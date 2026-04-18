@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>72 Seasons · 七十二候 — a Japanese tradition of small change</title>
+  <meta name="description" content="A Flutter app that brings the 72 ancient Japanese micro-seasons (Shichijūni-kō) to your phone. 72 illustrations, 72 classical haiku, bilingual, offline.">
+  <meta property="og:title" content="72 Seasons · 七十二候">
+  <meta property="og:description" content="72 micro-seasons. 72 illustrations. 72 haiku. One every five days.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://chyrvaserhii-ui.github.io/seasons_72/">
+  <meta property="og:image" content="https://raw.githubusercontent.com/chyrvaserhii-ui/seasons_72/main/docs/screenshots/01-now.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/chyrvaserhii-ui/seasons_72/main/assets/images/ko/11.png">
+  <style>
+    :root {
+      --paper: #F5EFE6;
+      --ink: #1A1615;
+      --subtle: rgba(26, 22, 21, 0.55);
+      --seal: #B94A3D;
+      --spring: #F4B5C1;
+      --summer: #8FBF7F;
+      --autumn: #D89060;
+      --winter: #8DAAC7;
+      --accent: var(--spring);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #1C1A1A;
+        --ink: #F5EFE6;
+        --subtle: rgba(245, 239, 230, 0.55);
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+    }
+    .hero-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      color: var(--subtle);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: clamp(40px, 8vw, 68px);
+      font-weight: 700;
+      margin: 0 0 18px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    h1 .kanji { color: var(--accent); font-weight: 500; }
+    .lede {
+      font-size: clamp(18px, 2.2vw, 22px);
+      color: var(--ink);
+      margin-bottom: 36px;
+      max-width: 620px;
+    }
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 64px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid var(--ink);
+      color: var(--ink);
+      transition: all 0.18s ease;
+    }
+    .btn.primary {
+      background: var(--ink);
+      color: var(--paper);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-bottom: 64px;
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 4 / 1;
+      border: 1px solid rgba(128, 128, 128, 0.2);
+    }
+    .grid-4 img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    section { margin-bottom: 72px; }
+    h2 {
+      font-size: 28px;
+      margin: 0 0 16px;
+      line-height: 1.2;
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+    .feature h3 {
+      font-size: 16px;
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+    .feature p {
+      font-size: 15px;
+      color: var(--subtle);
+      margin: 0;
+    }
+    .haiku {
+      text-align: center;
+      padding: 32px 0;
+      border-top: 1px solid rgba(128, 128, 128, 0.3);
+      border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+      position: relative;
+      margin: 48px 0;
+    }
+    .haiku p {
+      font-size: 18px;
+      font-style: normal;
+      color: var(--subtle);
+      margin: 0;
+      line-height: 1.8;
+    }
+    .haiku-seal {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px; height: 8px;
+      background: var(--seal);
+      border-radius: 50%;
+    }
+    footer {
+      text-align: center;
+      color: var(--subtle);
+      font-size: 13px;
+      padding: 48px 0 0;
+      border-top: 1px solid rgba(128, 128, 128, 0.2);
+    }
+    .footer-links { margin-bottom: 8px; }
+    .footer-links a { color: var(--subtle); margin: 0 8px; }
+    @media (max-width: 640px) {
+      .container { padding: 48px 20px 80px; }
+      .feature-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero-label">SHICHIJŪNI-KŌ · 七十二候</div>
+    <h1>72 Seasons <span class="kanji">七十二候</span></h1>
+    <p class="lede">
+      The Japanese have watched the year in seventy-two pieces for a
+      thousand years — one every five days. "East wind melts the ice".
+      "Bush warblers start singing". "First frost falls". Seventy-two
+      poetic names for the small shifts in nature.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="https://github.com/chyrvaserhii-ui/seasons_72">
+        View on GitHub →
+      </a>
+      <a class="btn" href="#features">How it works</a>
+    </div>
+
+    <div class="grid-4">
+      <img src="https://raw.githubusercontent.com/chyrvaserhii-ui/seasons_72/main/assets/images/ko/11.png" alt="Cherry blossoms (spring)">
+      <img src="https://raw.githubusercontent.com/chyrvaserhii-ui/seasons_72/main/assets/images/ko/19.png" alt="Frogs start singing (summer)">
+      <img src="https://raw.githubusercontent.com/chyrvaserhii-ui/seasons_72/main/assets/images/ko/54.png" alt="Maple leaves yellow (autumn)">
+      <img src="https://raw.githubusercontent.com/chyrvaserhii-ui/seasons_72/main/assets/images/ko/61.png" alt="Cold sets in (winter)">
+    </div>
+
+    <div class="haiku">
+      <p>
+        Old pond —<br>
+        a frog leaps in,<br>
+        sound of water.
+      </p>
+      <p style="margin-top: 14px; font-size: 13px;">— Bashō</p>
+      <div class="haiku-seal"></div>
+    </div>
+
+    <section id="features">
+      <h2>What's inside</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>72 bundled illustrations</h3>
+          <p>Ukiyo-e style, generated with Flux.1 from original prompts. No network needed at runtime.</p>
+        </div>
+        <div class="feature">
+          <h3>72 classical haiku</h3>
+          <p>Paired works by Bashō, Issa, Buson, Shiki, and Chiyo-ni — with Ukrainian and English translations.</p>
+        </div>
+        <div class="feature">
+          <h3>Seasonal palette</h3>
+          <p>Pink for spring, green for summer, orange for autumn, blue for winter. The whole app tints with the current season.</p>
+        </div>
+        <div class="feature">
+          <h3>Quiet notifications</h3>
+          <p>A gentle reminder at 9 AM on the first day of every new kō. Opt in from Settings.</p>
+        </div>
+        <div class="feature">
+          <h3>Bilingual, offline</h3>
+          <p>Ukrainian and English, system language by default. No accounts, no ads, no network calls.</p>
+        </div>
+        <div class="feature">
+          <h3>Open source</h3>
+          <p>Full source, all 72 data entries, and the image-generation scripts in one repo.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Where it comes from</h2>
+      <p>
+        The system of 72 micro-seasons reached Japan from China in the
+        6th century. In 1685, the shogun's astronomer
+        <em>Shibukawa Shunkai</em> rewrote all 72 names based on
+        observation of Japanese nature. His version — <em>Honchō
+        Shichijūni-kō</em> (本朝七十二候) — is the one Japanese readers
+        still use today. It's the one in this app.
+      </p>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="https://github.com/chyrvaserhii-ui/seasons_72">GitHub</a> ·
+        <a href="https://github.com/chyrvaserhii-ui/seasons_72/blob/main/BRAINSTORM.md">Notes</a> ·
+        <a href="https://github.com/chyrvaserhii-ui/seasons_72/blob/main/GETTING_STARTED.md">Build locally</a>
+      </div>
+      <div>Made with curiosity. Open source.</div>
+    </footer>
+  </div>
+</body>
+</html>
