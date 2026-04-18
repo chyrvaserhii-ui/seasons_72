@@ -1,0 +1,58 @@
+{
+    "@@locale": "en",
+
+    "appTitle": "72 Seasons",
+
+    "tabNow": "Now",
+    "tabAll": "All 72",
+    "tabAbout": "Tradition",
+    "tabSettings": "Settings",
+
+    "nowLabel": "Current season",
+    "seasonOf": "Season {index} of 72",
+    "@seasonOf": {
+        "placeholders": {
+            "index": { "type": "int" }
+        }
+    },
+
+    "daysUntilNext": "{count, plural, =0{Last day of this season} =1{Next season in 1 day} other{Next season in {count} days}}",
+    "@daysUntilNext": {
+        "description": "Countdown to the next kō.",
+        "placeholders": {
+            "count": { "type": "int" }
+        }
+    },
+    "sekkiLabel": "Sekki",
+    "metaLabel": "Season",
+    "periodLabel": "Period",
+
+    "previousSeason": "Previous",
+    "nextSeason": "Next",
+
+    "startsOn": "Starts {date}",
+    "@startsOn": {
+        "placeholders": {
+            "date": { "type": "String" }
+        }
+    },
+
+    "allSeasonsTitle": "All 72 micro-seasons",
+
+    "settingsTitle": "Settings",
+    "settingsLanguage": "Language",
+    "settingsLanguageSystem": "System",
+    "settingsLanguageEnglish": "English",
+    "settingsLanguageUkrainian": "Ukrainian",
+    "settingsTheme": "Theme",
+    "settingsThemeSystem": "System",
+    "settingsThemeLight": "Light",
+    "settingsThemeDark": "Dark",
+    "settingsNotifications": "Notify me when a new season begins",
+    "settingsNotificationsHint": "Coming in the next release",
+    "settingsAbout": "About",
+    "settingsAboutText": "The 72 micro-seasons (七十二候 Shichijūni-kō) divide the year into 5-day kō, each capturing a tiny shift in nature. This app is a small homage to that ancient calendar.",
+
+    "errorLoading": "Something went wrong while loading the seasons.",
+    "retry": "Retry"
+}

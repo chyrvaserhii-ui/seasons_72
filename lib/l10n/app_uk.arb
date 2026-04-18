@@ -1,0 +1,58 @@
+{
+    "@@locale": "uk",
+
+    "appTitle": "72 сезони",
+
+    "tabNow": "Зараз",
+    "tabAll": "Усі 72",
+    "tabAbout": "Традиція",
+    "tabSettings": "Налаштування",
+
+    "nowLabel": "Сезон зараз",
+    "seasonOf": "Сезон {index} з 72",
+    "@seasonOf": {
+        "placeholders": {
+            "index": { "type": "int" }
+        }
+    },
+
+    "daysUntilNext": "{count, plural, =0{Останній день цього сезону} one{Наступний сезон через {count} день} few{Наступний сезон через {count} дні} many{Наступний сезон через {count} днів} other{Наступний сезон через {count} дня}}",
+    "@daysUntilNext": {
+        "description": "Countdown to the next kō. Ukrainian has 3 plural forms.",
+        "placeholders": {
+            "count": { "type": "int" }
+        }
+    },
+    "sekkiLabel": "Секкі",
+    "metaLabel": "Сезон",
+    "periodLabel": "Період",
+
+    "previousSeason": "Попередній",
+    "nextSeason": "Наступний",
+
+    "startsOn": "Починається {date}",
+    "@startsOn": {
+        "placeholders": {
+            "date": { "type": "String" }
+        }
+    },
+
+    "allSeasonsTitle": "Усі 72 мікро-сезони",
+
+    "settingsTitle": "Налаштування",
+    "settingsLanguage": "Мова",
+    "settingsLanguageSystem": "Системна",
+    "settingsLanguageEnglish": "English",
+    "settingsLanguageUkrainian": "Українська",
+    "settingsTheme": "Тема",
+    "settingsThemeSystem": "Системна",
+    "settingsThemeLight": "Світла",
+    "settingsThemeDark": "Темна",
+    "settingsNotifications": "Сповіщати про початок нового сезону",
+    "settingsNotificationsHint": "З'явиться у наступному релізі",
+    "settingsAbout": "Про застосунок",
+    "settingsAboutText": "72 мікро-сезони (七十二候 Shichijūni-kō) ділять рік на п'ятиденні кō, кожен фіксує дрібну зміну в природі. Цей застосунок — невеликий поклін давньому календарю.",
+
+    "errorLoading": "Щось пішло не так під час завантаження сезонів.",
+    "retry": "Повторити"
+}

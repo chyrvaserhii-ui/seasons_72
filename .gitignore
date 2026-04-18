@@ -1,0 +1,59 @@
+# --- Flutter ------------------------------------------------------------
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+.metadata
+flutter_export_environment.sh
+
+# Generated l10n files (recreated by `flutter gen-l10n` on each build)
+lib/l10n/app_localizations*.dart
+
+# --- IDE ----------------------------------------------------------------
+.idea/
+.vscode/
+*.iml
+*.iws
+seasons_72.iml
+
+# --- macOS --------------------------------------------------------------
+.DS_Store
+**/.DS_Store
+
+# --- iOS (Xcode) --------------------------------------------------------
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcresult
+*.xcresult.bundle
+
+# --- Android (Gradle) ---------------------------------------------------
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/key.properties
+android/**/GeneratedPluginRegistrant.java
+
+# --- Auto-generated plugin code -----------------------------------------
+**/generated_plugin_registrant.dart
+**/GeneratedPluginRegistrant.swift
+**/GeneratedPluginRegistrant.java
+
+# --- Project-specific ---------------------------------------------------
+# Image backups (DALL-E 3 originals, kept locally only)
+assets/images/ko_backup_*/
+assets/images/ko_dalle3_backup/
+
+# Font files (large, not needed in repo — users fetch locally)
+assets/fonts/*.ttf
+assets/fonts/*.otf

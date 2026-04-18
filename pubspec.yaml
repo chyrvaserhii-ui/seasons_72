@@ -1,0 +1,51 @@
+name: seasons_72
+description: 72 Japanese micro-seasons — a Flutter app that tracks the ancient Shichijūni-kō calendar.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # i18n — version pinned transitively by flutter_localizations,
+  # so we accept whatever Flutter's SDK ships with.
+  intl: any
+
+  # Networking / caching (for ukiyo-e images)
+  cached_network_image: ^3.4.1
+
+  # Home Widget (prepared for Phase 2)
+  home_widget: ^0.7.0
+
+  # Local notifications (prepared for Phase 2)
+  flutter_local_notifications: ^18.0.0
+  timezone: ^0.10.0
+
+  # Persistence for user settings
+  shared_preferences: ^2.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/data/seasons.json
+    - assets/images/ko/
+
+  # Note: intentionally no custom fonts in Phase 1 — system fonts render
+  # Japanese kanji correctly on iOS (Hiragino), Android (Noto CJK), and macOS.
+  # To add Noto Serif JP later: drop TTFs into assets/fonts/ and re-enable below.
