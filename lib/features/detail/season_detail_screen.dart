@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../core/models/season_models.dart';
 import '../../core/providers/seasons_providers.dart';
 import '../../core/utils/localized_names.dart';
+import '../share/share_service.dart';
 import '../shared/widgets/season_hero.dart';
 
 class SeasonDetailScreen extends ConsumerWidget {
@@ -49,6 +50,18 @@ class SeasonDetailScreen extends ConsumerWidget {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           overflow: TextOverflow.ellipsis,
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.ios_share),
+            tooltip: l10n.shareSeasonTooltip,
+            onPressed: () => ShareService.instance.shareSeason(
+              context: context,
+              ko: ko,
+              meta: meta,
+              sekki: sekki,
+            ),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),

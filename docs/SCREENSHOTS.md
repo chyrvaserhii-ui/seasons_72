@@ -36,19 +36,22 @@ gives the cleanest frames without status bar noise.
    flutter run
    ```
 
-## The 6 shots to take
+## The 9 shots to take
 
 Switch language to Ukrainian in Settings before shooting (or leave
 English — pick one and stay consistent).
 
 | # | Screen | What to show |
 |---|---|---|
-| 1 | **Home / Now** | Current kō with hero illustration, title, haiku visible. Scroll so AppBar + hero + description + haiku fit |
-| 2 | **Detail** | Click any kō from "Усі 72" — show the full detail screen with hero, title block, description, haiku with seal, period row, prev/next cards |
-| 3 | **Catalog — All 72** | Scroll through the "Усі 72" list showing the meta-season groupings. Frame on a colorful section (spring pink + summer green) |
+| 1 | **Home / Now** | Current kō with hero illustration, title, haiku, and the moon glyph next to the date range — scroll so AppBar + hero + name + sekki card all fit |
+| 2 | **Detail** | Tap any kō from "Усі сезони" — show the full detail screen with hero, title, description, haiku with seal, share button visible in AppBar |
+| 3 | **All seasons (list)** | Scroll through the "Усі сезони" list showing the meta-season groupings. Frame on a colorful section (spring pink + summer green) |
 | 4 | **About / Tradition** | Show the 2×2 collage at the top with the SHICHIJŪNI-KŌ title pill |
-| 5 | **Settings (dark theme)** | Toggle to dark theme first, then screenshot Settings showing the tinted background and a filled notification toggle |
-| 6 | **Dark theme — Now** | Re-screenshot the home screen in dark mode — shows the palette is tuned for both |
+| 5 | **Settings (dark theme)** | Toggle to dark theme first, then screenshot Settings showing the tinted background, theme/language pickers, and notification toggle with subtitle |
+| 6 | **Dark theme — Now** | Re-screenshot the Home in dark mode — shows the palette is tuned for both |
+| 7 | **iOS Home Screen widget** | Press the simulator's Home button (Cmd+Shift+H), long-press the screen, add a Medium and a Large 72 Seasons widget. Frame both visible |
+| 8 | **Lock Screen widget** | Long-press the lock screen, customize → add accessoryRectangular Seasons widget under the clock. Screenshot the lock screen |
+| 9 | **Share card** | Open Detail → tap the share icon → wait for share sheet to open → screenshot. The 1080×1350 share image is auto-saved to /tmp/seasons72_share_*.png; copy it to docs/screenshots/09-share-card.png |
 
 ## Capturing
 
@@ -58,10 +61,13 @@ Rename them as you go:
 ```
 Desktop/Simulator_Screen_Shot_...png  →  docs/screenshots/01-now.png
                                        →  docs/screenshots/02-detail.png
-                                       →  docs/screenshots/03-catalog.png
+                                       →  docs/screenshots/03-list.png
                                        →  docs/screenshots/04-tradition.png
                                        →  docs/screenshots/05-settings-dark.png
                                        →  docs/screenshots/06-now-dark.png
+                                       →  docs/screenshots/07-widget.png
+                                       →  docs/screenshots/08-lockscreen.png
+                                       →  docs/screenshots/09-share-card.png
 ```
 
 Then:

@@ -108,9 +108,13 @@ class NotificationService {
       );
 
       final isUk = locale.languageCode == 'uk';
-      final title = isUk ? 'Новий сезон' : 'A new season';
+      final title = isUk ? 'Новий сезон почався' : 'A new season has begun';
       final name = isUk ? ko.nameUk : ko.nameEn;
-      final body = '#${ko.index} · ${ko.kanji} · $name';
+      // Sentence-form body so screen readers parse it naturally and it
+      // reads like a note, not a data row.
+      final body = isUk
+          ? '#${ko.index} $name. Триватиме близько 5 днів.'
+          : '#${ko.index} $name. Lasts about 5 days.';
 
       await _plugin.zonedSchedule(
         ko.index, // reuse index as notification id (stable across runs)

@@ -33,10 +33,35 @@ dependencies:
   # Persistence for user settings
   shared_preferences: ^2.3.2
 
+  # Share cards — captures a Flutter widget tree as a PNG and hands it
+  # off to the system share sheet (Photos, IG, Telegram, etc).
+  share_plus: ^10.1.4
+  path_provider: ^2.1.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+
+  # Generates all platform app-icon sizes from a single source PNG.
+  # Run once per icon change:  `dart run flutter_launcher_icons`.
+  flutter_launcher_icons: ^0.14.4
+
+# ---------------------------------------------------------------------------
+# App icon generation config — reads `assets/brand/appIcon.png` (1024×1024)
+# and writes every platform-specific size into `ios/Runner/Assets.xcassets/`
+# and `android/app/src/main/res/mipmap-*/`. Don't edit those files by hand.
+# ---------------------------------------------------------------------------
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  remove_alpha_ios: true        # iOS stripped alpha is required for App Store
+  image_path: "assets/brand/appIcon.png"
+  # Android adaptive icons — background washi cream, matching the icon's
+  # own background so it blends seamlessly when Android crops to a circle.
+  adaptive_icon_background: "#FAF5E8"
+  adaptive_icon_foreground: "assets/brand/appIcon.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
@@ -45,6 +70,7 @@ flutter:
   assets:
     - assets/data/seasons.json
     - assets/images/ko/
+    - assets/brand/appIcon.png
 
   # Note: intentionally no custom fonts in Phase 1 — system fonts render
   # Japanese kanji correctly on iOS (Hiragino), Android (Noto CJK), and macOS.

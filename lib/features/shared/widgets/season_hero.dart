@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/season_models.dart';
+import '../../../core/utils/localized_names.dart';
 
 /// Hero block for a kō — image-focused design.
 ///
@@ -39,11 +40,20 @@ class SeasonHero extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               // Primary visual: illustration if bundled, else the per-kō emoji.
+              // Engraving gets a descriptive Semantics label so VoiceOver
+              // describes it as a named illustration instead of just "image".
               if (ko.illustrationAsset != null)
-                Image.asset(
-                  ko.illustrationAsset!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _EmojiFallback(emoji: ko.emoji),
+                Semantics(
+                  label: 'Гравюра: ${ko.localizedName(
+                    Localizations.localeOf(context),
+                  )}',
+                  image: true,
+                  child: Image.asset(
+                    ko.illustrationAsset!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        _EmojiFallback(emoji: ko.emoji),
+                  ),
                 )
               else
                 _EmojiFallback(emoji: ko.emoji),
@@ -365,7 +375,6 @@ class SeasonTitleBlock extends StatelessWidget {
                 ko.romaji,
                 style: TextStyle(
                   fontSize: 14,
-                  fontStyle: FontStyle.italic,
                   color: subtle,
                 ),
                 overflow: TextOverflow.ellipsis,

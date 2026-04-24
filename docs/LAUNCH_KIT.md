@@ -49,11 +49,23 @@ This app brings the full cycle to your home screen:
 - A classical haiku by Bashō, Issa, Buson, Shiki, or Chiyo-ni
 - The date range it falls on this year
 - A short description of the natural event it names
-- Its place in the larger calendar (24 sekki, 4 seasons)
+- Its place in the larger calendar (24 sekki, 4 seasons) — tap any
+  sekki name to read what it traditionally meant
+
+**On your phone — beyond the app itself:**
+- **iOS Home Screen widget** in three sizes — small, medium, and a
+  large layout that shows the previous, current, and next kō with
+  their original engravings
+- **Lock Screen widget** under the clock for a glance-friendly
+  reminder of where you are in the year
+- **Moon phase indicator** on the Home tab — the calendar was
+  historically lunisolar, so the moon belongs here
+- **Share cards** — tap share on any kō to generate a 1080×1350
+  PNG with the illustration, name, and haiku, ready to post
 
 **Extras:**
 - Light and dark themes, each tuned to the color of the current season
-- Optional notification at the start of every new kō (~every 5 days)
+- Optional notification at 9 AM on the day a new kō begins
 - Everything works offline — no server, no ads, no accounts
 - Available in Ukrainian and English; system language by default
 
@@ -67,21 +79,31 @@ version used in Japan today.
 
 ### Reddit — r/LearnJapanese
 
-**Title:** I built a free app that shows Japan's 72 micro-seasons with original kanji and classical haiku
+**Title:** Free app for Japan's 72 micro-seasons (七十二候) — with kanji, classical haiku, and a Home Screen widget
 
 **Body:**
-> The Japanese traditional calendar divides the year into 72 kō of about
-> five days each (七十二候). I've always loved how specific they are —
-> "Crow-dipper sprouts", "Salmon swim upstream", "Bears start
-> hibernating" — so I built a little Flutter app that walks through all
-> 72, one per current date, with the kanji, romaji, a classical haiku,
-> and an ukiyo-e illustration.
+> The Japanese traditional calendar divides the year into 72 kō of
+> about five days each (七十二候). I've always loved how specific they
+> are — "Crow-dipper sprouts", "Salmon swim upstream", "Bears start
+> hibernating" — so I built a small Flutter app that walks through all
+> 72, one per current date.
 >
-> It's open source: github.com/chyrvaserhii-ui/seasons_72
+> For each kō you get:
+> - Kanji, romaji, English + Ukrainian name
+> - An ukiyo-e illustration
+> - A classical haiku by Bashō, Issa, Buson, Shiki, or Chiyo-ni
+> - The 24-sekki context (you can tap any sekki to read what it
+>   traditionally signified — *Kokuu* "grain rains", *Seimei* "pure
+>   and clear", etc.)
 >
-> Feedback welcome — especially from native speakers if any of the
-> romaji or translation choices feel off. Also curious what other kigo
-> resources you use.
+> Plus iOS Home Screen + Lock Screen widgets that show the current,
+> previous, and next kō with their engravings.
+>
+> Open source: github.com/chyrvaserhii-ui/seasons_72
+>
+> Feedback welcome — especially from native speakers if any romaji or
+> translation choices feel off. Also curious what other kigo resources
+> you use.
 
 ### Reddit — r/Haiku
 
@@ -132,13 +154,19 @@ version used in Japan today.
 > The app ships with:
 >   • 72 AI-generated ukiyo-e illustrations (Flux.1, from my own prompts)
 >   • 72 classical haiku with Ukrainian and English translations
->   • A palette that shifts with the current season (both light and dark themes)
+>   • iOS Home Screen + Lock Screen widgets in three sizes
+>   • A palette that shifts with the current season (both light and
+>     dark themes), plus a moon-phase indicator (the calendar was
+>     historically lunisolar)
+>   • Share cards — generates a 1080×1350 PNG for any kō
 >   • Offline data, no accounts, no ads
 >
 > Source + data: github.com/chyrvaserhii-ui/seasons_72
 >
 > Curious to hear what you think — especially about the illustration
-> workflow (Pollinations.ai batch script is in scripts/).
+> workflow (Pollinations.ai batch script is in scripts/) or the
+> SwiftUI widget extension (mostly drawn with Canvas + custom
+> moon-phase painter).
 
 ### Twitter / X thread (5 tweets)
 
@@ -209,7 +237,7 @@ falls on this year. Offline, no accounts, free.
 
 ### Ukrainian post (Telegram / Facebook groups)
 
-**Title:** Застосунок про 72 японські мікро-сезони — з хайку і гравюрами
+**Title:** 72 японські мікро-сезони — застосунок з хайку, гравюрами і віджетом для iPhone
 
 **Body:**
 > Японський традиційний календар ділить рік не на 4, а на **72**
@@ -217,17 +245,25 @@ falls on this year. Offline, no accounts, free.
 > назву: «Солов'ї заспівали в горах», «Перший іній», «Ведмеді лягають у
 > сплячку».
 >
-> Зробив застосунок на Flutter, що веде через усі 72:
-> — ілюстрація в стилі ukiyo-e для кожного сезону
-> — класичне хайку Басьо / Ісси / Бусона / Сікі українською та
->   англійською
-> — поточна дата, коли настає сезон
-> — українська і англійська мови
+> Зараз, наприклад, триває сезон #17 — «Сходи рису після останнього
+> інію». Ще через п'ять днів почнуться «Півонії розквітають».
 >
-> Безкоштовно, код відкритий:
+> Зробив застосунок на Flutter, що показує усі 72:
+> — оригінальна гравюра в стилі ukiyo-e для кожного сезону
+> — класичне хайку Басьо / Ісси / Бусона / Сікі українською й
+>   англійською
+> — пояснення сeкки (24-сезонної структури) з культурним контекстом
+> — фаза місяця тут же на головному екрані (календар історично був
+>   місячно-сонячним)
+> — **iOS Home Screen widget**: три розміри + Lock Screen, з
+>   гравюрою поточного сезону
+> — кнопка «поділитися» генерує гарну картку 1080×1350 для Instagram
+>
+> Безкоштовно, без реєстрації, працює офлайн. Код відкритий:
 > github.com/chyrvaserhii-ui/seasons_72
 >
-> Буду дуже радий відгукам — особливо стосовно перекладів хайку.
+> Буду дуже радий відгукам — особливо щодо перекладів хайку та
+> формулювань.
 
 ---
 

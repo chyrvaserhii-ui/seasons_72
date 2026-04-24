@@ -1,7 +1,10 @@
 //
 //  SeasonsWidgetBundle.swift
-//  Entry point for the widget extension. Declares every widget type
-//  the extension provides — right now just `SeasonsWidget`.
+//  SeasonsWidget
+//
+//  Entry point. Only one widget type — the home/lock-screen widget.
+//  (Xcode's template adds Control Center + Live Activity variants;
+//  we don't use them for this app.)
 //
 
 import SwiftUI

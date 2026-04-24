@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import '../../core/models/season_models.dart';
 import '../../core/providers/seasons_providers.dart';
 import '../../core/utils/localized_names.dart';
+import '../about/sekki_descriptions.dart';
+import '../shared/widgets/moon_phase.dart';
 import '../shared/widgets/season_hero.dart';
 import '../detail/season_detail_screen.dart';
 
@@ -59,22 +61,31 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             SeasonHaiku(ko: current, accentColor: meta.colorFor(brightness)),
             const SizedBox(height: 24),
-            _MetaRow(
+            // Date range + moon glyph on the same line. Moon sits
+            // right next to the date (not pushed to the right edge)
+            // so they read as one time-anchored group.
+            _DateWithMoon(
               label: _formatDateRange(current, locale),
               accentColor: meta.colorFor(brightness),
             ),
-            const SizedBox(height: 8),
-            _MetaRow(
-              label:
-                  '${meta.localizedName(locale)} · ${sekki.localizedName(locale)} (${sekki.kanji})',
+            const SizedBox(height: 12),
+            // Sekki block — the 24-season cultural context, distinct
+            // from metadata. Given its own card-like treatment so it
+            // doesn't read as just another metadata row.
+            _SekkiCard(
+              meta: meta,
+              sekki: sekki,
+              locale: locale,
               accentColor: meta.colorFor(brightness),
             ),
             const SizedBox(height: 24),
-            _ProgressBar(progress: progress, color: meta.colorFor(brightness)),
-            const SizedBox(height: 8),
-            Text(
-              l10n.daysUntilNext(daysLeft),
-              style: Theme.of(context).textTheme.bodyMedium,
+            // Progress + countdown merged: a single "where are we in
+            // this season?" block. Big number for quick glance, units +
+            // absolute date below for context.
+            _ProgressBlock(
+              progress: progress,
+              daysLeft: daysLeft,
+              color: meta.colorFor(brightness),
             ),
             const SizedBox(height: 32),
             Text(
@@ -104,6 +115,41 @@ class HomeScreen extends ConsumerWidget {
     final start = current.startDateForYear(now.year) as DateTime;
     final end = current.endDateForYear(now.year) as DateTime;
     return '${df.format(start)} – ${df.format(end)}';
+  }
+}
+
+/// Dot + date label + moon glyph, all in one row. Uses `Wrap`-style
+/// packing (Row with `mainAxisSize.min` children) so the moon sits
+/// immediately after the date instead of being pushed to the right
+/// edge by a Spacer.
+class _DateWithMoon extends StatelessWidget {
+  const _DateWithMoon({required this.label, required this.accentColor});
+  final String label;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final dotColor = accentColor.withValues(alpha: 0.8);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 5,
+          height: 5,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: dotColor,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(width: 12),
+        const MoonPhaseIndicator(size: 22),
+      ],
+    );
   }
 }
 
@@ -138,21 +184,225 @@ class _MetaRow extends StatelessWidget {
   }
 }
 
-class _ProgressBar extends StatelessWidget {
-  const _ProgressBar({required this.progress, required this.color});
+/// Sekki (24-season) cultural context, presented as a discreet card
+/// rather than a metadata list item. Tappable: opens a bottom sheet
+/// with the editorial explanation of the current sekki.
+class _SekkiCard extends StatelessWidget {
+  const _SekkiCard({
+    required this.meta,
+    required this.sekki,
+    required this.locale,
+    required this.accentColor,
+  });
+  final MetaSeason meta;
+  final Sekki sekki;
+  final Locale locale;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    return Material(
+      color: accentColor.withValues(alpha: 0.12),
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => _showSekkiSheet(context),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(
+            children: [
+              Text(
+                sekki.kanji,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: onSurface,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      sekki.localizedName(locale),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      meta.localizedName(locale),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: onSurface.withValues(alpha: 0.70),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Subtle "tap me" cue — info icon, decorative only.
+              Icon(
+                Icons.info_outline,
+                size: 18,
+                color: onSurface.withValues(alpha: 0.45),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSekkiSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (_) => _SekkiDetailsSheet(
+        sekki: sekki,
+        meta: meta,
+        locale: locale,
+        accentColor: accentColor,
+      ),
+    );
+  }
+}
+
+/// Bottom sheet with kanji, localized name, romaji, and editorial
+/// explanation of the sekki. Mirrors the `MoonPhase` sheet pattern.
+class _SekkiDetailsSheet extends StatelessWidget {
+  const _SekkiDetailsSheet({
+    required this.sekki,
+    required this.meta,
+    required this.locale,
+    required this.accentColor,
+  });
+  final Sekki sekki;
+  final MetaSeason meta;
+  final Locale locale;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    final desc = sekkiDescriptionFor(sekki.id);
+    final descText = desc == null
+        ? ''
+        : (locale.languageCode == 'uk' ? desc.uk : desc.en);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Tiny meta-season cap above the kanji (matches the
+            // editorial micro-header style used elsewhere).
+            Text(
+              meta.localizedName(locale).toUpperCase(),
+              style: theme.textTheme.labelLarge?.copyWith(
+                letterSpacing: 1.8,
+                color: onSurface.withValues(alpha: 0.55),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              sekki.kanji,
+              style: theme.textTheme.displayMedium?.copyWith(
+                fontSize: 56,
+                color: accentColor.withValues(alpha: 0.92),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              sekki.localizedName(locale),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              sekki.romaji,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: onSurface.withValues(alpha: 0.55),
+              ),
+            ),
+            const SizedBox(height: 22),
+            // Thin accent rule, like the haiku frame
+            Container(
+              width: 60,
+              height: 1,
+              color: accentColor.withValues(alpha: 0.4),
+            ),
+            const SizedBox(height: 22),
+            Text(
+              descText,
+              style: theme.textTheme.bodyLarge?.copyWith(height: 1.55),
+              textAlign: TextAlign.left,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Progress bar + a single understated caption line below.
+///
+/// Design choice: the absolute date and next-season name already live in
+/// the `_NextCard` below, so repeating them here is redundant. We keep
+/// only the countdown — the "how far along" part is the progress bar
+/// itself, the "when / what next" part is the card.
+class _ProgressBlock extends StatelessWidget {
+  const _ProgressBlock({
+    required this.progress,
+    required this.daysLeft,
+    required this.color,
+  });
   final double progress;
+  final int daysLeft;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    // Slimmer track for a refined feel. Rounded endcaps keep it gentle.
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: LinearProgressIndicator(
-        value: progress.clamp(0.0, 1.0),
-        minHeight: 4,
-        backgroundColor: color.withValues(alpha: 0.12),
-        valueColor: AlwaysStoppedAnimation<Color>(color.withValues(alpha: 0.85)),
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final onSurface = theme.colorScheme.onSurface;
+    final pct = (progress * 100).round();
+
+    return Semantics(
+      container: true,
+      label:
+          'Прогрес сезону $pct відсотків. ${l10n.daysLeftInSeason(daysLeft)}',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ExcludeSemantics(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: progress.clamp(0.0, 1.0),
+                minHeight: 4,
+                backgroundColor: color.withValues(alpha: 0.12),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    color.withValues(alpha: 0.85)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          ExcludeSemantics(
+            child: Text(
+              l10n.daysLeftInSeason(daysLeft),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: onSurface.withValues(alpha: 0.70),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

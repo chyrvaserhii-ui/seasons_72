@@ -64,15 +64,6 @@ const List<AboutSection> aboutSectionsUk = [
       "Зрозуміло, що японські kō описують японський клімат — сакура цвіте у нас пізніше, ведмеді в Україні не впадають у зимову сплячку в ті самі дати. Але дух календаря універсальний: природа говорить з тобою мовою малих подій, якщо дивишся уважно.",
     ],
   ),
-  AboutSection(
-    title: 'Джерела',
-    paragraphs: [
-      "• Nippon.com — «Japan's 72 Microseasons»",
-      "• Kanpai Japan — «Koyomi: the 72 Seasons of Japan»",
-      "• Maiko Japan — список усіх 72 кō з оригінальними назвами",
-      "• Класичні збірки хайку Басьо (芭蕉), Бусона (蕪村), Ісси (一茶)",
-    ],
-  ),
 ];
 
 /// English content — same sections, same order.
@@ -116,15 +107,6 @@ const List<AboutSection> aboutSectionsEn = [
       "Modern life has pushed the smaller rhythms of nature out of daily attention. We know \"spring / summer / autumn / winter\", and between them — months of sameness.",
       "The 72-season calendar invites a return to detail: to notice when the cuckoo first called, when maple leaves started yellowing, when the ground started to freeze. A five-day cycle is short enough that you can catch the change with your own eyes.",
       "Japanese kō describe Japanese climate — cherries bloom later here, bears in other countries don't hibernate on the same dates. But the spirit of the calendar is universal: nature speaks to you in the language of small events, if you are watching closely.",
-    ],
-  ),
-  AboutSection(
-    title: 'Sources',
-    paragraphs: [
-      "• Nippon.com — \"Japan's 72 Microseasons\"",
-      "• Kanpai Japan — \"Koyomi: the 72 Seasons of Japan\"",
-      "• Maiko Japan — full list of all 72 kō with original names",
-      "• Classical haiku collections by Bashō (芭蕉), Buson (蕪村), Issa (一茶)",
     ],
   ),
 ];

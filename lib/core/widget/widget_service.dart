@@ -1,8 +1,13 @@
+import 'dart:io' show Platform;
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 
 import '../data/seasons_repository.dart';
+import '../models/season_models.dart';
+import '../utils/moon_calculator.dart';
 import '../utils/season_calculator.dart';
 
 /// Pushes the current kō's data into the iOS/Android home-screen widget.
@@ -26,6 +31,11 @@ class WidgetService {
   static const String widgetName = 'SeasonsWidget';
   static const String iOSWidgetName = 'SeasonsWidget';
 
+  /// MethodChannel used on iOS to copy engraving PNGs into the App Group
+  /// container. Implemented in `ios/Runner/AppDelegate.swift`.
+  static const MethodChannel _engravingChannel =
+      MethodChannel('seasons72/widget/engraving');
+
   bool _initialized = false;
 
   Future<void> _ensureInit() async {
@@ -46,6 +56,7 @@ class WidgetService {
 
     final current = calc.currentAt();
     final next = calc.next(current);
+    final previous = calc.previous(current);
     final meta = repo.meta(current.metaId);
     final sekki = repo.sekki(current.sekkiId);
     final daysUntilNext = calc.daysUntilNext(current);
@@ -53,6 +64,7 @@ class WidgetService {
     final isUk = locale.languageCode == 'uk';
     final name = isUk ? current.nameUk : current.nameEn;
     final nextName = isUk ? next.nameUk : next.nameEn;
+    final previousName = isUk ? previous.nameUk : previous.nameEn;
     final sekkiName = isUk ? sekki.nameUk : sekki.nameEn;
     final metaName = isUk ? meta.nameUk : meta.nameEn;
 
@@ -69,10 +81,25 @@ class WidgetService {
       HomeWidget.saveWidgetData<String>('meta', metaName),
       HomeWidget.saveWidgetData<String>('metaColorHex', _hex(meta.colorLight)),
       HomeWidget.saveWidgetData<int>('daysUntilNext', daysUntilNext),
+      HomeWidget.saveWidgetData<int>('nextIndex', next.index),
       HomeWidget.saveWidgetData<String>('nextName', nextName),
       HomeWidget.saveWidgetData<String>('nextKanji', next.kanji),
       HomeWidget.saveWidgetData<String>('nextEmoji', next.emoji),
+      HomeWidget.saveWidgetData<int>('previousIndex', previous.index),
+      HomeWidget.saveWidgetData<String>('previousName', previousName),
+      HomeWidget.saveWidgetData<String>('previousKanji', previous.kanji),
+      HomeWidget.saveWidgetData<String>('previousEmoji', previous.emoji),
+      // Moon phase — widget renders a small glyph; math matches
+      // lib/core/utils/moon_calculator.dart. Stored as doubles so the
+      // Swift side can recompute illumination and pick waxing/waning.
+      ..._moonKV(),
     ]);
+
+    // Copy ukiyo-e engravings for current / next / previous into the
+    // shared App Group container. Done in parallel; failures are
+    // logged but don't block the widget update — the Swift side falls
+    // back to emoji rendering when a file is missing.
+    await _copyEngravings(current: current, next: next, previous: previous);
 
     await HomeWidget.updateWidget(
       name: widgetName,
@@ -80,9 +107,51 @@ class WidgetService {
     );
   }
 
+  /// Pushes three PNGs (current / next / previous kō) into the iOS App
+  /// Group container so the widget can render the actual ukiyo-e
+  /// illustration instead of an emoji placeholder.
+  Future<void> _copyEngravings({
+    required MicroSeason current,
+    required MicroSeason next,
+    required MicroSeason previous,
+  }) async {
+    if (!Platform.isIOS) return;
+    await Future.wait([
+      _pushEngraving(current.index, 'engraving_current'),
+      _pushEngraving(next.index, 'engraving_next'),
+      _pushEngraving(previous.index, 'engraving_previous'),
+    ]);
+  }
+
+  Future<void> _pushEngraving(int seasonIndex, String key) async {
+    try {
+      final data = await rootBundle.load('assets/images/ko/$seasonIndex.png');
+      await _engravingChannel.invokeMethod('copy', {
+        'key': key,
+        'bytes': data.buffer.asUint8List(),
+      });
+    } catch (e, st) {
+      // Non-fatal — widget falls back to emoji. Log so we see this in
+      // flutter run output.
+      debugPrint('WidgetService: failed to copy engraving $seasonIndex ($key): $e\n$st');
+    }
+  }
+
   String _hex(Color c) {
     // ARGB integer via toARGB32 to avoid deprecated .value
     final v = c.toARGB32() & 0x00FFFFFF;
     return '#${v.toRadixString(16).padLeft(6, '0').toUpperCase()}';
+  }
+
+  /// Returns a batch of saveWidgetData calls that push the current
+  /// moon's phase into shared storage. Called as `..._moonKV()` inside
+  /// `Future.wait([...])`. Return type mirrors `HomeWidget.saveWidgetData`.
+  List<Future<bool?>> _moonKV() {
+    final m = MoonCalculator.at();
+    return [
+      HomeWidget.saveWidgetData<double>('moonPhase', m.phase),
+      HomeWidget.saveWidgetData<double>('moonIllumination', m.illumination),
+      HomeWidget.saveWidgetData<int>('moonIsWaxing', m.isWaxing ? 1 : 0),
+    ];
   }
 }

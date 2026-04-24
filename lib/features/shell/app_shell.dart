@@ -24,6 +24,11 @@ class AppShell extends ConsumerStatefulWidget {
 class _AppShellState extends ConsumerState<AppShell> {
   int _tab = 0;
 
+  /// Bumped each time the "72 сезони" tab is tapped. Used as part of the
+  /// [Key] for [SeasonsListScreen] so that every tap remounts the screen
+  /// and re-triggers the auto-scroll-to-current logic in its initState.
+  int _listRemountKey = 0;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -48,11 +53,13 @@ class _AppShellState extends ConsumerState<AppShell> {
       surface,
     );
 
-    final pages = const [
-      HomeScreen(),
-      SeasonsListScreen(),
-      AboutScreen(),
-      SettingsScreen(),
+    final pages = [
+      const HomeScreen(),
+      // ValueKey bumps whenever the tab is tapped, which remounts the
+      // screen and fires its post-frame scroll-to-current.
+      SeasonsListScreen(key: ValueKey('seasons-list-$_listRemountKey')),
+      const AboutScreen(),
+      const SettingsScreen(),
     ];
     final titles = [
       l10n.appTitle,
@@ -122,7 +129,13 @@ class _AppShellState extends ConsumerState<AppShell> {
           // Subtle tint instead of a loud oval — pairs with per-season color.
           indicatorColor: metaColor.withValues(alpha: 0.22),
           selectedIndex: _tab,
-          onDestinationSelected: (i) => setState(() => _tab = i),
+          onDestinationSelected: (i) => setState(() {
+            // Every tap on the "72 сезони" tab bumps the remount key so
+            // the list re-initializes and scrolls to the current kō,
+            // even if the user is already on that tab.
+            if (i == 1) _listRemountKey++;
+            _tab = i;
+          }),
           destinations: [
             NavigationDestination(
               icon: const Icon(Icons.wb_sunny_outlined),

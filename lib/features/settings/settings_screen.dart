@@ -66,6 +66,7 @@ class SettingsScreen extends ConsumerWidget {
         const Divider(),
         SwitchListTile(
           title: Text(l10n.settingsNotifications),
+          subtitle: Text(l10n.settingsNotificationsHint),
           value: settings.notifyOnSeasonChange,
           onChanged: (value) async {
             if (value) {

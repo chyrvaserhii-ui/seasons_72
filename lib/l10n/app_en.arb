@@ -4,11 +4,11 @@
     "appTitle": "72 Seasons",
 
     "tabNow": "Now",
-    "tabAll": "All 72",
+    "tabAll": "All seasons",
     "tabAbout": "Tradition",
     "tabSettings": "Settings",
 
-    "nowLabel": "Current season",
+    "nowLabel": "Unfolding now",
     "seasonOf": "Season {index} of 72",
     "@seasonOf": {
         "placeholders": {
@@ -17,6 +17,13 @@
     },
 
     "daysUntilNext": "{count, plural, =0{Last day of this season} =1{Next season in 1 day} other{Next season in {count} days}}",
+    "daysLeftInSeason": "{count, plural, =0{Last day} =1{1 day left} other{{count} days left}}",
+    "@daysLeftInSeason": {
+        "description": "Countdown for CURRENT season (not next one). Used under progress bar.",
+        "placeholders": {
+            "count": { "type": "int" }
+        }
+    },
     "@daysUntilNext": {
         "description": "Countdown to the next kō.",
         "placeholders": {
@@ -27,8 +34,8 @@
     "metaLabel": "Season",
     "periodLabel": "Period",
 
-    "previousSeason": "Previous",
-    "nextSeason": "Next",
+    "previousSeason": "Previous season",
+    "nextSeason": "Next season",
 
     "startsOn": "Starts {date}",
     "@startsOn": {
@@ -37,22 +44,55 @@
         }
     },
 
-    "allSeasonsTitle": "All 72 micro-seasons",
+    "allSeasonsTitle": "Year at a glance",
 
     "settingsTitle": "Settings",
     "settingsLanguage": "Language",
-    "settingsLanguageSystem": "System",
+    "settingsLanguageSystem": "Match iOS",
     "settingsLanguageEnglish": "English",
     "settingsLanguageUkrainian": "Ukrainian",
     "settingsTheme": "Theme",
-    "settingsThemeSystem": "System",
+    "settingsThemeSystem": "Auto",
     "settingsThemeLight": "Light",
     "settingsThemeDark": "Dark",
     "settingsNotifications": "Notify me when a new season begins",
-    "settingsNotificationsHint": "Coming in the next release",
-    "settingsAbout": "About",
-    "settingsAboutText": "The 72 micro-seasons (七十二候 Shichijūni-kō) divide the year into 5-day kō, each capturing a tiny shift in nature. This app is a small homage to that ancient calendar.",
+    "settingsNotificationsHint": "We'll ping you at 9 AM on the day a new kō starts",
+    "settingsAbout": "About this project",
+    "settingsAboutText": "The 72 micro-seasons (七十二候 Shichijūni-kō) divide the year into 5-day kō, each capturing a tiny shift in nature. This project is a small homage to that ancient calendar.",
 
-    "errorLoading": "Something went wrong while loading the seasons.",
-    "retry": "Retry"
+    "errorLoading": "Couldn't load the seasons. Try again.",
+    "retry": "Try again",
+
+    "moonPhaseNew": "New moon",
+    "moonPhaseWaxingCrescent": "Waxing crescent",
+    "moonPhaseFirstQuarter": "First quarter",
+    "moonPhaseWaxingGibbous": "Waxing gibbous",
+    "moonPhaseFull": "Full moon",
+    "moonPhaseWaningGibbous": "Waning gibbous",
+    "moonPhaseLastQuarter": "Last quarter",
+    "moonPhaseWaningCrescent": "Waning crescent",
+
+    "moonDetailsTitle": "The moon right now",
+    "moonIllumination": "{percent}% illuminated",
+    "@moonIllumination": {
+        "placeholders": {
+            "percent": { "type": "int" }
+        }
+    },
+    "moonNextFull": "Full moon — {date}",
+    "@moonNextFull": {
+        "placeholders": {
+            "date": { "type": "String" }
+        }
+    },
+    "moonNextNew": "New moon — {date}",
+    "@moonNextNew": {
+        "placeholders": {
+            "date": { "type": "String" }
+        }
+    },
+    "moonLunisolarNote": "The Japanese calendar was historically lunisolar — the moon and the 72 seasons lived on the same page.",
+
+    "shareLabel": "Share",
+    "shareSeasonTooltip": "Share this season"
 }
