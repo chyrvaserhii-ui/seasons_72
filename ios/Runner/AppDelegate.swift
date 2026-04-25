@@ -4,7 +4,7 @@ import UIKit
 /// App Group identifier shared with the SeasonsWidget extension.
 /// Must match `WidgetService.appGroupId` in Dart and the entitlements
 /// on both the Runner and SeasonsWidget targets.
-private let kAppGroupId = "group.com.seasons72.shared"
+private let kAppGroupId = "group.chyrva.seasons72"
 
 /// MethodChannel name used by Dart to copy engraving PNGs into the
 /// shared App Group container so the widget can render them.

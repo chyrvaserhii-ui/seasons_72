@@ -20,7 +20,7 @@ import WidgetKit
 private enum Const {
     /// Must match `WidgetService.appGroupId` in Dart and the App Group
     /// capability enabled on both the Runner and SeasonsWidget targets.
-    static let appGroupId = "group.com.seasons72.shared"
+    static let appGroupId = "group.chyrva.seasons72"
     static let widgetKind = "SeasonsWidget"
 
     /// Deep-link scheme: `seasons72://season/<index>` opens the app
@@ -54,6 +54,15 @@ struct SeasonEntry: TimelineEntry {
     /// we don't recompute in every view.
     let moonIllumination: Double
     let moonIsWaxing: Bool
+    /// Localized labels written by Flutter — keeps the widget's static
+    /// strings in sync with the device language even when the device's
+    /// locale isn't one we ship (e.g. Russian falls back to English on
+    /// the Dart side, so Swift mustn't paste Ukrainian into that mix).
+    let prevLabel: String
+    let nextLabel: String
+    let countdownLong: String
+    let countdownShort: String
+    let lockScreenCountdown: String
 
     static let placeholder = SeasonEntry(
         date: Date(),
@@ -75,7 +84,12 @@ struct SeasonEntry: TimelineEntry {
         previousEmoji: "🦆",
         moonPhase: 0.26,
         moonIllumination: 0.52,
-        moonIsWaxing: true
+        moonIsWaxing: true,
+        prevLabel: "ПОПЕРЕДНІЙ",
+        nextLabel: "НАСТУПНИЙ",
+        countdownLong: "Наступний сезон через 3 дні",
+        countdownShort: "3 дні",
+        lockScreenCountdown: "Залишилось 3 дні"
     )
 }
 
@@ -129,7 +143,10 @@ struct SeasonProvider: TimelineProvider {
             daysUntilNext: daysUntilNext,
             nextIndex: e.nextIndex, nextName: e.nextName, nextEmoji: e.nextEmoji,
             previousIndex: e.previousIndex, previousName: e.previousName, previousEmoji: e.previousEmoji,
-            moonPhase: e.moonPhase, moonIllumination: e.moonIllumination, moonIsWaxing: e.moonIsWaxing
+            moonPhase: e.moonPhase, moonIllumination: e.moonIllumination, moonIsWaxing: e.moonIsWaxing,
+            prevLabel: e.prevLabel, nextLabel: e.nextLabel,
+            countdownLong: e.countdownLong, countdownShort: e.countdownShort,
+            lockScreenCountdown: e.lockScreenCountdown
         )
     }
 
@@ -161,7 +178,13 @@ struct SeasonProvider: TimelineProvider {
             previousEmoji: defaults.string(forKey: "previousEmoji") ?? "•",
             moonPhase: defaults.double(forKey: "moonPhase"),
             moonIllumination: defaults.double(forKey: "moonIllumination"),
-            moonIsWaxing: defaults.integer(forKey: "moonIsWaxing") == 1
+            moonIsWaxing: defaults.integer(forKey: "moonIsWaxing") == 1,
+            prevLabel: defaults.string(forKey: "prevLabel") ?? "PREVIOUS",
+            nextLabel: defaults.string(forKey: "nextLabel") ?? "NEXT",
+            countdownLong: defaults.string(forKey: "countdownLong") ?? "",
+            countdownShort: defaults.string(forKey: "countdownShort") ?? "",
+            lockScreenCountdown:
+                defaults.string(forKey: "lockScreenCountdown") ?? ""
         )
     }
 }
@@ -327,7 +350,7 @@ struct SmallView: View {
                     }
                 }
                 Spacer(minLength: 0)
-                Text(countdownShort(days: entry.daysUntilNext))
+                Text(entry.countdownShort)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.primary.opacity(0.75))
                     .lineLimit(1)
@@ -410,7 +433,7 @@ struct MediumView: View {
                             .foregroundColor(.primary.opacity(0.70))
                             .lineLimit(1)
                     }
-                    Text(countdownText(days: entry.daysUntilNext))
+                    Text(entry.countdownLong)
                         .font(.system(size: 11))
                         .foregroundColor(.primary.opacity(0.7))
                         .lineLimit(1)
@@ -429,7 +452,7 @@ struct LargeView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             NeighborRow(
-                label: "ПОПЕРЕДНІЙ",
+                label: entry.prevLabel,
                 index: entry.previousIndex,
                 emoji: entry.previousEmoji,
                 engravingKey: "engraving_previous",
@@ -442,7 +465,7 @@ struct LargeView: View {
                 .padding(.vertical, 10)
             Divider().opacity(0.35)
             NeighborRow(
-                label: "НАСТУПНИЙ",
+                label: entry.nextLabel,
                 index: entry.nextIndex > 0 ? entry.nextIndex : nil,
                 emoji: entry.nextEmoji,
                 engravingKey: "engraving_next",
@@ -512,7 +535,7 @@ struct AccessoryRectangularView: View {
                     .font(.headline)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
-                Text(countdownShortLeft(days: entry.daysUntilNext))
+                Text(entry.lockScreenCountdown)
                     .font(.caption2)
                     .opacity(0.7)
                     .lineLimit(1)

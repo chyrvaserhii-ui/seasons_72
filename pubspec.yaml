@@ -38,6 +38,10 @@ dependencies:
   share_plus: ^10.1.4
   path_provider: ^2.1.5
 
+  # Ambient audio loops — one per meta-season. Layered behind the
+  # current kō for a quiet sensory anchor (P3.7 in ROADMAP).
+  just_audio: ^0.9.42
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -71,6 +75,7 @@ flutter:
     - assets/data/seasons.json
     - assets/images/ko/
     - assets/brand/appIcon.png
+    - assets/audio/
 
   # Note: intentionally no custom fonts in Phase 1 — system fonts render
   # Japanese kanji correctly on iOS (Hiragino), Android (Noto CJK), and macOS.

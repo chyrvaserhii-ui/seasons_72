@@ -23,8 +23,14 @@ class WidgetService {
   WidgetService._();
   static final WidgetService instance = WidgetService._();
 
-  /// App Group identifier — must match the iOS widget target.
-  static const String appGroupId = 'group.com.seasons72.shared';
+  /// App Group identifier — must match the iOS widget target. Personal
+  /// Team accounts can't claim arbitrary group IDs (the `com.seasons72`
+  /// prefix conflicted), so we use a developer-unique reverse-DNS
+  /// derived from the Apple ID. If you fork this app, change this to
+  /// your own prefix and update `Runner.entitlements`,
+  /// `SeasonsWidget.entitlements`, `SeasonsWidget.swift` Const, and
+  /// `AppDelegate.swift` kAppGroupId in lockstep.
+  static const String appGroupId = 'group.chyrva.seasons72';
 
   /// Widget kind name — must match the Swift widget's `kind:` string and
   /// Android provider class name.
@@ -68,6 +74,16 @@ class WidgetService {
     final sekkiName = isUk ? sekki.nameUk : sekki.nameEn;
     final metaName = isUk ? meta.nameUk : meta.nameEn;
 
+    // Section / countdown labels that the Swift widget would otherwise
+    // hardcode. Sending them from Dart keeps locale handling in one
+    // place and avoids the "header in UA, body in EN" mix when the
+    // device language has no UA fallback.
+    final prevLabel = isUk ? 'ПОПЕРЕДНІЙ' : 'PREVIOUS';
+    final nextLabel = isUk ? 'НАСТУПНИЙ' : 'NEXT';
+    final countdownLong = _countdownLong(daysUntilNext, isUk);
+    final countdownShort = _countdownShort(daysUntilNext, isUk);
+    final lockScreenCountdown = _lockScreenCountdown(daysUntilNext, isUk);
+
     // Save flat key/value pairs. Widget reads these from UserDefaults
     // via the shared App Group.
     await Future.wait([
@@ -89,6 +105,14 @@ class WidgetService {
       HomeWidget.saveWidgetData<String>('previousName', previousName),
       HomeWidget.saveWidgetData<String>('previousKanji', previous.kanji),
       HomeWidget.saveWidgetData<String>('previousEmoji', previous.emoji),
+      // Localized section / countdown labels (Swift widget reads these
+      // verbatim — see SeasonEntry.* in SeasonsWidget.swift).
+      HomeWidget.saveWidgetData<String>('prevLabel', prevLabel),
+      HomeWidget.saveWidgetData<String>('nextLabel', nextLabel),
+      HomeWidget.saveWidgetData<String>('countdownLong', countdownLong),
+      HomeWidget.saveWidgetData<String>('countdownShort', countdownShort),
+      HomeWidget.saveWidgetData<String>(
+          'lockScreenCountdown', lockScreenCountdown),
       // Moon phase — widget renders a small glyph; math matches
       // lib/core/utils/moon_calculator.dart. Stored as doubles so the
       // Swift side can recompute illumination and pick waxing/waning.
@@ -141,6 +165,62 @@ class WidgetService {
     // ARGB integer via toARGB32 to avoid deprecated .value
     final v = c.toARGB32() & 0x00FFFFFF;
     return '#${v.toRadixString(16).padLeft(6, '0').toUpperCase()}';
+  }
+
+  /// "Наступний сезон через 5 днів" / "Next season in 5 days"
+  /// Used in Medium widget below the kō name.
+  String _countdownLong(int days, bool isUk) {
+    if (days == 0) {
+      return isUk ? 'Останній день цього сезону' : 'Last day of this season';
+    }
+    if (isUk) {
+      final mod10 = days % 10;
+      final mod100 = days % 100;
+      String unit;
+      if (mod10 == 1 && mod100 != 11) {
+        unit = 'день';
+      } else if ((2 <= mod10 && mod10 <= 4) && !(12 <= mod100 && mod100 <= 14)) {
+        unit = 'дні';
+      } else {
+        unit = 'днів';
+      }
+      return 'Наступний сезон через $days $unit';
+    }
+    return days == 1 ? 'Next season in 1 day' : 'Next season in $days days';
+  }
+
+  /// "1 день" / "5 дн." / "1 day" / "5 days" — used in Small widget.
+  String _countdownShort(int days, bool isUk) {
+    if (days == 0) return isUk ? 'Останній день' : 'Last day';
+    if (isUk) {
+      final mod10 = days % 10;
+      final mod100 = days % 100;
+      String unit;
+      if (mod10 == 1 && mod100 != 11) {
+        unit = 'день';
+      } else if ((2 <= mod10 && mod10 <= 4) && !(12 <= mod100 && mod100 <= 14)) {
+        unit = 'дні';
+      } else {
+        unit = 'днів';
+      }
+      return '$days $unit';
+    }
+    return days == 1 ? '1 day' : '$days days';
+  }
+
+  /// "Залишилось 5 днів" / "5 days left" — Lock-screen widget.
+  String _lockScreenCountdown(int days, bool isUk) {
+    if (days == 0) return isUk ? 'Останній день' : 'Last day';
+    if (isUk) {
+      final mod10 = days % 10;
+      final mod100 = days % 100;
+      if (mod10 == 1 && mod100 != 11) return 'Залишився $days день';
+      if ((2 <= mod10 && mod10 <= 4) && !(12 <= mod100 && mod100 <= 14)) {
+        return 'Залишилось $days дні';
+      }
+      return 'Залишилось $days днів';
+    }
+    return days == 1 ? '1 day left' : '$days days left';
   }
 
   /// Returns a batch of saveWidgetData calls that push the current

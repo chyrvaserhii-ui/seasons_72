@@ -7,6 +7,7 @@ import '../../core/models/season_models.dart';
 import '../../core/providers/seasons_providers.dart';
 import '../../core/utils/localized_names.dart';
 import '../about/sekki_descriptions.dart';
+import '../shared/widgets/ambient_player.dart';
 import '../shared/widgets/moon_phase.dart';
 import '../shared/widgets/season_hero.dart';
 import '../detail/season_detail_screen.dart';
@@ -67,6 +68,7 @@ class HomeScreen extends ConsumerWidget {
             _DateWithMoon(
               label: _formatDateRange(current, locale),
               accentColor: meta.colorFor(brightness),
+              metaId: meta.id,
             ),
             const SizedBox(height: 12),
             // Sekki block — the 24-season cultural context, distinct
@@ -123,9 +125,16 @@ class HomeScreen extends ConsumerWidget {
 /// immediately after the date instead of being pushed to the right
 /// edge by a Spacer.
 class _DateWithMoon extends StatelessWidget {
-  const _DateWithMoon({required this.label, required this.accentColor});
+  const _DateWithMoon({
+    required this.label,
+    required this.accentColor,
+    required this.metaId,
+  });
   final String label;
   final Color accentColor;
+
+  /// Used by the ambient-audio toggle to pick the matching loop.
+  final String metaId;
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +151,13 @@ class _DateWithMoon extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 14),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium,
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ),
-        const SizedBox(width: 12),
+        AmbientPlayerButton(metaId: metaId, accentColor: accentColor),
         const MoonPhaseIndicator(size: 22),
       ],
     );

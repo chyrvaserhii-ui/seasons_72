@@ -32,11 +32,13 @@ class _SeasonsListScreenState extends ConsumerState<SeasonsListScreen> {
 
   /// Estimated pixel heights used to compute a scroll offset for the
   /// current kō before lazy-building the list. Measured empirically
-  /// against the current layout — must be revisited if the header or
-  /// ListTile design changes materially.
+  /// against the current layout (slightly generous on purpose — better
+  /// to overshoot a few pixels than to leave the target off-screen).
+  /// Must be revisited if the header or ListTile design changes
+  /// materially.
   static const double _sliverAppBarHeight = 56.0;
-  static const double _metaHeaderHeight = 82.0;
-  static const double _listTileHeight = 69.0; // content + divider
+  static const double _metaHeaderHeight = 96.0;
+  static const double _listTileHeight = 96.0; // 2-line content + divider
 
   @override
   void initState() {
@@ -69,34 +71,30 @@ class _SeasonsListScreenState extends ConsumerState<SeasonsListScreen> {
     final g = (currentIndex - 1) ~/ 18;
     final p = (currentIndex - 1) % 18;
 
-    // Offset = one app-bar + (g+1) meta headers + (18*g + p) tiles.
-    // Subtract roughly a third of the viewport so the current tile
-    // lands in the upper-middle instead of right under the app bar.
-    final raw = _sliverAppBarHeight +
+    // Pixel position of the top of the current tile inside the
+    // scroll view: app-bar + (g+1) meta headers + (18*g + p) tiles
+    // before it.
+    final tileTop = _sliverAppBarHeight +
         _metaHeaderHeight * (g + 1) +
-        _listTileHeight * (18 * g + p) -
-        MediaQuery.of(context).size.height * 0.33;
+        _listTileHeight * (18 * g + p);
+
+    // Center the tile vertically in the viewport.
+    final viewportHeight = MediaQuery.of(context).size.height;
+    final raw =
+        tileTop - viewportHeight / 2 + _listTileHeight / 2;
     // Don't clamp the upper bound — lazy-built slivers grow
     // maxScrollExtent on demand. Only guard against negatives.
     final target = raw < 0 ? 0.0 : raw;
 
+    // One long, uninterrupted animation. Earlier we chained an
+    // `ensureVisible` call after the main scroll for pixel-perfect
+    // alignment, but the second movement felt like a hiccup mid-flow.
+    // Trusting the offset estimate keeps it cinematic.
     await _scrollController.animateTo(
       target,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1500),
       curve: Curves.easeInOutCubic,
     );
-
-    // Pixel-perfect alignment once the tile is built.
-    if (!mounted) return;
-    final ctx = _currentTileKey.currentContext;
-    if (ctx != null) {
-      await Scrollable.ensureVisible(
-        ctx,
-        alignment: 0.25,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeOut,
-      );
-    }
   }
 
   @override
