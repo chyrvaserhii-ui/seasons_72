@@ -69,6 +69,7 @@ class HomeScreen extends ConsumerWidget {
               label: _formatDateRange(current, locale),
               accentColor: meta.colorFor(brightness),
               metaId: meta.id,
+              koIndex: current.index,
             ),
             const SizedBox(height: 12),
             // Sekki block — the 24-season cultural context, distinct
@@ -129,12 +130,17 @@ class _DateWithMoon extends StatelessWidget {
     required this.label,
     required this.accentColor,
     required this.metaId,
+    required this.koIndex,
   });
   final String label;
   final Color accentColor;
 
   /// Used by the ambient-audio toggle to pick the matching loop.
   final String metaId;
+
+  /// Current kō index — lets the audio service prefer a kō-specific
+  /// clip (frogs for #19, cicadas for #38) over the meta default.
+  final int koIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +163,11 @@ class _DateWithMoon extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
-        AmbientPlayerButton(metaId: metaId, accentColor: accentColor),
+        AmbientPlayerButton(
+          koIndex: koIndex,
+          metaId: metaId,
+          accentColor: accentColor,
+        ),
         const MoonPhaseIndicator(size: 22),
       ],
     );

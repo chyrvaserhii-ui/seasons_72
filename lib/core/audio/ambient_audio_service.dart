@@ -3,20 +3,27 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 
-/// Plays a soft ambient loop matching the current meta-season:
-/// spring birds, summer cicadas, autumn rain, winter wind.
+import 'ambient_map.dart';
+
+/// Plays a one-shot ambient clip matching either:
+///   * a specific kō (e.g. #19 frogs, #38 cicadas) when an override
+///     is registered in `ambientOverrides`,
+///   * or the kō's meta-season default (`spring` / `summer` / `autumn`
+///     / `winter`) when no override exists.
 ///
-/// One singleton player so toggling the same key restarts cleanly,
-/// switching keys swaps loops without a gap. Audio is bundled in
-/// `assets/audio/` and looped via `LoopMode.one`.
-///
-/// MVP scope: four loops, one per `metaId`. When the current kō
-/// changes meta we don't auto-switch — the user has to opt back in.
+/// One singleton player so the same icon can both start and stop the
+/// clip. Audio is bundled in `assets/audio/<key>.m4a`. If a file is
+/// missing, the service silently swallows the error and the UI shows
+/// the off-state — the rest of the app works normally.
 class AmbientAudioService {
   AmbientAudioService._() {
-    // Keep our broadcast state in sync with the actual player.
     _player.playerStateStream.listen((state) {
-      _isPlaying.value = state.playing;
+      // just_audio quirk: after a one-shot finishes, `state.playing`
+      // remains true while `processingState` becomes `completed`.
+      // We treat completed as "not playing anymore" so the UI icon
+      // flips back to the default state.
+      _isPlaying.value = state.playing &&
+          state.processingState != ProcessingState.completed;
     });
   }
 
@@ -24,57 +31,69 @@ class AmbientAudioService {
 
   final AudioPlayer _player = AudioPlayer();
 
-  /// The metaId currently loaded (`spring`, `summer`, `autumn`,
-  /// `winter`), or null if nothing is loaded yet.
-  String? _loadedMeta;
+  /// The asset key currently loaded ("frogs" / "spring" / etc), or
+  /// null if nothing is loaded yet.
+  String? _loadedKey;
 
-  /// Listenable boolean — `true` while audio is actively playing.
-  /// Widgets can `valueListenable: AmbientAudioService.instance.isPlaying`
-  /// to rebuild their play/pause icon without subscribing manually.
   final ValueNotifier<bool> _isPlaying = ValueNotifier(false);
   ValueListenable<bool> get isPlaying => _isPlaying;
 
-  /// True if `metaId` matches the currently-loaded loop and audio is
-  /// playing. Lets the UI show "this meta is active" only when both
-  /// conditions hold.
-  bool isPlayingFor(String metaId) =>
-      _isPlaying.value && _loadedMeta == metaId;
+  /// Resolves the asset key for [koIndex] + [metaId]:
+  ///   * specific override if `ambientOverrides[koIndex]` is set
+  ///   * otherwise the meta-season default
+  String _resolveKey({required int koIndex, required String metaId}) {
+    return ambientForKo(koIndex) ?? metaId;
+  }
 
-  /// Toggle playback for [metaId]. If a different meta is currently
-  /// loaded, switches to the new loop. If the same meta is playing,
-  /// pauses. If paused, resumes.
-  Future<void> toggle(String metaId) async {
+  /// True iff the ambient currently playing matches what would be
+  /// resolved for `(koIndex, metaId)`. Lets the UI light up when its
+  /// own pair is the one playing.
+  bool isPlayingFor({required int koIndex, required String metaId}) {
+    if (!_isPlaying.value) return false;
+    return _loadedKey == _resolveKey(koIndex: koIndex, metaId: metaId);
+  }
+
+  /// Toggle playback for the (koIndex, metaId) pair. If the same
+  /// asset is currently loaded, pause/resume; if a different key is
+  /// loaded, switch to the new one and play.
+  Future<void> toggle({required int koIndex, required String metaId}) async {
+    final key = _resolveKey(koIndex: koIndex, metaId: metaId);
     try {
-      if (_loadedMeta == metaId) {
+      if (_loadedKey == key) {
         if (_player.playing) {
           await _player.pause();
         } else {
+          // If the clip already played through (one-shot finished),
+          // rewind so the next tap plays it from the start.
+          final dur = _player.duration;
+          if (dur != null &&
+              _player.position >= dur - const Duration(milliseconds: 100)) {
+            await _player.seek(Duration.zero);
+          }
           await _player.play();
         }
         return;
       }
 
-      // Different meta — load fresh asset and start.
-      await _player.setAsset(_assetFor(metaId));
-      await _player.setLoopMode(LoopMode.one);
-      _loadedMeta = metaId;
+      // Switch to a different asset — interrupt anything currently
+      // playing first so the changeover is instant. One-shot, no loop.
+      if (_player.playing) {
+        await _player.stop();
+      }
+      await _player.setAsset(_assetFor(key));
+      await _player.setLoopMode(LoopMode.off);
+      _loadedKey = key;
       await _player.play();
     } catch (e, st) {
-      // Most common: missing asset. Log + leave the player paused so
-      // the UI just shows the off state.
-      debugPrint('AmbientAudio toggle failed for $metaId: $e\n$st');
+      debugPrint('AmbientAudio toggle failed for $key: $e\n$st');
     }
   }
 
-  /// Stop and unload regardless of state. Used when leaving the app
-  /// or to reclaim resources.
+  /// Stop and unload regardless of state.
   Future<void> stop() async {
     await _player.stop();
-    _loadedMeta = null;
+    _loadedKey = null;
   }
 
-  String _assetFor(String metaId) {
-    // File names match the meta IDs in seasons.json.
-    return 'assets/audio/$metaId.m4a';
-  }
+  String _assetFor(String key) => 'assets/audio/$key.m4a';
 }

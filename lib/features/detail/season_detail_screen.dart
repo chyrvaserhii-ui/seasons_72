@@ -7,6 +7,7 @@ import '../../core/models/season_models.dart';
 import '../../core/providers/seasons_providers.dart';
 import '../../core/utils/localized_names.dart';
 import '../share/share_service.dart';
+import '../shared/widgets/ambient_player.dart';
 import '../shared/widgets/season_hero.dart';
 
 class SeasonDetailScreen extends ConsumerWidget {
@@ -51,6 +52,14 @@ class SeasonDetailScreen extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
+          // Sound button — plays a per-kō clip (e.g. frogs for #19)
+          // when one is registered in `ambientOverrides`, otherwise
+          // falls back to the meta-season default.
+          AmbientPlayerButton(
+            koIndex: ko.index,
+            metaId: meta.id,
+            accentColor: meta.colorFor(brightness),
+          ),
           IconButton(
             icon: const Icon(Icons.ios_share),
             tooltip: l10n.shareSeasonTooltip,
