@@ -5,11 +5,19 @@ import 'package:intl/intl.dart';
 
 import '../../core/models/season_models.dart';
 import '../../core/providers/seasons_providers.dart';
+import '../../core/settings/settings_provider.dart';
 import '../../core/utils/localized_names.dart';
-import '../about/sekki_descriptions.dart';
+import '../detail/colors_card.dart';
+import '../detail/food_card.dart';
+import '../detail/hana_card.dart';
+import '../detail/kigo_card.dart';
+import '../detail/kodo_card.dart';
+import '../detail/practice_card.dart';
+import '../detail/tea_card.dart';
 import '../shared/widgets/ambient_player.dart';
 import '../shared/widgets/moon_phase.dart';
 import '../shared/widgets/season_hero.dart';
+import '../shared/widgets/sekki_card.dart';
 import '../detail/season_detail_screen.dart';
 
 /// The "Now" screen — shows the currently-active ko with progress bar
@@ -24,6 +32,7 @@ class HomeScreen extends ConsumerWidget {
     final asyncCurrent = ref.watch(currentSeasonProvider);
     final calc = ref.watch(seasonCalculatorProvider);
     final repo = ref.watch(seasonsRepositoryProvider);
+    final cards = ref.watch(settingsProvider).cards;
 
     return asyncCurrent.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -36,23 +45,68 @@ class HomeScreen extends ConsumerWidget {
         final progress = calc.progress(current);
         final daysLeft = calc.daysUntilNext(current);
 
+        final accent = meta.colorFor(brightness);
         return ListView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
           children: [
-            Text(
-              l10n.nowLabel.toUpperCase(),
-              style: Theme.of(context).textTheme.labelLarge,
+            // Eyebrow row: caps "ЗАРАЗ ТРИВАЄ" on the left, a tappable
+            // moon-phase pill on the right. The moon now lives as a
+            // pure ambient-context element in the page header rather
+            // than buried in the date row — it's the lunar context of
+            // "now", which is what this row already announces.
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.nowLabel.toUpperCase(),
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                const MoonPhasePill(),
+              ],
             ),
             const SizedBox(height: 12),
+            // Hero engraving with a floating ambient-sound button in
+            // the bottom-right. The whole frame is still tappable to
+            // open the detail screen; the play button captures its
+            // own taps so it doesn't bubble into navigation.
             GestureDetector(
               onTap: () => _openDetail(context, current.index),
-              child: SeasonHero(ko: current, meta: meta),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  SeasonHero(ko: current, meta: meta),
+                  Positioned(
+                    right: 8,
+                    bottom: 8,
+                    child: AmbientPlayerFab(
+                      koIndex: current.index,
+                      metaId: meta.id,
+                      accentColor: accent,
+                    ),
+                  ),
+                  // One-time hint bubble that names the floating
+                  // button. Position math: the FAB's inner 48-px
+                  // button sits at right:20..68 and bottom:20..68.
+                  // Setting right:92 leaves a ~24-px gap from the
+                  // button's left edge; bottom:30 puts the bubble's
+                  // vertical centre on the button's centre (bottom 44).
+                  // IgnorePointer inside the bubble — taps on the FAB
+                  // pass through.
+                  Positioned(
+                    right: 92,
+                    bottom: 30,
+                    child: const _AmbientHintBubble(),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             SeasonTitleBlock(
               ko: current,
               locale: locale,
-              accentColor: meta.colorFor(brightness),
+              accentColor: accent,
             ),
             const SizedBox(height: 16),
             Text(
@@ -60,27 +114,59 @@ class HomeScreen extends ConsumerWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 24),
-            SeasonHaiku(ko: current, accentColor: meta.colorFor(brightness)),
+            SeasonHaiku(ko: current, accentColor: accent),
             const SizedBox(height: 24),
-            // Date range + moon glyph on the same line. Moon sits
-            // right next to the date (not pushed to the right edge)
-            // so they read as one time-anchored group.
-            _DateWithMoon(
+            // Date range — focused on "коли", no longer competing
+            // with moon and sound icons. Single accent dot + label.
+            _DateRow(
               label: _formatDateRange(current, locale),
-              accentColor: meta.colorFor(brightness),
-              metaId: meta.id,
-              koIndex: current.index,
+              accentColor: accent,
             ),
-            const SizedBox(height: 12),
-            // Sekki block — the 24-season cultural context, distinct
-            // from metadata. Given its own card-like treatment so it
-            // doesn't read as just another metadata row.
-            _SekkiCard(
-              meta: meta,
-              sekki: sekki,
-              locale: locale,
-              accentColor: meta.colorFor(brightness),
-            ),
+            // Sekki block — the 24-season cultural context. The caps
+            // header ("ПІДСЕЗОН СЕККІ") is shown on Home as well as
+            // Detail so the row reads consistently with the seven
+            // deep-dive cards above; the parallel labelling helps the
+            // user understand what each block is.
+            if (cards.sekki) ...[
+              const SizedBox(height: 16),
+              SekkiCard(
+                meta: meta,
+                sekki: sekki,
+                locale: locale,
+                accentColor: meta.colorFor(brightness),
+              ),
+            ],
+            // Each deep-dive card is conditional on its own visibility
+            // toggle in Settings → Season cards. Each card's leading
+            // SizedBox collapses with it.
+            if (cards.tea) ...[
+              const SizedBox(height: 16),
+              TeaCard(koIndex: current.index, locale: locale),
+            ],
+            if (cards.food) ...[
+              const SizedBox(height: 16),
+              FoodCard(koIndex: current.index, locale: locale),
+            ],
+            if (cards.hana) ...[
+              const SizedBox(height: 16),
+              HanaCard(koIndex: current.index, locale: locale),
+            ],
+            if (cards.colors) ...[
+              const SizedBox(height: 16),
+              ColorsCard(koIndex: current.index, locale: locale),
+            ],
+            if (cards.kodo) ...[
+              const SizedBox(height: 16),
+              KodoCard(koIndex: current.index, locale: locale),
+            ],
+            if (cards.kigo) ...[
+              const SizedBox(height: 16),
+              KigoCard(koIndex: current.index, locale: locale),
+            ],
+            if (cards.practice) ...[
+              const SizedBox(height: 16),
+              PracticeCard(koIndex: current.index, locale: locale),
+            ],
             const SizedBox(height: 24),
             // Progress + countdown merged: a single "where are we in
             // this season?" block. Big number for quick glance, units +
@@ -121,30 +207,21 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-/// Dot + date label + moon glyph, all in one row. Uses `Wrap`-style
-/// packing (Row with `mainAxisSize.min` children) so the moon sits
-/// immediately after the date instead of being pushed to the right
-/// edge by a Spacer.
-class _DateWithMoon extends StatelessWidget {
-  const _DateWithMoon({
+/// Pure date row: accent dot + the period label. Moon and ambient
+/// sound moved out of this row — moon to the page eyebrow, sound to
+/// a floating button on the hero engraving. Each lives where it
+/// matches its job: moon = passive cosmic context, sound = active
+/// sensory interaction, dates = factual period.
+class _DateRow extends StatelessWidget {
+  const _DateRow({
     required this.label,
     required this.accentColor,
-    required this.metaId,
-    required this.koIndex,
   });
   final String label;
   final Color accentColor;
 
-  /// Used by the ambient-audio toggle to pick the matching loop.
-  final String metaId;
-
-  /// Current kō index — lets the audio service prefer a kō-specific
-  /// clip (frogs for #19, cicadas for #38) over the meta default.
-  final int koIndex;
-
   @override
   Widget build(BuildContext context) {
-    final dotColor = accentColor.withValues(alpha: 0.8);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -153,7 +230,7 @@ class _DateWithMoon extends StatelessWidget {
           height: 5,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: dotColor,
+            color: accentColor.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(width: 14),
@@ -163,12 +240,6 @@ class _DateWithMoon extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
-        AmbientPlayerButton(
-          koIndex: koIndex,
-          metaId: metaId,
-          accentColor: accentColor,
-        ),
-        const MoonPhaseIndicator(size: 22),
       ],
     );
   }
@@ -205,172 +276,6 @@ class _MetaRow extends StatelessWidget {
   }
 }
 
-/// Sekki (24-season) cultural context, presented as a discreet card
-/// rather than a metadata list item. Tappable: opens a bottom sheet
-/// with the editorial explanation of the current sekki.
-class _SekkiCard extends StatelessWidget {
-  const _SekkiCard({
-    required this.meta,
-    required this.sekki,
-    required this.locale,
-    required this.accentColor,
-  });
-  final MetaSeason meta;
-  final Sekki sekki;
-  final Locale locale;
-  final Color accentColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final onSurface = theme.colorScheme.onSurface;
-    return Material(
-      color: accentColor.withValues(alpha: 0.12),
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: () => _showSekkiSheet(context),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            children: [
-              Text(
-                sekki.kanji,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: onSurface,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      sekki.localizedName(locale),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      meta.localizedName(locale),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: onSurface.withValues(alpha: 0.70),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Subtle "tap me" cue — info icon, decorative only.
-              Icon(
-                Icons.info_outline,
-                size: 18,
-                color: onSurface.withValues(alpha: 0.45),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showSekkiSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (_) => _SekkiDetailsSheet(
-        sekki: sekki,
-        meta: meta,
-        locale: locale,
-        accentColor: accentColor,
-      ),
-    );
-  }
-}
-
-/// Bottom sheet with kanji, localized name, romaji, and editorial
-/// explanation of the sekki. Mirrors the `MoonPhase` sheet pattern.
-class _SekkiDetailsSheet extends StatelessWidget {
-  const _SekkiDetailsSheet({
-    required this.sekki,
-    required this.meta,
-    required this.locale,
-    required this.accentColor,
-  });
-  final Sekki sekki;
-  final MetaSeason meta;
-  final Locale locale;
-  final Color accentColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final onSurface = theme.colorScheme.onSurface;
-    final desc = sekkiDescriptionFor(sekki.id);
-    final descText = desc == null
-        ? ''
-        : (locale.languageCode == 'uk' ? desc.uk : desc.en);
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Tiny meta-season cap above the kanji (matches the
-            // editorial micro-header style used elsewhere).
-            Text(
-              meta.localizedName(locale).toUpperCase(),
-              style: theme.textTheme.labelLarge?.copyWith(
-                letterSpacing: 1.8,
-                color: onSurface.withValues(alpha: 0.55),
-              ),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              sekki.kanji,
-              style: theme.textTheme.displayMedium?.copyWith(
-                fontSize: 56,
-                color: accentColor.withValues(alpha: 0.92),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              sekki.localizedName(locale),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              sekki.romaji,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: onSurface.withValues(alpha: 0.55),
-              ),
-            ),
-            const SizedBox(height: 22),
-            // Thin accent rule, like the haiku frame
-            Container(
-              width: 60,
-              height: 1,
-              color: accentColor.withValues(alpha: 0.4),
-            ),
-            const SizedBox(height: 22),
-            Text(
-              descText,
-              style: theme.textTheme.bodyLarge?.copyWith(height: 1.55),
-              textAlign: TextAlign.left,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 /// Progress bar + a single understated caption line below.
 ///
@@ -386,6 +291,8 @@ class _ProgressBlock extends StatelessWidget {
   });
   final double progress;
   final int daysLeft;
+
+  /// Foreground accent — fills the bar.
   final Color color;
 
   @override
@@ -393,6 +300,7 @@ class _ProgressBlock extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final onSurface = theme.colorScheme.onSurface;
+    final isDark = theme.brightness == Brightness.dark;
     final pct = (progress * 100).round();
 
     return Semantics(
@@ -402,28 +310,151 @@ class _ProgressBlock extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Thicker, higher-contrast progress bar. 4 px read as a
+          // hairline before; 7 px gives the fill enough body to feel
+          // like a real "you are X% through" signal. Light-theme
+          // backdrop alpha is ×2.5 the dark-theme value so the
+          // unfilled portion is a discernible track, not white space.
           ExcludeSemantics(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(999),
               child: LinearProgressIndicator(
                 value: progress.clamp(0.0, 1.0),
-                minHeight: 4,
-                backgroundColor: color.withValues(alpha: 0.12),
+                minHeight: 7,
+                backgroundColor: color.withValues(
+                    alpha: isDark ? 0.16 : 0.28),
                 valueColor: AlwaysStoppedAnimation<Color>(
-                    color.withValues(alpha: 0.85)),
+                    color.withValues(alpha: 0.95)),
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           ExcludeSemantics(
             child: Text(
               l10n.daysLeftInSeason(daysLeft),
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: onSurface.withValues(alpha: 0.70),
+                color: onSurface.withValues(alpha: 0.85),
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// One-time "Послухати кō" hint bubble shown next to the floating
+/// ambient-sound button on the home hero. Disappears once the user
+/// has seen it — persisted via [AppSettings.hasSeenAmbientHint].
+///
+/// Behaviour:
+///   • Mounts only when settings have loaded AND the flag is false.
+///   • Fades in over 600 ms after a 1 s delay (the hero finishes
+///     settling first), holds for 5 s, fades out, then writes the
+///     flag so it never reappears.
+///   • Doesn't intercept taps — the FAB underneath stays fully
+///     responsive while the hint is shown.
+class _AmbientHintBubble extends ConsumerStatefulWidget {
+  const _AmbientHintBubble();
+
+  @override
+  ConsumerState<_AmbientHintBubble> createState() =>
+      _AmbientHintBubbleState();
+}
+
+class _AmbientHintBubbleState extends ConsumerState<_AmbientHintBubble>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctl;
+  bool _started = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _runOnce() async {
+    if (_started) return;
+    _started = true;
+    await Future.delayed(const Duration(milliseconds: 1100));
+    if (!mounted) return;
+    await _ctl.forward();
+    await Future.delayed(const Duration(milliseconds: 5000));
+    if (!mounted) return;
+    await _ctl.reverse();
+    if (!mounted) return;
+    // Persist — never show again on subsequent launches.
+    await ref.read(settingsProvider.notifier).setHasSeenAmbientHint(true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = ref.watch(settingsProvider);
+    if (!settings.isLoaded || settings.hasSeenAmbientHint) {
+      return const SizedBox.shrink();
+    }
+    // Kick off the animation on first visible build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _runOnce();
+    });
+
+    final theme = Theme.of(context);
+    final isUk = Localizations.localeOf(context).languageCode == 'uk';
+    final isDark = theme.brightness == Brightness.dark;
+
+    return IgnorePointer(
+      child: FadeTransition(
+        opacity: _ctl,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.78)
+                : Colors.white.withValues(alpha: 0.94),
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.10),
+              width: 0.6,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.headphones_rounded,
+                size: 14,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                isUk ? 'Послухати кō' : 'Listen to this kō',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface
+                      .withValues(alpha: 0.92),
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

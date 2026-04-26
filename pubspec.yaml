@@ -42,6 +42,12 @@ dependencies:
   # current kō for a quiet sensory anchor (P3.7 in ROADMAP).
   just_audio: ^0.9.42
 
+  # Audio session category control. Configures the iOS audio session
+  # to "ambient" so all in-app sounds (kō ambient + onboarding music)
+  # respect the device's silent switch and mix politely with whatever
+  # the user is already listening to (Spotify, Podcasts, etc).
+  audio_session: ^0.1.21
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,6 +80,7 @@ flutter:
   assets:
     - assets/data/seasons.json
     - assets/images/ko/
+    - assets/images/onboarding/
     - assets/brand/appIcon.png
     - assets/audio/
 

@@ -4,7 +4,7 @@
     "appTitle": "72 Seasons",
 
     "tabNow": "Now",
-    "tabAll": "All seasons",
+    "tabAll": "Calendar",
     "tabAbout": "Tradition",
     "tabSettings": "Settings",
 
@@ -17,7 +17,7 @@
     },
 
     "daysUntilNext": "{count, plural, =0{Last day of this season} =1{Next season in 1 day} other{Next season in {count} days}}",
-    "daysLeftInSeason": "{count, plural, =0{Last day} =1{1 day left} other{{count} days left}}",
+    "daysLeftInSeason": "{count, plural, =0{Last day before the new season} =1{1 day left until the next season} other{{count} days left until the next season}}",
     "@daysLeftInSeason": {
         "description": "Countdown for CURRENT season (not next one). Used under progress bar.",
         "placeholders": {
@@ -58,7 +58,7 @@
     "settingsNotifications": "Notify me when a new season begins",
     "settingsNotificationsHint": "We'll ping you at 9 AM on the day a new kō starts",
     "settingsAbout": "About this project",
-    "settingsAboutText": "The 72 micro-seasons (七十二候 Shichijūni-kō) divide the year into 5-day kō, each capturing a tiny shift in nature. This project is a small homage to that ancient calendar.",
+    "settingsAboutText": "The 72 seasons (七十二候 Shichijūni-kō) divide the year into 5-day kō, each capturing a tiny shift in nature. This project is a small homage to that ancient calendar.",
 
     "errorLoading": "Couldn't load the seasons. Try again.",
     "retry": "Try again",

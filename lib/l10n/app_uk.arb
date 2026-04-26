@@ -4,7 +4,7 @@
     "appTitle": "72 сезони",
 
     "tabNow": "Зараз",
-    "tabAll": "Усі сезони",
+    "tabAll": "Календар",
     "tabAbout": "Традиція",
     "tabSettings": "Налаштування",
 
@@ -23,7 +23,7 @@
             "count": { "type": "int" }
         }
     },
-    "daysLeftInSeason": "{count, plural, =0{Останній день} one{Залишився {count} день} few{Залишилось {count} дні} many{Залишилось {count} днів} other{Залишилось {count} дня}}",
+    "daysLeftInSeason": "{count, plural, =0{Останній день перед новим сезоном} one{Залишився {count} день до зміни сезону} few{Залишилось {count} дні до зміни сезону} many{Залишилось {count} днів до зміни сезону} other{Залишилось {count} дня до зміни сезону}}",
     "@daysLeftInSeason": {
         "description": "Countdown framed around the CURRENT season (how much is left), not the next one. Used under progress bar.",
         "placeholders": {
@@ -58,7 +58,7 @@
     "settingsNotifications": "Сповіщати про початок нового сезону",
     "settingsNotificationsHint": "Нагадаємо о 9 ранку, коли починається новий сезон",
     "settingsAbout": "Про проект",
-    "settingsAboutText": "72 мікро-сезони (七十二候 Shichijūni-kō) ділять рік на п'ятиденні кō, кожен фіксує дрібну зміну в природі. Цей проект — невеликий поклін давньому календарю.",
+    "settingsAboutText": "72 сезони (七十二候 Shichijūni-kō) ділять рік на п'ятиденні сезони (кō), кожен фіксує дрібну зміну в природі. Цей проект — невеликий поклін давньому календарю.",
 
     "errorLoading": "Не вдалося завантажити сезони. Спробуй ще раз.",
     "retry": "Спробувати знову",

@@ -91,6 +91,47 @@ class SettingsScreen extends ConsumerWidget {
           },
         ),
         const Divider(),
+        _SectionHeader(_cardsSectionTitle(context)),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+          child: Text(
+            _cardsSectionHint(context),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.65),
+                ),
+          ),
+        ),
+        for (final card in DetailCard.values)
+          SwitchListTile(
+            title: Text(_cardLabel(card, context)),
+            value: settings.cards.get(card),
+            onChanged: (v) => notifier.setCardVisible(card, v),
+          ),
+        const Divider(),
+        _SectionHeader(_introSectionTitle(context)),
+        ListTile(
+          leading: const Icon(Icons.replay_outlined),
+          title: Text(_replayOnboardingTitle(context)),
+          subtitle: Text(
+            _replayOnboardingSubtitle(context),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.65),
+                ),
+          ),
+          onTap: () async {
+            // Resetting the flag to false makes the RootRouter swap
+            // the current AppShell out for OnboardingScreen on the
+            // next frame. No manual navigation needed.
+            await notifier.setHasSeenOnboarding(false);
+          },
+        ),
+        const Divider(),
         _SectionHeader(l10n.settingsAbout),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -121,5 +162,56 @@ class _SectionHeader extends StatelessWidget {
             ),
       ),
     );
+  }
+}
+
+// ─── Card-visibility section copy ──────────────────────────────────────
+//
+// New strings live inline rather than in the .arb files because they're
+// uniquely scoped to this section and the overall l10n surface is small.
+// Pattern matches the existing tea / food / colour cards' isUk approach.
+
+bool _isUk(BuildContext context) =>
+    Localizations.localeOf(context).languageCode == 'uk';
+
+String _cardsSectionTitle(BuildContext context) =>
+    _isUk(context) ? 'Картки сезону' : 'Season cards';
+
+String _cardsSectionHint(BuildContext context) => _isUk(context)
+    ? 'Прибери ті, що не цікавлять — екран сезону стане коротшим.'
+    : 'Hide the ones you don\'t want — the season screen gets shorter.';
+
+String _introSectionTitle(BuildContext context) =>
+    _isUk(context) ? 'Знайомство' : 'Intro';
+
+String _replayOnboardingTitle(BuildContext context) => _isUk(context)
+    ? 'Показати онбординг знову'
+    : 'Show the onboarding again';
+
+String _replayOnboardingSubtitle(BuildContext context) => _isUk(context)
+    ? 'Чотири короткі екрани про 72 сезони (кō) і 24 фази (секкі), що складають чотири пори року.'
+    : 'Four short screens on the 72 seasons (kō) and 24 phases (sekki) that make up the four seasons of the year.';
+
+String _cardLabel(DetailCard card, BuildContext context) {
+  final isUk = _isUk(context);
+  switch (card) {
+    case DetailCard.period:
+      return isUk ? 'Період 📅' : 'Period 📅';
+    case DetailCard.sekki:
+      return isUk ? 'Фаза секкі 🌾' : 'Sekki phase 🌾';
+    case DetailCard.tea:
+      return isUk ? 'Сезонний чай 🌱' : 'Seasonal tea 🌱';
+    case DetailCard.food:
+      return isUk ? 'Сезонна їжа 🍱' : 'Seasonal food 🍱';
+    case DetailCard.hana:
+      return isUk ? 'Сезонна квітка 🌸' : 'Seasonal flower 🌸';
+    case DetailCard.colors:
+      return isUk ? 'Сезонні кольори одягу 🎨' : 'Seasonal robe colours 🎨';
+    case DetailCard.kodo:
+      return isUk ? 'Сезонні пахощі kōdō 🌫️' : 'Seasonal kōdō incense 🌫️';
+    case DetailCard.kigo:
+      return isUk ? 'Сезонні слова 📜' : 'Seasonal words 📜';
+    case DetailCard.practice:
+      return isUk ? 'Практика 🪷' : 'Practice 🪷';
   }
 }

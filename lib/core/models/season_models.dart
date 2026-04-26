@@ -28,8 +28,38 @@ class MetaSeason {
   });
 
   /// Brightness-aware accessor — use wherever you'd write `meta.color`.
+  ///
+  /// Returns the *foreground* hue: bright pastel for dark theme,
+  /// soft pastel for light theme. Suitable for icons, kanji glyphs,
+  /// borders, and progress bars where the colour itself is the
+  /// signal. For tinted backgrounds (header pills, card fills, day
+  /// cells) prefer [tintColorFor] — see its docs for why.
   Color colorFor(Brightness b) =>
       b == Brightness.dark ? colorDark : colorLight;
+
+  /// Background-tint variant of [colorFor].
+  ///
+  /// The light-theme accents are pastels (#F4B5C1, #8FBF7F, #D89060,
+  /// #8DAAC7). Applied to a white surface at low alpha they read as
+  /// "almost white" — which is why the calendar / cards felt washed
+  /// out at first. But pulling the lightness too far down (the
+  /// initial fix) ended up at "eye-popping" / "looks cheap": a deep
+  /// muddy pink instead of an elegant washi blossom.
+  ///
+  /// The current balance is intentionally gentle: a small luminance
+  /// drop (×0.78) with no saturation push, leaving the pastel feel
+  /// intact while giving low-alpha tints just enough body to
+  /// register on a white scaffold.
+  ///
+  /// Dark theme keeps the original (already balanced for near-black).
+  Color tintColorFor(Brightness b) {
+    final base = colorFor(b);
+    if (b == Brightness.dark) return base;
+    final hsl = HSLColor.fromColor(base);
+    return hsl
+        .withLightness((hsl.lightness * 0.78).clamp(0.0, 1.0))
+        .toColor();
+  }
 
   /// Legacy alias — defaults to light variant. Prefer [colorFor].
   Color get color => colorLight;

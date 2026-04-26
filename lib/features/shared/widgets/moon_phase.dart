@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -98,6 +99,116 @@ class MoonPhaseIndicator extends StatelessWidget {
       context: context,
       showDragHandle: true,
       builder: (ctx) => _MoonDetailsSheet(info: info),
+    );
+  }
+}
+
+/// Compact pill that pairs the moon glyph with the literal label
+/// "Місяць" / "Moon" and the illumination percentage — sits in the
+/// page eyebrow next to a caps label like "ЗАРАЗ ТРИВАЄ".
+///
+/// Why the explicit "Місяць" word: without it, the percentage next
+/// to a "ЗАРАЗ ТРИВАЄ" eyebrow reads as season-progress, not lunar
+/// illumination. The label removes that ambiguity instantly.
+///
+/// Tap → existing modal with full phase name, next full/new moon
+/// dates, and the lunisolar note.
+class MoonPhasePill extends StatelessWidget {
+  const MoonPhasePill({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final info = MoonCalculator.at();
+    final theme = Theme.of(context);
+    final colors = _MoonColors.from(theme);
+    final pct = (info.illumination * 100).round();
+    final phaseLabel = _phaseLabel(context, info.phaseName);
+    final isUk =
+        Localizations.localeOf(context).languageCode == 'uk';
+    final moonWord = isUk ? 'Місяць' : 'Moon';
+
+    return Semantics(
+      button: true,
+      label: '$moonWord, $phaseLabel',
+      value: '$pct% illuminated',
+      onTapHint: 'Show moon details',
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(999),
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(999),
+              onTap: () => showModalBottomSheet(
+                context: context,
+                showDragHandle: true,
+                builder: (ctx) => _MoonDetailsSheet(info: info),
+              ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                decoration: BoxDecoration(
+                  color:
+                      theme.colorScheme.surface.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: theme.colorScheme.onSurface
+                        .withValues(alpha: 0.14),
+                    width: 0.6,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CustomPaint(
+                        painter: _MoonPainter(
+                          phase: info.phase,
+                          light: colors.lit,
+                          dark: colors.shadow,
+                          strokeColor: colors.stroke,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 7),
+                    Text(
+                      moonWord,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.85),
+                      ),
+                    ),
+                    Text(
+                      '  ·  ',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.45),
+                      ),
+                    ),
+                    Text(
+                      '$pct%',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                        fontFeatures: const [
+                          FontFeature.tabularFigures()
+                        ],
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.85),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

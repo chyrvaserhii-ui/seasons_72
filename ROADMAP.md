@@ -196,6 +196,15 @@ shun (旬) foods for each sekki, then split by kō. Example sources:
 
 ---
 
+## 🧹 Polish & cleanup (tech debt)
+
+| Item | Why |
+|---|---|
+| **Compress onboarding PNGs** in `assets/images/onboarding/` | Each is ~2.5–3 MB (Microsoft Designer raw exports). Through tinypng.com or squoosh.app they shrink to ~800 KB–1.2 MB without visible quality loss. ~7–8 MB savings on bundle size. Apply when onboarding visuals are finalised so we don't compress twice. |
+| Audit other PNGs in `assets/images/ko/` | 72 engravings × ~120 KB each. Already lean, but a TinyPNG pass might shave a further 20–30%. Optional. |
+
+---
+
 ## 🔮 Phase 4 — future / maybe
 
 | Idea | Why skip for now |

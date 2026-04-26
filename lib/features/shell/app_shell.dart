@@ -8,6 +8,7 @@ import '../about/about_screen.dart';
 import '../home/home_screen.dart';
 import '../list/seasons_list_screen.dart';
 import '../settings/settings_screen.dart';
+import 'shell_providers.dart';
 
 /// Root shell with bottom nav: Now / All 72 / Settings.
 ///
@@ -22,8 +23,6 @@ class AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<AppShell> {
-  int _tab = 0;
-
   /// Bumped each time the "72 сезони" tab is tapped. Used as part of the
   /// [Key] for [SeasonsListScreen] so that every tap remounts the screen
   /// and re-triggers the auto-scroll-to-current logic in its initState.
@@ -34,6 +33,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = Theme.of(context).colorScheme.surface;
+    final tab = ref.watch(selectedTabProvider);
 
     // Pull the current season's meta color. Fall back to neutral if data
     // hasn't loaded yet (shouldn't happen given main() preloads).
@@ -44,12 +44,20 @@ class _AppShellState extends ConsumerState<AppShell> {
       orElse: () => Theme.of(context).colorScheme.primary,
     );
 
+    // Pull a darker "tint" variant of the accent for light theme so
+    // the chrome reads as actually-tinted, not as off-white.
+    final tintColor = asyncSeason.maybeWhen(
+      data: (s) => repo.meta(s.metaId).tintColorFor(Theme.of(context).brightness),
+      orElse: () => metaColor,
+    );
     final scaffoldBg = Color.alphaBlend(
-      metaColor.withValues(alpha: isDark ? 0.06 : 0.10),
+      (isDark ? metaColor : tintColor)
+          .withValues(alpha: isDark ? 0.06 : 0.08),
       surface,
     );
     final appBarBg = Color.alphaBlend(
-      metaColor.withValues(alpha: isDark ? 0.18 : 0.25),
+      (isDark ? metaColor : tintColor)
+          .withValues(alpha: isDark ? 0.18 : 0.18),
       surface,
     );
 
@@ -72,7 +80,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     // (SHICHIJŪNI-KŌ tiny cap above "72 сезони"). Other tabs keep a
     // plain centered single-line title.
     PreferredSizeWidget? appBar;
-    if (_tab == 0) {
+    if (tab == 0) {
       appBar = AppBar(
         backgroundColor: appBarBg,
         toolbarHeight: 56,
@@ -94,17 +102,17 @@ class _AppShellState extends ConsumerState<AppShell> {
             ),
             const SizedBox(height: 2),
             Text(
-              titles[_tab],
+              titles[tab],
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ],
         ),
       );
-    } else if (_tab != 1) {
+    } else if (tab != 1) {
       // list screen has its own SliverAppBar
       appBar = AppBar(
         backgroundColor: appBarBg,
-        title: Text(titles[_tab]),
+        title: Text(titles[tab]),
       );
     }
 
@@ -112,7 +120,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       backgroundColor: scaffoldBg,
       appBar: appBar,
       body: SafeArea(
-        child: WashiBackground(child: pages[_tab]),
+        child: WashiBackground(child: pages[tab]),
       ),
       bottomNavigationBar: NavigationBarTheme(
         // Shrink the indicator pill to be subtler and less dominant.
@@ -128,14 +136,13 @@ class _AppShellState extends ConsumerState<AppShell> {
           backgroundColor: appBarBg,
           // Subtle tint instead of a loud oval — pairs with per-season color.
           indicatorColor: metaColor.withValues(alpha: 0.22),
-          selectedIndex: _tab,
-          onDestinationSelected: (i) => setState(() {
-            // Every tap on the "72 сезони" tab bumps the remount key so
-            // the list re-initializes and scrolls to the current kō,
-            // even if the user is already on that tab.
-            if (i == 1) _listRemountKey++;
-            _tab = i;
-          }),
+          selectedIndex: tab,
+          onDestinationSelected: (i) {
+            if (i == 1) {
+              setState(() => _listRemountKey++);
+            }
+            ref.read(selectedTabProvider.notifier).state = i;
+          },
           destinations: [
             NavigationDestination(
               icon: const Icon(Icons.wb_sunny_outlined),

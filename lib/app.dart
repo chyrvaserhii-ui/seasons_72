@@ -6,7 +6,7 @@ import 'core/settings/settings_provider.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widget/deep_link_handler.dart';
 import 'core/widget/widget_sync.dart';
-import 'features/shell/app_shell.dart';
+import 'features/onboarding/root_router.dart';
 
 class SeasonsApp extends ConsumerStatefulWidget {
   const SeasonsApp({super.key});
@@ -42,7 +42,7 @@ class _SeasonsAppState extends ConsumerState<SeasonsApp> {
       locale: settings.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const AppShell(),
+      home: const RootRouter(),
     );
   }
 }
