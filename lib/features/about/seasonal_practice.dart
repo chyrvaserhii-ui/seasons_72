@@ -511,7 +511,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     activityEn:
         "Place a single iris leaf or any long green blade under the pillow. In Heian times this was done against bad dreams — and because it smells wonderful.",
     contemplationUk:
-        "Шобу (菖蒲) і шобу (尚武, доблесть) пишуться по-різному, але звучать однаково. Подумай, де у твоєму житті м'якість і твердість співпадають.",
+        "Шобу (菖蒲) і шобу (尚武, доблесть) пишуться по-різному, але звучать однаково. Подумай, де у твоєму житті м'якість і твердість збігаються.",
     contemplationEn:
         "Shōbu (iris) and shōbu (martial valour) are different kanji with the same sound. Think where in your life softness and firmness rhyme.",
   ),
@@ -567,7 +567,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Молодий яструб робить коло, дорослий поряд виправляє — вчись малими кроками.",
     mottoEn: "The young hawk circles, the elder corrects — learn in small movements.",
     bodyUk:
-        "Молоді яструби вчаться літати — рух треба точно дозувати: спробуй один тиждень коротких прогулянок до завтрака, не довгих — дрібніший крок зараз корисніший.",
+        "Молоді яструби вчаться літати — рух треба точно дозувати: спробуй один тиждень коротких прогулянок до сніданку, не довгих — дрібніший крок зараз корисніший.",
     bodyEn:
         "Young hawks learn to fly — small precise movements matter; try a week of short walks before breakfast, not long ones — small steps serve you better now.",
     activityUk:
@@ -1117,7 +1117,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     bodyEn:
         "January seventh, nanakusa-no-sekku — if you can, make the morning porridge with the seven spring herbs. The stomach thanks you after the feast week.",
     activityUk:
-        "Знайди на ринку чи у магазині хоч би шпинат, кріп і петрушку. Класичний нанакуса — це сім видів, але дух — у поверненні до зеленого після білого.",
+        "Знайди на ринку чи у магазині хоча б шпинат, кріп і петрушку. Класичний нанакуса — це сім видів, але дух — у поверненні до зеленого після білого.",
     activityEn:
         "Find at least spinach, parsley, and chervil at the market; the classical nanakusa lists seven, but the spirit is the return to green after the white week.",
     contemplationUk:

@@ -1,24 +1,35 @@
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 
 /// Loops a single traditional Japanese wind-instrument piece behind
-/// the onboarding flow. The audio session category configured in
-/// `main.dart` is `playback` with `mixWithOthers`, so:
-///   • Plays regardless of the iOS silent switch — onboarding music
-///     is essential content (the meditative ritual the user came
-///     for), not an incidental sound. Standard pattern for music /
-///     meditation apps.
-///   • If the user is already listening to other audio (Spotify,
-///     Podcasts), this mixes politely instead of stealing focus.
+/// the onboarding flow.
 ///
-/// The asset path expects a single bundled file at
-/// `assets/audio/onboarding.m4a`. If the file is missing the service
-/// silently no-ops — onboarding still works, just without sound.
+/// Audio-session strategy is two-tier:
+///   • **Auto-start** ([start]) — uses the global default `ambient`
+///     category so iOS silent switch is honoured. If the user is in
+///     silent mode, the music doesn't play and we expose the silent
+///     state via [silenced] so the speaker icon can render its
+///     crossed-out variant.
+///   • **User-initiated** ([startOverridingSilent], called from
+///     [toggle]) — re-configures the session to `playback` first so
+///     the music plays regardless of the silent switch. An explicit
+///     tap is unambiguous user consent.
+///
+/// `mixWithOthers` is preserved in both modes — Spotify / Podcasts
+/// keep playing if they were already.
+///
+/// Asset: `assets/audio/onboarding.m4a`. If missing the service
+/// silently no-ops — onboarding still works, just without music.
 class OnboardingAudioService {
   OnboardingAudioService._() {
     _player.playerStateStream.listen((s) {
       _isPlaying.value =
           s.playing && s.processingState != ProcessingState.idle;
+      // Once playback actually starts, we know we're not silenced.
+      if (_isPlaying.value && _silenced.value) {
+        _silenced.value = false;
+      }
     });
   }
 
@@ -27,14 +38,25 @@ class OnboardingAudioService {
   final AudioPlayer _player = AudioPlayer();
   bool _loaded = false;
 
-  /// True iff the player has the asset loaded *and* is currently
-  /// emitting audio (not paused). Drives the speaker icon in the UI.
+  /// True iff the player is currently emitting audio.
   final ValueNotifier<bool> _isPlaying = ValueNotifier(false);
   ValueListenable<bool> get isPlaying => _isPlaying;
 
-  /// Begin playback if not already running. Configures the loop and
-  /// volume on the first call. Safe to call multiple times — no-ops
-  /// if already playing.
+  /// True iff [start] was called but iOS appears to have silenced us
+  /// (silent switch on, ambient category). Used by the speaker icon
+  /// to render a crossed-out state. Cleared when playback succeeds
+  /// or when the user explicitly toggles via [toggle].
+  final ValueNotifier<bool> _silenced = ValueNotifier(false);
+  ValueListenable<bool> get silenced => _silenced;
+
+  /// True after the user has explicitly tapped pause — used to
+  /// distinguish "muted by silent switch" (silenced=true) from "user
+  /// stopped on purpose" (silenced=false, _isPlaying=false).
+  bool _userPaused = false;
+
+  /// Auto-start path. Honours the silent switch via the default
+  /// `ambient` category. If silent mode prevented playback, sets
+  /// [silenced] = true after a short verification window.
   Future<void> start() async {
     try {
       if (!_loaded) {
@@ -45,10 +67,60 @@ class OnboardingAudioService {
         _loaded = true;
       }
       if (!_player.playing) {
+        _userPaused = false;
+        _silenced.value = false;
         await _player.play();
+        // After a beat, check if the player actually started. If
+        // `playing` is still false and the user didn't pause us in
+        // the meantime, infer that the silent switch is muting.
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (!_player.playing && !_userPaused) {
+            _silenced.value = true;
+          }
+        });
       }
     } catch (e, st) {
       debugPrint('Onboarding audio start failed: $e\n$st');
+    }
+  }
+
+  /// User-initiated path. Re-configures the audio session to
+  /// `playback` first so the music plays even when the iOS silent
+  /// switch is on, then plays. Used by [toggle].
+  Future<void> startOverridingSilent() async {
+    try {
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration(
+        avAudioSessionCategory: AVAudioSessionCategory.playback,
+        avAudioSessionCategoryOptions:
+            AVAudioSessionCategoryOptions.mixWithOthers,
+        avAudioSessionMode: AVAudioSessionMode.defaultMode,
+        androidAudioAttributes: AndroidAudioAttributes(
+          contentType: AndroidAudioContentType.music,
+          usage: AndroidAudioUsage.media,
+        ),
+        androidAudioFocusGainType:
+            AndroidAudioFocusGainType.gainTransientMayDuck,
+      ));
+      // A short pause so the category change has time to apply
+      // before the AVAudioPlayer attempts the new playback. Without
+      // it the first play() call after a category swap can still hit
+      // the previous category's silent-switch behaviour.
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      _userPaused = false;
+      _silenced.value = false;
+      if (!_loaded) {
+        await _player.setAsset('assets/audio/onboarding.m4a');
+        await _player.setLoopMode(LoopMode.one);
+        await _player.setVolume(0.55);
+        _loaded = true;
+      }
+      if (!_player.playing) {
+        await _player.play();
+      }
+    } catch (e, st) {
+      debugPrint('Onboarding override-silent start failed: $e\n$st');
     }
   }
 
@@ -56,28 +128,33 @@ class OnboardingAudioService {
   Future<void> pause() async {
     try {
       if (_player.playing) await _player.pause();
+      _userPaused = true;
     } catch (e) {
       debugPrint('Onboarding audio pause failed: $e');
     }
   }
 
-  /// One-tap toggle from the speaker icon. Starts on first call,
-  /// then pauses/resumes on subsequent taps.
+  /// One-tap toggle from the speaker icon.
+  ///
+  /// • If currently playing → pause.
+  /// • If not playing (silent or paused) → call
+  ///   [startOverridingSilent] so the music plays regardless of the
+  ///   iOS silent switch. An explicit tap is treated as consent.
   Future<void> toggle() async {
     if (_isPlaying.value) {
       await pause();
     } else {
-      await start();
+      await startOverridingSilent();
     }
   }
 
   /// Tear down — called when onboarding finishes or is dismissed.
-  /// Stops playback and unloads so cold-launching the app doesn't
-  /// hold the audio session open.
   Future<void> stop() async {
     try {
       await _player.stop();
       _loaded = false;
+      _silenced.value = false;
+      _userPaused = false;
     } catch (e) {
       debugPrint('Onboarding audio stop failed: $e');
     }
@@ -86,10 +163,6 @@ class OnboardingAudioService {
   /// Smoothly ramp the volume from its current level down to silence,
   /// then [stop]. Used when the user finishes onboarding so the
   /// shakuhachi doesn't cut off the moment AppShell swaps in.
-  ///
-  /// Default duration is 5 seconds — a long, contemplative exhale
-  /// that bridges the onboarding's quiet music into the app's own
-  /// sounds. Long enough to feel like a real out-breath, not a cut.
   Future<void> fadeOut({
     Duration duration = const Duration(milliseconds: 5000),
   }) async {
@@ -99,29 +172,23 @@ class OnboardingAudioService {
         return;
       }
       final startVolume = _player.volume;
-      // 50 ms tick = 20 fps fade — smooth enough for the human ear.
       const tick = Duration(milliseconds: 50);
       final steps = (duration.inMilliseconds / tick.inMilliseconds).round();
       for (int i = 1; i <= steps; i++) {
         await Future.delayed(tick);
-        if (!_player.playing) break; // user paused mid-fade
+        if (!_player.playing) break;
         final progress = i / steps;
         final eased = _easeOutCubic(progress);
         final newVolume = (startVolume * (1.0 - eased)).clamp(0.0, 1.0);
         await _player.setVolume(newVolume);
       }
       await stop();
-      // Reset volume so a future re-show starts at the original
-      // level (without this, replaying onboarding would be silent).
       await _player.setVolume(startVolume);
     } catch (e) {
       debugPrint('Onboarding audio fadeOut failed: $e');
     }
   }
 
-  /// EaseOutCubic — fast at the start, slow at the end. Makes the
-  /// fade feel more natural than a linear ramp; the tail lingers
-  /// instead of vanishing.
   double _easeOutCubic(double t) {
     final f = t - 1;
     return f * f * f + 1;

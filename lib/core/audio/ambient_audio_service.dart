@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -56,9 +57,19 @@ class AmbientAudioService {
   /// Toggle playback for the (koIndex, metaId) pair. If the same
   /// asset is currently loaded, pause/resume; if a different key is
   /// loaded, switch to the new one and play.
+  ///
+  /// Always re-configures the audio session to `playback` first so
+  /// the clip plays regardless of the iOS silent switch — every tap
+  /// here is an explicit user request to hear the kō, never an
+  /// auto-trigger. Mirrors how Spotify / Apple Music / Calm /
+  /// Headspace treat user-initiated playback.
   Future<void> toggle({required int koIndex, required String metaId}) async {
     final key = _resolveKey(koIndex: koIndex, metaId: metaId);
     try {
+      // Switch session category before play. Cheap; just_audio
+      // re-uses the active session for subsequent operations.
+      await _ensurePlaybackSession();
+
       if (_loadedKey == key) {
         if (_player.playing) {
           await _player.pause();
@@ -87,6 +98,22 @@ class AmbientAudioService {
     } catch (e, st) {
       debugPrint('AmbientAudio toggle failed for $key: $e\n$st');
     }
+  }
+
+  Future<void> _ensurePlaybackSession() async {
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration(
+      avAudioSessionCategory: AVAudioSessionCategory.playback,
+      avAudioSessionCategoryOptions:
+          AVAudioSessionCategoryOptions.mixWithOthers,
+      avAudioSessionMode: AVAudioSessionMode.defaultMode,
+      androidAudioAttributes: AndroidAudioAttributes(
+        contentType: AndroidAudioContentType.music,
+        usage: AndroidAudioUsage.media,
+      ),
+      androidAudioFocusGainType:
+          AndroidAudioFocusGainType.gainTransientMayDuck,
+    ));
   }
 
   /// Stop and unload regardless of state.

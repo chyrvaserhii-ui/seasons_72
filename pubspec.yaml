@@ -81,7 +81,7 @@ flutter:
     - assets/data/seasons.json
     - assets/images/ko/
     - assets/images/onboarding/
-    - assets/brand/appIcon.png
+    - assets/brand/                       # appIcon + author_seal (drop-in)
     - assets/audio/
 
   # Note: intentionally no custom fonts in Phase 1 — system fonts render

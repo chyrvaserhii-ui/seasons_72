@@ -23,23 +23,21 @@ Future<void> main() async {
   //     starting onboarding music doesn't kill the user's playlist.
   // Configuration before runApp ensures the first AudioPlayer that
   // mounts already inherits this category.
-  // Audio session: `playback` category so the per-kō ambient clips
-  // and onboarding shakuhachi play regardless of the iOS silent
-  // switch. Rationale: silent switch is iOS's "no surprise sounds"
-  // setting (notifications, system beeps) — when the user taps a
-  // play button in our app they are explicitly asking to hear, and
-  // every meditation / music app worth its salt (Spotify, Apple
-  // Music, Calm, Headspace, Podcasts) overrides silent for
-  // user-initiated playback. Previously we used `ambient`, which
-  // respects the switch and silently swallowed every play tap when
-  // the device was muted — confusing UX, not respectful.
+  // Audio session — DEFAULT category is `ambient` so the
+  // onboarding music auto-start respects the iOS silent switch
+  // (it's an automatic ritual; surprise audio in silent mode is
+  // bad UX). For explicit user-initiated playback (tap on the
+  // speaker icon, FAB on hero, IconButton in detail AppBar) the
+  // services in `core/audio/` re-configure the session to
+  // `playback` first, then play — overriding the silent switch
+  // since the user clearly asked to hear.
   //
   // `mixWithOthers` is preserved so we still cohabit politely with
   // other audio (Spotify, podcasts) — starting our music doesn't
   // kill the user's playlist.
   final session = await AudioSession.instance;
   await session.configure(const AudioSessionConfiguration(
-    avAudioSessionCategory: AVAudioSessionCategory.playback,
+    avAudioSessionCategory: AVAudioSessionCategory.ambient,
     avAudioSessionCategoryOptions:
         AVAudioSessionCategoryOptions.mixWithOthers,
     avAudioSessionMode: AVAudioSessionMode.defaultMode,

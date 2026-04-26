@@ -383,7 +383,7 @@ const Map<int, FoodPairing> seasonalFoods = {
     nameUk: "Едамаме (молода соя у стручках, відварена з сіллю)",
     nameEn: "Edamame (young soybeans in their pods, boiled in salted water)",
     type: FoodType.yasai,
-    noteUk: "Молода соя у стручку, ще тепла від солоної води — простий смак, що добре йде з першим прохолодним вітром із-за дому.",
+    noteUk: "Молода соя у стручку, ще тепла від солоної води — простий смак, що добре йде з першим прохолодним вітром з-за дому.",
     noteEn: "Young soybeans in the pod, still warm from salted water — a plain taste matched to the first cool wind slipping past the house.",
   ),
   38: FoodPairing(

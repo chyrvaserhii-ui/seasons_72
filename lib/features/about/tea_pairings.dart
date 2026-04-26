@@ -894,7 +894,7 @@ const Map<String, TeaVariety> teaVarieties = {
   // ─── Білі чаї ────────────────────────────────────────────────────────────
   "Бай Хао Інь Чжень": TeaVariety(
     infoUk:
-        "«Срібні голки з білими ворсинками» — найвищий ґатунок білого чаю з повітів Фудін і Чженхе у Фуцзяні. Виготовляється виключно з нерозкритих бруньок культивара Да Бай (Велика Біла), вкритих густим сріблястим пушком. Виробництво мінімальне: природне в'ялення під сонцем і слабке досушування, без скручування і смаження. Смак ніжний, медовий, з нотами свіжого сіна, динного м'якуша і легким кокосом; з роками набуває повноти та смаку сухофруктів.",
+        "«Срібні голки з білими ворсинками» — найвищий ґатунок білого чаю з повітів Фудін і Чженхе у Фуцзяні. Виготовляється лише з нерозкритих бруньок культивара Да Бай (Велика Біла), вкритих густим сріблястим пушком. Виробництво мінімальне: природне в'ялення під сонцем і слабке досушування, без скручування і смаження. Смак ніжний, медовий, з нотами свіжого сіна, динного м'якуша і легким кокосом; з роками набуває повноти та смаку сухофруктів.",
     infoEn:
         "'Silver Needles with White Down' — the top grade of white tea from Fuding and Zhenghe counties in Fujian. It is made exclusively from unopened buds of the Da Bai (Great White) cultivar, sheathed in dense silvery down. Processing is minimal: natural sun-withering and a light final dry, with no rolling and no firing. The cup is delicate, honeyed, with notes of fresh hay, melon flesh and a faint coconut sweetness, deepening with age into dried-fruit richness.",
     legendUk: "",
@@ -956,7 +956,7 @@ const Map<String, TeaVariety> teaVarieties = {
   // ─── Жовті чаї ───────────────────────────────────────────────────────────
   "Цзюньшань Іньчжень": TeaVariety(
     infoUk:
-        "«Срібні голки з гори Цзюнь» — рідкісний жовтий чай з невеликого острова Цзюньшань на озері Дунтін у провінції Хунань. Виготовляється виключно з бруньок навесні; ключовий етап — «мень-хуан» (томління в жовтому), коли загорнутий у папір лист повільно ферментується власним теплом. Завдяки цьому зникає трав'яниста різкість зеленого чаю, з'являється м'яка солодкість кукурудзяного зерна і теплий аромат сухого сіна. Колись данина імператорського двору.",
+        "«Срібні голки з гори Цзюнь» — рідкісний жовтий чай з невеликого острова Цзюньшань на озері Дунтін у провінції Хунань. Виготовляється лише з бруньок навесні; ключовий етап — «мень-хуан» (томління в жовтому), коли загорнутий у папір лист повільно ферментується власним теплом. Завдяки цьому зникає трав'яниста різкість зеленого чаю, з'являється м'яка солодкість кукурудзяного зерна і теплий аромат сухого сіна. Колись данина імператорського двору.",
     infoEn:
         "'Silver Needles from Junshan Mountain' — a rare yellow tea from the small Junshan island in Lake Dongting, Hunan province. Made exclusively from spring buds; the defining step is men-huang ('yellow smothering'), in which paper-wrapped leaves slowly ferment in their own heat. This removes the grassy edge of green tea and introduces a soft sweet-corn note and warm dry-hay aroma. Once an imperial tribute tea.",
     legendUk:
@@ -984,7 +984,7 @@ const Map<String, TeaVariety> teaVarieties = {
   // ─── Червоні (чорні) чаї ─────────────────────────────────────────────────
   "Цзінь Цзюнь Мей": TeaVariety(
     infoUk:
-        "«Золота брова жвавого коня» — порівняно молодий (створений 2005 року) преміальний червоний чай із заповідника Тонму в Уішанських горах, серце старого Лапсан Сушона. Виготовляється виключно з ранніх весняних бруньок; на 500 г готового чаю йде до 100 000 бруньок. На відміну від класичного Чжен Шан Сяочжуна, не коптиться. Смак — мускатна квітка, дикий мед, ноти ліжчі, какао і теплої смоли; настій яскраво-золотий.",
+        "«Золота брова жвавого коня» — порівняно молодий (створений 2005 року) преміальний червоний чай із заповідника Тонму в Уішанських горах, серце старого Лапсан Сушона. Виготовляється лише з ранніх весняних бруньок; на 500 г готового чаю йде до 100 000 бруньок. На відміну від класичного Чжен Шан Сяочжуна, не коптиться. Смак — мускатна квітка, дикий мед, ноти ліжчі, какао і теплої смоли; настій яскраво-золотий.",
     infoEn:
         "'Golden Steed Eyebrow' — a relatively new (created in 2005) premium red tea from the Tongmu reserve in the Wuyi mountains, the heartland of the original Lapsang Souchong. Made exclusively from early-spring buds; up to 100,000 buds go into 500 g of finished tea. Unlike classic Zhengshan Xiaozhong, it is not smoked. The cup tastes of muscat flower, wild honey, lychee, cocoa and warm resin; the liquor is vivid gold.",
     legendUk: "",
@@ -1324,7 +1324,7 @@ const Map<String, TeaVariety> teaVarieties = {
   ),
   "Гун Тін": TeaVariety(
     infoUk:
-        "«Палацовий» — найвищий ґатунок шу пуера, складений виключно з найдрібніших золотавих бруньок (а не цілого листа). Ферментується делікатніше і коротше за стандартний рецепт, щоб не зруйнувати тонкий лист. Смак чистіший за звичайний шу: солодке какао, темний шоколад, ноти жареного зерна і фініка, без болотної землистості; післясмак довгий і солодкий. Назва натякає на історичний імператорський рівень якості.",
+        "«Палацовий» — найвищий ґатунок шу пуера, складений лише з найдрібніших золотавих бруньок (а не цілого листа). Ферментується делікатніше і коротше за стандартний рецепт, щоб не зруйнувати тонкий лист. Смак чистіший за звичайний шу: солодке какао, темний шоколад, ноти жареного зерна і фініка, без болотної землистості; післясмак довгий і солодкий. Назва натякає на історичний імператорський рівень якості.",
     infoEn:
         "'Imperial Palace' — the top grade of shu pu-erh, made exclusively from the smallest golden buds (not whole leaves). Fermentation is gentler and shorter than for the standard recipe, to spare the delicate buds. The cup is cleaner than ordinary shu: sweet cocoa, dark chocolate, notes of roasted grain and date, with none of the swampy-earth register; the aftertaste is long and sweet. The name evokes a historic imperial-level grade.",
     legendUk: "",

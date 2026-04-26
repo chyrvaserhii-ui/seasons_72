@@ -383,29 +383,88 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
             ),
 
             // Speaker mute toggle — top-left, semi-transparent.
-            // Tap flips between play and pause. Always present so the
-            // user can mute even if iOS already chose to keep silent.
+            // Listens to BOTH isPlaying (true = music emitting) and
+            // silenced (true = auto-start was muted by iOS silent
+            // switch). The icon has three states:
+            //   • playing  → volume_up (sound currently audible)
+            //   • silenced → volume_off (struck-through; tap to play)
+            //   • paused   → volume_off (user-muted)
+            // Tapping in any state calls toggle(), which uses the
+            // override-silent path so playback always succeeds.
             Positioned(
               top: 6,
               left: 6,
               child: ValueListenableBuilder<bool>(
                 valueListenable:
                     OnboardingAudioService.instance.isPlaying,
-                builder: (_, isPlaying, __) => Opacity(
-                  opacity: 0.55,
-                  child: IconButton(
-                    onPressed: () =>
-                        OnboardingAudioService.instance.toggle(),
-                    icon: Icon(
-                      isPlaying ? Icons.volume_up : Icons.volume_off,
-                      color: onSurface,
-                      size: 22,
-                    ),
-                    tooltip: isUk
-                        ? (isPlaying ? 'Вимкнути звук' : 'Увімкнути звук')
-                        : (isPlaying ? 'Mute' : 'Unmute'),
-                  ),
-                ),
+                builder: (_, isPlaying, __) {
+                  return ValueListenableBuilder<bool>(
+                    valueListenable:
+                        OnboardingAudioService.instance.silenced,
+                    builder: (_, silenced, __) {
+                      // Pick icon. When iOS silent switch muted
+                      // auto-start, render `volume_off` — the
+                      // universal "muted" glyph — so the user knows
+                      // why no music plays. The tap action remains
+                      // toggle() which forces playback regardless.
+                      final icon = isPlaying
+                          ? Icons.volume_up_rounded
+                          : Icons.volume_off_rounded;
+                      // When silenced, dim the speaker AND show a
+                      // small struck-through bar overlay so it reads
+                      // unambiguously as "muted by system".
+                      final showSilencedOverlay = silenced && !isPlaying;
+                      return Opacity(
+                        opacity: 0.62,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () => OnboardingAudioService
+                                  .instance
+                                  .toggle(),
+                              icon: Icon(
+                                icon,
+                                color: onSurface,
+                                size: 22,
+                              ),
+                              tooltip: isUk
+                                  ? (isPlaying
+                                      ? 'Вимкнути звук'
+                                      : silenced
+                                          ? 'Беззвучний режим — тапни, щоб увімкнути'
+                                          : 'Увімкнути звук')
+                                  : (isPlaying
+                                      ? 'Mute'
+                                      : silenced
+                                          ? 'Silent mode — tap to play'
+                                          : 'Unmute'),
+                            ),
+                            // Diagonal struck-through bar — drawn
+                            // on top of the speaker icon when iOS
+                            // silenced us. Same colour as the icon
+                            // so it reads as part of the glyph.
+                            if (showSilencedOverlay)
+                              IgnorePointer(
+                                child: Transform.rotate(
+                                  angle: -0.78, // ~ -45°
+                                  child: Container(
+                                    width: 26,
+                                    height: 2.2,
+                                    decoration: BoxDecoration(
+                                      color: onSurface,
+                                      borderRadius:
+                                          BorderRadius.circular(2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
 
