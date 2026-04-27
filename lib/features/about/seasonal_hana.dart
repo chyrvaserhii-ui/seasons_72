@@ -535,7 +535,7 @@ const Map<int, HanaPairing> seasonalHana = {
     hanakotobaUk: 'делікатна краса, шляхетна жінка',
     hanakotobaEn: 'delicate beauty, refined lady',
     noteUk:
-        'Фуйо змінює колір від білого ранку до рожевого вечора — поведінка, яка Хейанські поетеси приписували витонченому серцю.',
+        'Фуйо змінює колір від білого ранку до рожевого вечора — поведінка, яку хейанські поетеси приписували витонченому серцю.',
     noteEn:
         'Fuyō shifts from white at dawn to pink by dusk — a habit Heian poets attributed to a refined heart.',
   ),
@@ -587,7 +587,7 @@ const Map<int, HanaPairing> seasonalHana = {
     hanakotobaUk: 'життєва сила, тиха витривалість',
     hanakotobaEn: 'vital force, quiet endurance',
     noteUk:
-        'Срібні плюмажі сусукі ловлять перше прохолодне світло — зкомпонована з данґо, вона стоїть під місяцем повного жнивного циклу.',
+        'Срібні плюмажі сусукі ловлять перше прохолодне світло — скомпонована з данґо, вона стоїть під місяцем повного жнивного циклу.',
     noteEn:
         'Susuki\'s silver plumes catch the first cool light — set with dango, it stands beneath the harvest moon of mid-autumn.',
   ),
@@ -750,13 +750,13 @@ const Map<int, HanaPairing> seasonalHana = {
   54: HanaPairing(
     japanese: '山茶花',
     romaji: 'sazanka',
-    nameUk: 'Саданка (камелія сасанква)',
+    nameUk: 'Садзанка (камелія сасанква)',
     nameEn: 'Sazanka (sasanqua camellia)',
     botanical: 'Camellia sasanqua',
     hanakotobaUk: 'скромна привітність, ідеальне кохання',
     hanakotobaEn: 'modest welcome, ideal love',
     noteUk:
-        'Перші рожеві саданки розкриваються поряд з кленами, що горять — тиха пара палаючим листям, переддень зими.',
+        'Перші рожеві садзанки розкриваються поряд з кленами, що горять — тиха пара палаючим листям, переддень зими.',
     noteEn:
         'The first pink sazanka open beside the burning maples — a quiet companion to flame-coloured leaves on winter\'s edge.',
   ),
@@ -823,7 +823,7 @@ const Map<int, HanaPairing> seasonalHana = {
     hanakotobaUk: 'захист, далекоглядність',
     hanakotobaEn: 'protection, foresight',
     noteUk:
-        'Дрібні білі квіти хіїраґі ховаються між колючим листям — їх вішають разом з головою сардини у Сецубун, аби відлякати ріці.',
+        'Дрібні білі квіти хіїраґі ховаються між колючим листям — їх вішають разом з головою сардини у Сецубун, аби відлякати демонів.',
     noteEn:
         'Hiiragi\'s tiny white flowers hide among prickly leaves — hung with a sardine head at Setsubun to scare off demons.',
   ),
@@ -836,7 +836,7 @@ const Map<int, HanaPairing> seasonalHana = {
     hanakotobaUk: 'безсмертний аромат, чистота думки',
     hanakotobaEn: 'eternal fragrance, purity of mind',
     noteUk:
-        'Маленькі жовті плоди тачібана висять на вічнозеленому дереві — одне з небес\'ких рослин Хейанського палацу.',
+        'Маленькі жовті плоди тачібана висять на вічнозеленому дереві — одне з небесних рослин Хейанського палацу.',
     noteEn:
         'Tachibana\'s small yellow fruit hangs on evergreen branches — one of the sacred plants of the Heian palace courtyard.',
   ),
@@ -914,7 +914,7 @@ const Map<int, HanaPairing> seasonalHana = {
     hanakotobaUk: 'тисячі багатств, святковий добробут',
     hanakotobaEn: 'a thousand riches, festive fortune',
     noteUk:
-        'Помаранчеві ягоди сенрьо стоять на новорічному кадомацу — благословення для першого ранку Шьоґацу під снігом.',
+        'Помаранчеві ягоди сенрьо стоять на новорічному кадомацу — благословення для першого ранку Сьоґацу під снігом.',
     noteEn:
         'Senryō\'s orange berries stand in the New Year kadomatsu — a blessing for Shōgatsu\'s first morning under snow.',
   ),
@@ -934,13 +934,13 @@ const Map<int, HanaPairing> seasonalHana = {
   68: HanaPairing(
     japanese: '蕗の薹',
     romaji: 'fukinotō',
-    nameUk: 'Фукінотьо (бутон білокопитника)',
+    nameUk: 'Фукіното (бутон білокопитника)',
     nameEn: 'Fukinotō (butterbur bud)',
     botanical: 'Petasites japonicus',
     hanakotobaUk: 'справедливість, чекання навесні',
     hanakotobaEn: 'fairness, waiting on spring',
     noteUk:
-        'Зеленувато-жовті бутони фукінотьо пробивають сніг біля гірських джерел — гірчинку весни, яку шеф-кухар включає в перший тенпура.',
+        'Зеленувато-жовті бутони фукіното пробивають сніг біля гірських джерел — гірчинку весни, яку шеф-кухар включає в першу темпуру.',
     noteEn:
         'Fukinotō\'s yellow-green buds pierce the snow near mountain springs — spring\'s bitter note in the season\'s first tempura.',
   ),

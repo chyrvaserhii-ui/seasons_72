@@ -11,6 +11,59 @@ import '../../core/utils/season_calculator.dart';
 import '../detail/season_detail_screen.dart';
 import '../shared/widgets/dismissible_modal_sheet.dart';
 
+/// Background colour for one sekki cell within a meta-season.
+///
+/// Long iteration history (see ROADMAP "Open issue — calendar sekki
+/// colour differentiation"). Strategy now combines TWO cues:
+///   1. **bg alpha ramp** — sekki 0 most transparent, sekki 5 most
+///      opaque. Modest 0.06 step on a cool meta tint reads as a
+///      gentle progression without any single stop punching out.
+///   2. **corner marker** — bright pigment dot, only 3 distinct
+///      colours cycling (see [_sekkiMarkerColor]). A single calendar
+///      month shows at most 3 consecutive sekki, so a 3-cycle is
+///      always fully distinct within any one viewport.
+///
+///   • Light alpha: 0.18 → 0.48 (range 0.30, step 0.06)
+///   • Dark  alpha: 0.20 → 0.50 (range 0.30, step 0.06)
+///
+/// Used by both the list-view tile bg and the months-grid day cell;
+/// list view also adds a per-kō left-edge stripe for ko-within-sekki.
+Color _sekkiCellColor(Color tint, Brightness brightness, int sekkiIdx) {
+  final alpha = brightness == Brightness.light
+      ? 0.18 + sekkiIdx * 0.06
+      : 0.20 + sekkiIdx * 0.06;
+  return tint.withValues(alpha: alpha);
+}
+
+/// 3-stop sekki position marker palette. The trick: each calendar
+/// month displays AT MOST 3 consecutive sekki (since each sekki spans
+/// ~15 days), so a 3-cycle is mathematically guaranteed to give every
+/// sekki within a viewport its own distinct marker — no two of the
+/// markers visible in any single month will ever clash.
+///
+/// Three colours picked to be **universally distinguishable** against
+/// any of the 4 cool meta backgrounds (cool rose / teal-green /
+/// umber-brown / cool-blue). All three avoid the meta tint hues:
+///
+///   0. 墨 sumi             — black ink, universal contrast
+///   1. 梔子 kuchinashi     — gardenia yellow, warm and clean
+///   2. 古代紫 kodai-murasaki — ancient purple, deep and quiet
+///
+/// Pure black, warm yellow, and deep purple each occupy a distinct
+/// area of colour space, far from any meta-tint hue, so they remain
+/// readable on every cell tone in both light and dark themes.
+///
+/// Rendered at alpha 0.80 in the cell — slight watercolour softness
+/// so the dot reads as a pigment stamp rather than a sticker.
+const List<Color> _sekkiMarkerPalette = <Color>[
+  Color(0xFF1A1615), // 墨 sumi — black ink
+  Color(0xFFD4A23A), // 梔子 kuchinashi — gardenia yellow
+  Color(0xFF8B5A8C), // 古代紫 kodai-murasaki — ancient purple
+];
+
+Color _sekkiMarkerColor(int sekkiIdx) =>
+    _sekkiMarkerPalette[sekkiIdx % _sekkiMarkerPalette.length];
+
 /// Calendar — full picture of the year, shown in two complementary
 /// modes the user can switch between via a centred segmented control
 /// at the top:
@@ -536,20 +589,13 @@ class _ListView extends ConsumerWidget {
   }) {
     final accent = meta.colorFor(brightness);
     final tint = meta.tintColorFor(brightness);
-    // Six-step alpha ramp (one per sekki within meta), step 0.06:
-    //   • light: 0.05–0.35
-    //   • dark:  0.08–0.38
-    // Ramp deliberately compressed — earlier 0.13 step produced top
-    // stops at 0.73/0.77 alpha that read as "punchy / too bright" on
-    // light theme and "too contrasty against the dark surface" on
-    // dark theme. Compromise: keep the top end gentle and let the
-    // PER-KŌ left-edge stripe (see [_buildSekkiBlock] / kō item
-    // builder below) carry the within-sekki position cue. Tile bg
-    // tells you "which pora roku / which sekki", stripe tells you
-    // "which of the three kō inside this sekki".
-    final tileBgAlpha = isDark
-        ? 0.08 + sekkiIdx * 0.06
-        : 0.05 + sekkiIdx * 0.06;
+    // Hue-shift ramp + small alpha staircase via [_sekkiCellColor].
+    // See helper docstring for the full design rationale; in short,
+    // each of the 6 sekki gets its own slightly-shifted hue inside
+    // the meta's chromatic family, plus a +0.04 alpha bump per stop.
+    // Within-sekki kō differentiation still carried by the left-edge
+    // accent stripe below.
+    final cellColor = _sekkiCellColor(tint, brightness, sekkiIdx);
 
     return SliverMainAxisGroup(
       slivers: [
@@ -608,7 +654,7 @@ class _ListView extends ConsumerWidget {
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: tint.withValues(alpha: tileBgAlpha),
+                    color: cellColor,
                     border: isLastInSekki
                         ? Border(left: stripeSide)
                         : Border(left: stripeSide, bottom: hairlineSide),
@@ -1129,7 +1175,6 @@ class _MiniMonth extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final brightness = theme.brightness;
-    final isDark = brightness == Brightness.dark;
     final locale = Localizations.localeOf(context);
     final monthFmt = DateFormat.MMMM(locale.languageCode);
 
@@ -1201,25 +1246,19 @@ class _MiniMonth extends StatelessWidget {
                 final accent = meta.colorFor(brightness);
                 final tint = meta.tintColorFor(brightness);
                 final sekkiInMeta = ((ko.index - 1) % 18) ~/ 3;
-                // Six-step alpha ramp, step 0.08 (light: 0.05–0.45,
-                // dark: 0.08–0.48). Months-grid cells are tiny (~30px
-                // square) so they need MORE alpha differentiation than
-                // the list view tiles — at the list's gentler 0.06
-                // step the day cells smeared into one band again.
-                // List view compensates with its left-edge stripe;
-                // months grid relies on tile bg alone, so the ramp
-                // here is widened. Sekki-legend swatch below MUST
-                // match this exactly.
-                final tileAlpha = isDark
-                    ? 0.08 + sekkiInMeta * 0.08
-                    : 0.05 + sekkiInMeta * 0.08;
+                // Single bg per meta (no within-meta sekki walk) —
+                // sekki position is shown via the corner marker dot.
+                final cellColor =
+                    _sekkiCellColor(tint, brightness, sekkiInMeta);
+                final markerColor = _sekkiMarkerColor(sekkiInMeta);
                 final isToday = date.year == today.year &&
                     date.month == today.month &&
                     date.day == today.day;
 
                 return _DayCell(
                   day: dayNum,
-                  bg: tint.withValues(alpha: tileAlpha),
+                  bg: cellColor,
+                  marker: markerColor,
                   ring: isToday ? accent : null,
                   textColor: theme.colorScheme.onSurface,
                   onTap: () {
@@ -1297,14 +1336,15 @@ class _SekkiLegend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = brightness == Brightness.dark;
     final isUk = locale.languageCode == 'uk';
 
     // Walk days in calendar order, dedupe by sekki id, remember the
-    // tint colour each day generated so the swatch matches the cell.
+    // tint AND marker each day generated so the legend swatch fully
+    // matches what the user sees in the day grid above.
     final orderedSekki = <Sekki>[];
     final seenIds = <String>{};
     final sekkiSwatch = <String, Color>{};
+    final sekkiMarker = <String, Color>{};
 
     for (int day = 1; day <= daysInMonth; day++) {
       final ko = calc.currentAt(DateTime(year, month, day));
@@ -1314,12 +1354,9 @@ class _SekkiLegend extends StatelessWidget {
       final meta = repo.meta(ko.metaId);
       final tint = meta.tintColorFor(brightness);
       final sekkiInMeta = ((ko.index - 1) % 18) ~/ 3;
-      // Same six-step alpha ramp (step 0.08) as day cells — the
-      // legend swatch must visually equal the cells it is naming.
-      final alpha = isDark
-          ? 0.08 + sekkiInMeta * 0.08
-          : 0.05 + sekkiInMeta * 0.08;
-      sekkiSwatch[sekki.id] = tint.withValues(alpha: alpha);
+      sekkiSwatch[sekki.id] =
+          _sekkiCellColor(tint, brightness, sekkiInMeta);
+      sekkiMarker[sekki.id] = _sekkiMarkerColor(sekkiInMeta);
     }
 
     if (orderedSekki.isEmpty) return const SizedBox.shrink();
@@ -1332,9 +1369,13 @@ class _SekkiLegend extends StatelessWidget {
             padding: const EdgeInsets.only(top: 3),
             child: Row(
               children: [
+                // Mini-cell mock: same tinted bg + corner marker dot
+                // as the day cells in the grid above. Lets the user
+                // map a colour band in the grid to its name in the
+                // legend at a glance — including the marker hue.
                 Container(
-                  width: 12,
-                  height: 12,
+                  width: 14,
+                  height: 14,
                   decoration: BoxDecoration(
                     color: sekkiSwatch[s.id],
                     borderRadius: BorderRadius.circular(3),
@@ -1343,6 +1384,23 @@ class _SekkiLegend extends StatelessWidget {
                           .withValues(alpha: 0.10),
                       width: 0.5,
                     ),
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 1.5,
+                        right: 1.5,
+                        child: Container(
+                          width: 4,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: sekkiMarker[s.id]!
+                                .withValues(alpha: 0.80),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -1599,6 +1657,7 @@ class _DayCell extends StatelessWidget {
   const _DayCell({
     required this.day,
     required this.bg,
+    required this.marker,
     required this.ring,
     required this.textColor,
     required this.onTap,
@@ -1606,6 +1665,14 @@ class _DayCell extends StatelessWidget {
 
   final int day;
   final Color bg;
+
+  /// Vivid sekki position marker rendered as a small dot in the
+  /// top-right corner. Same colour for every day in the same sekki;
+  /// 6 distinct rainbow stops (see [_sekkiMarkerPalette]) make the
+  /// position within meta unambiguous at a glance, even though the
+  /// tile bg uses the same meta tint for all 6 sekki.
+  final Color marker;
+
   final Color? ring;
   final Color textColor;
   final VoidCallback onTap;
@@ -1623,18 +1690,42 @@ class _DayCell extends StatelessWidget {
               ? Border.all(color: ring!, width: 1.4)
               : null,
         ),
-        alignment: Alignment.center,
-        child: Text(
-          '$day',
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight:
-                ring != null ? FontWeight.w800 : FontWeight.w500,
-            color: ring != null
-                ? ring
-                : textColor.withValues(alpha: 0.85),
-            height: 1.0,
-          ),
+        child: Stack(
+          children: [
+            // Day number, centred.
+            Center(
+              child: Text(
+                '$day',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight:
+                      ring != null ? FontWeight.w800 : FontWeight.w500,
+                  color: ring != null
+                      ? ring
+                      : textColor.withValues(alpha: 0.85),
+                  height: 1.0,
+                ),
+              ),
+            ),
+            // Sekki marker: small pigment dot in the top-right corner.
+            // 5×5 px at alpha 0.80 — large enough to read as a colour,
+            // small + slightly translucent enough to feel like a
+            // watercolour stamp rather than a sticker, so the tile bg
+            // breathes through and the marker doesn't compete with
+            // the day number.
+            Positioned(
+              top: 2,
+              right: 2,
+              child: Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: marker.withValues(alpha: 0.80),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

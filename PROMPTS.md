@@ -192,3 +192,58 @@ Your first 29 images were made with DALL-E 3 via Designer. The style prompt belo
 ### #72 — Кури несуться (鶏始乳 · Niwatori hajimete toya ni tsuku) 🥚
 
 > hens in a straw-lined coop, eggs on ground, warm interior light, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones with selective vibrant accents, bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hokusai and Hiroshige, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+---
+
+## Re-generations from audit (priority queue)
+
+These 7 already-generated illustrations were flagged as season/subject mismatches in the audit pass. Each prompt is tuned to fix a specific issue noted there. Re-generate, replace `{N}.png` in `assets/images/ko/`, run `scripts/sync_images.py`.
+
+### #4 — Дощ зволожує землю (土脉潤起 · Tsuchi no shō uruoi okoru) ☔ — REGEN
+
+> close-up of dark wet brown earth and stone-edged paddy embankments soaked by a steady early-spring rain, vertical lines of rain falling, single bare leafless plum branch with three or four white plum buds barely opening in upper foreground, distant grey-purple mountains under low overcast sky, late-February quiet thaw mood, no green leaves anywhere, no rice plants, no summer foliage, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones (sumi ink black, sumiha indigo, kinari cream), bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hiroshige's Tōkaidō rain prints, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+### #17 — Сходи рису після останнього інію (霜止出苗 · Shimo yamite nae izuru) 🌾 — REGEN
+
+> a small wooden farmhouse beside mirror-flooded rectangular rice paddies in late April, tiny pale-green rice seedlings (3-5 cm tall) barely poking above the still water surface, paddy embankments still bare brown earth, hazy distant blue mountains under cool sky, sparse pink plum or wild cherry branches in middle distance, last traces of frost on embankment shadows, NOT lush summer green, NO mature trees in full leaf, NO mid-season green paddies, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones with selective pink and pale-green accents, bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hokusai and Hiroshige, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+### #19 — Перший спів жаб (蛙始鳴 · Kawazu hajimete naku) 🐸 — REGEN
+
+> a single small green frog perched on a wet stone at the edge of shallow reeds and irises by a pond, mouth open mid-call, early-summer fresh green grasses around, evening twilight light over still water, ripples expanding from the frog, NO lotus blossoms, NO water lilies, NO open pink flowers, save lotus for kō #32, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones with selective fresh-green accents, bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hokusai and Hiroshige, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+### #21 — Бамбук пробивається із землі (竹笋生 · Take no ko shōzu) 🎋 — REGEN
+
+> three or four stout pointed bamboo shoots (takenoko) breaking through dark soil and brown leaf litter in clear foreground focus, brown protective sheaths still wrapping their tips, dappled May sunlight on the ground, mature green bamboo culms softly receding into the misty background, focus is the EMERGING young shoots not the established grove, NO full grown bamboo as the subject, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones with selective fresh-green accents, bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hokusai and Hiroshige, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+### #34 — Павловнія зав'язує насіння (桐始結花 · Kiri hajimete hana o musubu) 🌳 — REGEN
+
+> close-up of paulownia (kiri) tree branches against a soft summer sky, very large heart-shaped green leaves, clusters of small round green-and-brown WALNUT-SIZED SEED CAPSULES (not flowers) hanging from the branch tips, late July seed-forming stage, paulownia blooms in spring so this kō is specifically the SEED stage AFTER the lavender flowers have dropped, NO purple flowers, NO red blossoms, NO clusters of pink, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones with selective sage-green accents, bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hokusai and Hiroshige, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+### #35 — Земля волога, повітря важке (土潤溽暑 · Tsuchi uruōte mushi atsushi) ♨ — REGEN
+
+> heavy white-grey humid haze hanging low over still-growing GREEN rice paddies in late July, dripping wet glossy foliage, condensation droplets, water reflections heavy with mist, faint sun barely visible through the muggy white sky, midsummer sticky-heat mood, NO golden ripe rice, NO autumn russet, NO clear blue sky, NO harvest scenes, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones with selective deep-green accents, bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hokusai and Hiroshige, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+### #64 — Перші зелені паростки (乃東生 · Natsukarekusa shōzu) 🌱 — REGEN
+
+> close-up of two or three tiny bright-green sprouts (self-heal / prunella vulgaris seedlings) pushing up through a thin crust of pristine white snow, dark soil visible at base of each sprout, soft pre-dawn winter solstice light, palette of sumi ink, kinari cream, and a single fresh green for the shoots, return-of-light mood, NO flowers, NO blossoms, NO purple bells, NO bare ground without snow, just the snow + emerging seedlings, in the style of a traditional Japanese ukiyo-e woodblock print, muted earth tones with selective fresh-green accent, bold confident black outlines, flat color fields, soft atmospheric gradient in the sky, reminiscent of Hokusai and Hiroshige, square composition, aged paper texture, no text, no letters, no borders, no signature
+
+---
+
+## Ambiguous (optional improvements)
+
+Lower-priority — image is "close" but a better one would tighten the seasonal cue. List for future passes if budget allows:
+
+- **#2** Солов'ї заспівали — songbird should sit on a bare/budding plum branch, not a fully-leafed green one
+- **#12** Перші гуркоти грому — lightning OK, but rice fields look too established for early April
+- **#15** Перша веселка — rainbow OK, paddies look mid-summer
+- **#16** Очерет пускає паростки — reeds look mature; remove the dragonfly (summer-coded)
+- **#25** Богомоли вилуплюються — show ootheca / nymphs hatching, not an adult mantis
+- **#28** В'яне літнє різнотрав'я — drop the cosmos flowers, show actual wilting summer grasses
+- **#31** Теплі вітри — tones too sepia/dry; want lush warm-summer green
+- **#37** Прохолодні вітри — looks fully autumn; want first cool hint INSIDE late summer
+- **#39** Туман огортає долини — fog OK, but vivid maples are too early
+- **#45** Ластівки відлітають — birds may not all read as swallows
+- **#47** Комахи ховаються в землю — beetle on autumn leaves, want actual burrowing into soil
+- **#48** Воду з рисових полів спускають — flanking trees look like cherry blossom pinks; want ochre/red autumn
+- **#58** Веселки зникають — winter scene fine, but no rainbow at all to anchor the kō
+- **#65** Олені скидають роги — stag has full intact rack; need shedding/shed antlers

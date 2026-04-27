@@ -47,15 +47,17 @@ class AmbientPlayerButton extends StatelessWidget {
         // hit-area match the system Material icons sitting next to
         // it in the AppBar (e.g. the share button).
         //
-        // Icon set is the same play/pause pair the home-screen FAB
-        // uses, so the user has ONE mental model for "ambient sound
-        // toggle" across the app — not "speaker icon here, play
-        // button there".
+        // Icon set unified with the onboarding sound toggle:
+        //   • playing  → volume_up   (sound currently audible)
+        //   • paused   → volume_off  (silent / not playing)
+        // One mental model for "ambient sound state" across the whole
+        // app — onboarding intro, app-bar pill, and floating FAB all
+        // speak the same speaker-icon vocabulary.
         return IconButton(
           tooltip: active ? 'Зупинити звук' : 'Послухати звук сезону',
           onPressed: () => svc.toggle(koIndex: koIndex, metaId: metaId),
           icon: Icon(
-            active ? Icons.pause_rounded : Icons.play_arrow_rounded,
+            active ? Icons.volume_up_rounded : Icons.volume_off_rounded,
             color: glyphColor,
           ),
         );
@@ -213,8 +215,8 @@ class _AmbientPlayerFabState extends State<AmbientPlayerFab>
                           ),
                           child: Icon(
                             active
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
+                                ? Icons.volume_up_rounded
+                                : Icons.volume_off_rounded,
                             color: Colors.white,
                             size: widget.size * 0.5,
                           ),

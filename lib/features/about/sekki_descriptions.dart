@@ -25,7 +25,7 @@ const Map<String, SekkiDescription> sekkiDescriptions = {
     en: "Rainwater. Snow melts, rivers swell, willows put out buds. The first stretch where the earth drinks instead of sleeping.",
   ),
   "keichitsu": SekkiDescription(
-    uk: "Пробудження комах. Жуки, метелики й земляні створіння виходять із зимового сховку. Назва буквально — «відкриття вугілля», коли тепло доходить до землі.",
+    uk: "Пробудження комах. Жуки, метелики й земляні створіння виходять із зимового сховку. Назва буквально — «відкриття нір», коли тепло доходить до землі.",
     en: "Awakening of hibernators. Insects and burrowing creatures stir from winter hiding. The name literally means \"opening the burrows\" — heat finally reaches the soil.",
   ),
   "shunbun": SekkiDescription(
@@ -77,7 +77,7 @@ const Map<String, SekkiDescription> sekkiDescriptions = {
     en: "White dew. Mornings cool enough that dew settles on grass. The first real sign that autumn is here for real.",
   ),
   "shubun": SekkiDescription(
-    uk: "Осіннє рівнодення. День знов дорівнює ночі. Японське національне свято — як і весняне. Час «дзо-меі», поваги до предків.",
+    uk: "Осіннє рівнодення. День знов дорівнює ночі. Японське національне свято — як і весняне. Час «хіган», поваги до предків.",
     en: "Autumn equinox. Day equals night again. A Japanese national holiday, like the spring one — time for \"higan\", honoring ancestors.",
   ),
   "kanro": SekkiDescription(

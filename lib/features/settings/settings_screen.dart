@@ -26,17 +26,21 @@ class SettingsScreen extends ConsumerWidget {
         // Now ~52 px per row, matching the [_ViewToggle] design from
         // the calendar tab so the app speaks one visual language for
         // "pick one of N" controls.
+        //
+        // Dropped the "Match iOS" / null option — only two locales
+        // are bundled (en, uk) so the system-default pill collapsed
+        // visually onto whichever of the two iOS picked anyway. Two
+        // explicit pills make the choice cleaner and unambiguous.
         _PillPicker<Locale?>(
           value: settings.locale,
-          options: const [null, Locale('en'), Locale('uk')],
+          options: const [Locale('en'), Locale('uk')],
           labels: [
-            l10n.settingsLanguageSystem,
             l10n.settingsLanguageEnglish,
             l10n.settingsLanguageUkrainian,
           ],
           onChanged: notifier.setLocale,
         ),
-        const Divider(),
+        const _SectionRule(),
         _SectionHeader(l10n.settingsTheme),
         _PillPicker<ThemeMode>(
           value: settings.themeMode,
@@ -52,7 +56,7 @@ class SettingsScreen extends ConsumerWidget {
           ],
           onChanged: notifier.setThemeMode,
         ),
-        const Divider(),
+        const _SectionRule(),
         SwitchListTile(
           title: Text(l10n.settingsNotifications),
           subtitle: Text(l10n.settingsNotificationsHint),
@@ -79,7 +83,7 @@ class SettingsScreen extends ConsumerWidget {
             }
           },
         ),
-        const Divider(),
+        const _SectionRule(),
         _SectionHeader(_cardsSectionTitle(context)),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
@@ -99,7 +103,7 @@ class SettingsScreen extends ConsumerWidget {
             value: settings.cards.get(card),
             onChanged: (v) => notifier.setCardVisible(card, v),
           ),
-        const Divider(),
+        const _SectionRule(),
         _SectionHeader(_introSectionTitle(context)),
         ListTile(
           leading: const Icon(Icons.replay_outlined),
@@ -120,7 +124,7 @@ class SettingsScreen extends ConsumerWidget {
             await notifier.setHasSeenOnboarding(false);
           },
         ),
-        const Divider(),
+        const _SectionRule(),
         _SectionHeader(l10n.settingsAbout),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -368,6 +372,24 @@ void _showColophonSheet(BuildContext context, bool isUk) {
                 ),
               ),
             ),
+            const SizedBox(height: 14),
+            // Closing kanji 愛 (ai) — "love". Final mark of the
+            // colophon, sits below the sign-off as a quiet stamp.
+            // Rendered in seal-red at low alpha so it reads as
+            // pigment more than as text — same restraint as the
+            // hairline rule and the printer's mark above.
+            Center(
+              child: Text(
+                '愛',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w500,
+                  height: 1.0,
+                  color: const Color(0xFFB94A3D)
+                      .withValues(alpha: 0.65),
+                ),
+              ),
+            ),
           ],
         ),
       );
@@ -378,6 +400,24 @@ void _showColophonSheet(BuildContext context, bool isUk) {
 /// Thin rule + small crimson dot in the middle — mirrors the
 /// haiku-frame seal used in [SeasonHaiku]. Closing punctuation in
 /// visual form: «це я».
+/// Settings-screen section divider. Replaces the default Material
+/// [Divider] (a flat hairline) with the app's existing [_SealRule]
+/// pattern: thin rule + small crimson seal-red dot in the middle —
+/// already used in haiku frames and the colophon. Wraps the rule in
+/// 12-px vertical padding so the breathing room is similar to the
+/// 16-px height a [Divider] occupies.
+class _SectionRule extends StatelessWidget {
+  const _SectionRule();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: _SealRule(),
+    );
+  }
+}
+
 class _SealRule extends StatelessWidget {
   const _SealRule();
 
@@ -592,7 +632,7 @@ String _cardLabel(DetailCard card, BuildContext context) {
     case DetailCard.colors:
       return isUk ? 'Сезонні кольори одягу 🎨' : 'Seasonal robe colours 🎨';
     case DetailCard.kodo:
-      return isUk ? 'Сезонні пахощі kōdō 🌫️' : 'Seasonal kōdō incense 🌫️';
+      return isUk ? 'Сезонні пахощі kōdō 🪔' : 'Seasonal kōdō incense 🪔';
     case DetailCard.kigo:
       return isUk ? 'Сезонні слова 📜' : 'Seasonal words 📜';
     case DetailCard.practice:

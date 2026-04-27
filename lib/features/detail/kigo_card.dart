@@ -62,61 +62,77 @@ class KigoCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Material(
-          color: indigo.withValues(alpha: isDark ? 0.08 : 0.10),
+        ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => _showSheet(context, pairing, isUk, indigo),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '📜',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: indigo.withValues(alpha: 0.92),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _showSheet(context, pairing, isUk, indigo),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: indigo.withValues(alpha: isDark ? 0.14 : 0.16),
+                  border: Border(
+                    left: BorderSide(
+                      color: indigo.withValues(alpha: 0.70),
+                      width: 3,
+                    ),
+                    bottom: BorderSide(
+                      color: indigo.withValues(alpha: 0.18),
+                      width: 0.5,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Plain-language headline so the row reads as a
-                        // count first ("4 сезонні слова"), not as a single
-                        // mysterious term sitting alone.
-                        Text(
-                          headline,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        // Subtitle: kanji of every kigo separated by
-                        // middots — visually shows this is a list.
-                        Text(
-                          kanjiTeaser,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: onSurface.withValues(alpha: 0.7),
-                            letterSpacing: 0.6,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '📜',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: indigo.withValues(alpha: 0.92),
+                      ),
                     ),
-                  ),
-                  Icon(
-                    Icons.info_outline,
-                    size: 18,
-                    color: onSurface.withValues(alpha: 0.45),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Plain-language headline so the row reads as a
+                          // count first ("4 сезонні слова"), not as a single
+                          // mysterious term sitting alone.
+                          Text(
+                            headline,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          // Subtitle: kanji of every kigo separated by
+                          // middots — visually shows this is a list.
+                          Text(
+                            kanjiTeaser,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: onSurface.withValues(alpha: 0.7),
+                              letterSpacing: 0.6,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: onSurface.withValues(alpha: 0.45),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

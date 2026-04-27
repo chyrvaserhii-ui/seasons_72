@@ -34,7 +34,14 @@ class PeriodCard extends StatelessWidget {
     final isUk = locale.languageCode == 'uk';
     final onSurface = theme.colorScheme.onSurface;
     final isDark = theme.brightness == Brightness.dark;
-    final tint = meta.tintColorFor(theme.brightness);
+    // Inkstone slate — fixed accent for the "Period" card, independent
+    // of the kō's meta-season. Period and Sekki cards used to share the
+    // meta tint, which made them visually identical when viewed
+    // together; giving Period its own neutral inkstone-blue and Sekki
+    // its own moss-olive (see sekki_card.dart) restores the per-card
+    // colour vocabulary the rest of the deep-dive cards already follow.
+    const slate = Color(0xFF6E7E8E);
+    final tint = slate;
     final dateRange = _dateRange(ko, locale);
     final positionLine = _positionShort(ko, isUk);
 
@@ -50,56 +57,72 @@ class PeriodCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Material(
-          color: tint.withValues(alpha: isDark ? 0.10 : 0.13),
+        ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => _showSheet(context, isUk),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '📅',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: accentColor.withValues(alpha: 0.92),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _showSheet(context, isUk),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: tint.withValues(alpha: isDark ? 0.14 : 0.16),
+                  border: Border(
+                    left: BorderSide(
+                      color: tint.withValues(alpha: 0.70),
+                      width: 3,
+                    ),
+                    bottom: BorderSide(
+                      color: tint.withValues(alpha: 0.18),
+                      width: 0.5,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          dateRange,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          positionLine,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: onSurface.withValues(alpha: 0.65),
-                            letterSpacing: 0.3,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '📅',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: accentColor.withValues(alpha: 0.92),
+                      ),
                     ),
-                  ),
-                  Icon(
-                    Icons.info_outline,
-                    size: 18,
-                    color: onSurface.withValues(alpha: 0.45),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            dateRange,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            positionLine,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: onSurface.withValues(alpha: 0.65),
+                              letterSpacing: 0.3,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: onSurface.withValues(alpha: 0.45),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -109,6 +132,10 @@ class PeriodCard extends StatelessWidget {
   }
 
   void _showSheet(BuildContext context, bool isUk) {
+    // Pass the same slate accent to the details sheet so its headings
+    // / separators match the row the user just tapped. Caller-provided
+    // [accentColor] is ignored — the card owns its colour identity.
+    const slate = Color(0xFF6E7E8E);
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -119,7 +146,7 @@ class PeriodCard extends StatelessWidget {
         meta: meta,
         sekki: sekki,
         locale: locale,
-        accent: accentColor,
+        accent: slate,
         isUk: isUk,
       ),
     );

@@ -110,7 +110,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     activityEn:
         "Check the soil in your pots — repotting season is now, while the rain is still soft. Houseplants feel spring earlier than we do.",
     contemplationUk:
-        "Помацай землю на балконі чи в парку — холодна, волога, жива. У японських саджалок є приказка: земля будиться знизу, не зверху.",
+        "Помацай землю на балконі чи в парку — холодна, волога, жива. У японських садівників є приказка: земля будиться знизу, не зверху.",
     contemplationEn:
         "Touch the soil on the balcony or in a park — cold, damp, alive. Japanese gardeners say the earth wakes from below, not from above.",
   ),
@@ -286,7 +286,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     activityEn:
         "Linger outside for ten minutes after a brief shower; niji, the rainbow, only shows itself to those who don't bolt for cover at once.",
     contemplationUk:
-        "Перша райдуга року в саадзіки рахується окремим кіґо. Запитай себе тихо: чи помітив ти її, чи просто сфотографував і пішов.",
+        "Перша райдуга року в саджікі рахується окремим кіґо. Запитай себе тихо: чи помітив ти її, чи просто сфотографував і пішов.",
     contemplationEn:
         "The year's first rainbow is its own kigo in the saijiki. Ask quietly: did you notice it, or did you only photograph it and walk on.",
   ),
@@ -423,7 +423,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Не все мусить чекати своєї осені — пшениця дозріває серед літа.",
     mottoEn: "Not everything waits for autumn — wheat ripens in the middle of summer.",
     bodyUk:
-        "Пшениця колоситься — почалася 'осінь у літі' (麦秋). Спробуй свіжий хліб з трохи солоного мисо-масла, це їжа на той рідкісний тиждень.",
+        "Пшениця колоситься — почалася 'осінь у літі' (麦秋). Спробуй свіжий хліб з трохи солоного місо-масла, це їжа на той рідкісний тиждень.",
     bodyEn:
         "Wheat ripens in early summer — the Japanese call this 'autumn-in-summer' (mugi-aki); fresh bread with a thin layer of salted miso-butter fits perfectly.",
     activityUk:
@@ -539,7 +539,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     bodyEn:
         "Tanabata — a warm wind carries the stars. For supper: cold somen noodles, thin as the silvery threads of the Milky Way; a couple of spoons of tsuyu, no more.",
     activityUk:
-        "Напиши одне бажання на смужці кольорового паперу і прив'яжи до гілки чи рослини. Це не магія, а форма уважності, як Хей’анська традиція.",
+        "Напиши одне бажання на смужці кольорового паперу і прив'яжи до гілки чи рослини. Це не магія, а форма уважності, як хейанська традиція.",
     activityEn:
         "Write one wish on a strip of coloured paper and tie it to a branch or houseplant. Not magic — a form of attention, the way the Heian court did it.",
     contemplationUk:
@@ -596,10 +596,10 @@ const Map<int, PracticeNote> seasonalPractice = {
         "Kiri (paulownia) was planted at a daughter's birth and made into her dowry chest. Reflect on what, in your life, you planted long-term.",
   ),
   35: PracticeNote(
-    mottoUk: "Доьо — шов між сезонами: не вимагай від себе ясності, лише доброти.",
+    mottoUk: "Дойо — шов між сезонами: не вимагай від себе ясності, лише доброти.",
     mottoEn: "Doyō is the seam between seasons — ask for kindness, not clarity.",
     bodyUk:
-        "Шлунок страждає від вологи: уникай сирого і холодного, обери варені страви, рисову кашу з імбиром, гарячий мугі-ча. Це класичний доьо-режим.",
+        "Шлунок страждає від вологи: уникай сирого і холодного, обери варені страви, рисову кашу з імбиром, гарячий мугі-ча. Це класичний дойо-режим.",
     bodyEn:
         "The stomach suffers in the damp; avoid raw and cold dishes, prefer cooked food — rice porridge with ginger, hot barley tea. Classic doyō care.",
     activityUk:
@@ -607,7 +607,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     activityEn:
         "This week the Japanese eat eel (unagi) on the day of the ox to endure the heat; otherwise grilled oily fish with rice and umeboshi paste does it.",
     contemplationUk:
-        "Доьо — момент між порами, коли тіло і світ переходять. Не чекай від себе ясності цього тижня. Достатньо просто триматись доброти до себе.",
+        "Дойо — момент між порами, коли тіло і світ переходять. Не чекай від себе ясності цього тижня. Достатньо просто триматись доброти до себе.",
     contemplationEn:
         "Doyō is the seam between seasons, when both body and world cross over. Don't expect clarity this week — small kindness toward yourself is enough.",
   ),
@@ -615,7 +615,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Юдачі ніколи не довша за чверть години — переждеш під дахом, нічого не пиши.",
     mottoEn: "A yūdachi never lasts past fifteen minutes — wait under cover, write nothing.",
     bodyUk:
-        "Великі дощі — повітря важке: пий гарячу воду, не холодну, додай у супи трохи кудзу. Кудзу і шмат свіжого імбиру — сімейний антидот липню в Кьото.",
+        "Великі дощі — повітря важке: пий гарячу воду, не холодну, додай у супи трохи кудзу. Кудзу і шмат свіжого імбиру — сімейний антидот липню в Кіото.",
     bodyEn:
         "Great rains, heavy air; drink hot water, not cold, and slip a little kudzu into soups. Kudzu with fresh ginger is the Kyoto household antidote to July.",
     activityUk:
@@ -824,7 +824,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Гуси століттями летять одним маршрутом — який твій тримає тебе в формі?",
     mottoEn: "Geese hold one route for centuries — which of yours keeps your shape?",
     bodyUk:
-        "Дикі гуси повертаються — приходять справжні холодні ранки: спробуй гарячий мізо-суп з кабочою (японським гарбузом) і шматочком тофу.",
+        "Дикі гуси повертаються — приходять справжні холодні ранки: спробуй гарячий місо-суп з кабочою (японським гарбузом) і шматочком тофу.",
     bodyEn:
         "Wild geese return as real cold mornings begin; a hot miso soup with kabocha and a piece of tofu fits the week perfectly.",
     activityUk:
@@ -840,7 +840,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Поглянь на хризантему: вона знає, як квітнути в холоді.",
     mottoEn: "Watch the chrysanthemum — it knows how to bloom into the cold.",
     bodyUk:
-        "Хризантеми цвітуть — Чьоьо, день дев'ятого. Налий чашку гарячого саке з пелюсткою кіку (їстівної хризантеми) або просто додай у чай ромашку.",
+        "Хризантеми цвітуть — Тьойо, день дев'ятого. Налий чашку гарячого саке з пелюсткою кіку (їстівної хризантеми) або просто додай у чай ромашку.",
     bodyEn:
         "Chrysanthemums bloom — Chōyō, the ninth day; pour hot sake with an edible kiku petal, or simply drop chamomile into your tea.",
     activityUk:
@@ -856,7 +856,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Цвіркун співає під вікном — не зачиняй, з ним ти зимуєш.",
     mottoEn: "A cricket sings under the window — leave it open, you winter together.",
     bodyUk:
-        "Цвіркуни біля дверей — будинок проситься в порядок: розбери одну полицю, що шурхотіла усе літо. Уважна осіння господарка — це теж ё-дзо.",
+        "Цвіркуни біля дверей — будинок проситься в порядок: розбери одну полицю, що шурхотіла усе літо. Уважна осіння господарка — це теж йоджо.",
     bodyEn:
         "Crickets at the door, the house wants tidying; clear one shelf that has rustled all summer. Quiet autumn housekeeping is yōjō too.",
     activityUk:
@@ -904,7 +904,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Зайди в один парк двічі за тиждень — між двома візитами проявляться характери.",
     mottoEn: "Visit one park twice this week — characters show in the gap between visits.",
     bodyUk:
-        "Клен і плющ жовтіють — у саду йде період моміджі. На столі: смажений ґінкго (іньо) у мисо-юдзу або печене яблуко з місо-карамеллю.",
+        "Клен і плющ жовтіють — у саду йде період моміджі. На столі: смажений ґінкго (іньо) у місо-юдзу або печене яблуко з місо-карамеллю.",
     bodyEn:
         "Maple and ivy yellow — momiji time; on the table, roasted ginkgo nuts in miso-yuzu, or baked apple with miso caramel.",
     activityUk:
@@ -921,7 +921,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Цубакі падає одразу цілою — відпусти не повільно, а одним рухом.",
     mottoEn: "Tsubaki falls whole, never petal by petal — let go in one gesture.",
     bodyUk:
-        "Цубакі (камелія) розкривається — час потовщувати супи: спробуй густіший мізо з кабочою, чорними соєвими бобами і шматочком водорості комбу.",
+        "Цубакі (камелія) розкривається — час потовщувати супи: спробуй густіший місо з кабочою, чорними соєвими бобами і шматочком водорості комбу.",
     bodyEn:
         "Tsubaki (camellia) opens — soups want body; a thicker miso with kabocha, kuromame, and a small piece of kombu does the work this week.",
     activityUk:
@@ -937,7 +937,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Земля твердіє сама — згадай, де за рік ти теж затвердів у доброму сенсі.",
     mottoEn: "The earth hardens by itself — recall where you, too, firmed in a good way.",
     bodyUk:
-        "Земля промерзає — стопи стигнуть першими: перед сном теплі ванни для ніг (асі-юу) з ложкою солі та шматочком імбиру. Це класичне зимове ё-дзо.",
+        "Земля промерзає — стопи стигнуть першими: перед сном теплі ванни для ніг (асі-ю) з ложкою солі та шматочком імбиру. Це класичне зимове йоджо.",
     bodyEn:
         "The ground freezes and feet cool first; before bed, an ashi-yu — foot bath with a spoonful of salt and a slice of ginger. Winter yōjō at its quietest.",
     activityUk:
@@ -1033,7 +1033,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Серце ведмедя сповільнюється, не вимикається — обери одну книжку на зиму.",
     mottoEn: "A bear's heart slows, it does not stop — choose one book to winter with.",
     bodyUk:
-        "Ведмеді у барлогу — нам теж пора більше сну: спробуй один тиждень лягати на годину раніше. Зимова темрява — не діагноз, а сигнал.",
+        "Ведмеді у барлогах — нам теж пора більше сну: спробуй один тиждень лягати на годину раніше. Зимова темрява — не діагноз, а сигнал.",
     bodyEn:
         "Bears go into the den — we want more sleep too; try one week of going to bed an hour earlier. Winter dark is not a diagnosis but a cue.",
     activityUk:
@@ -1049,7 +1049,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Лосось іде проти власної течії — чи варто йти проти твоєї цієї зими?",
     mottoEn: "Salmon swims against its own current — is yours worth swimming against this winter?",
     bodyUk:
-        "Лосось іде на нерест — час жирної риби: запечений лосось з рідькою, мисо-юдзу і трохи шісо. Це сезонне ё-дзо для нирок і шкіри.",
+        "Лосось іде на нерест — час жирної риби: запечений лосось з рідькою, місо-юдзу і трохи шісо. Це сезонне йоджо для нирок і шкіри.",
     bodyEn:
         "Salmon spawn upstream — oily fish week; baked salmon with daikon, miso-yuzu, and a leaf or two of shiso, the seasonal yōjō for kidneys and skin.",
     activityUk:
@@ -1069,7 +1069,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     bodyEn:
         "Winter solstice — drop yuzu peel in your bath, soak ten minutes; yuzu-yu is not a legend but the body's cleansing rite before the new year.",
     activityUk:
-        "На тоджі їдять кабочу — варену з трохи азукі. Це класичний 'тоджі-кабоча'. Якщо немає — звичайний печений гарбуз з мисо теж робить справу.",
+        "На тоджі їдять кабочу — варену з трохи азукі. Це класичний 'тоджі-кабоча'. Якщо немає — звичайний печений гарбуз з місо теж робить справу.",
     activityEn:
         "On tōji one eats kabocha simmered with azuki — the classic tōji-kabocha. If you can't do that, baked squash with miso does the same work.",
     contemplationUk:
@@ -1097,7 +1097,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Котодама: тихо промовлене слово має силу — встань на десять хвилин раніше.",
     mottoEn: "Kotodama: a whispered word still has power — rise ten minutes earlier.",
     bodyUk:
-        "Шьоґацу — пшениця тихо росте під снігом. На столі озоні (новорічна юшка з моті) і трохи нанакуса-ґаю на наступному тижні. Все робиться повільно.",
+        "Сьоґацу — пшениця тихо росте під снігом. На столі озоні (новорічна юшка з моті) і трохи нанакуса-ґаю на наступному тижні. Все робиться повільно.",
     bodyEn:
         "Shōgatsu — wheat grows quietly under snow; on the table, ozōni (a New Year mochi soup), and nanakusa-gayu coming next week. Everything done slowly.",
     activityUk:
@@ -1145,11 +1145,11 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Фазан кричить, навіть коли ніхто не чує — це теж форма здоров'я.",
     mottoEn: "The pheasant calls whether anyone hears or not — that, too, is health.",
     bodyUk:
-        "Фазани кричать — повітря різке, але ясне: спробуй гарячий рисовий бульйон (одзоюу) з паличкою у-меу-боші і шматочком імбиру.",
+        "Фазани кричать — повітря різке, але ясне: спробуй гарячий рисовий бульйон (одзою) з паличкою умебоші і шматочком імбиру.",
     bodyEn:
         "Pheasants call — the air is sharp but clear; try a hot rice broth (ozōyu) with a single umeboshi and a slice of ginger.",
     activityUk:
-        "У саду чи парку послухай зимових птахів — у січні вони голосні, бо немає листя. Кажен звук іде далі, ніж улітку.",
+        "У саду чи парку послухай зимових птахів — у січні вони голосні, бо немає листя. Кожен звук іде далі, ніж улітку.",
     activityEn:
         "In a yard or park, listen to winter birds; in January their calls travel farther because there are no leaves to soften the air.",
     contemplationUk:
@@ -1161,7 +1161,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Тіло прокидається через гіркоту, не через солодке — шукай зелене на чорній землі.",
     mottoEn: "The body wakes through bitterness, not sweetness — find green on the black earth.",
     bodyUk:
-        "Фукіното (брунька білокопитника) проривається з-під снігу — перша гірка зелень. Дрібно посічена в тенпуру або у місо-суп — пробудник печінки.",
+        "Фукіното (брунька білокопитника) проривається з-під снігу — перша гірка зелень. Дрібно посічена в темпуру або у місо-суп — пробудник печінки.",
     bodyEn:
         "Fukinotō pushes through the snow — the first bitter green; finely chopped into tempura or miso soup, it wakens the liver.",
     activityUk:
@@ -1193,7 +1193,7 @@ const Map<int, PracticeNote> seasonalPractice = {
     mottoUk: "Звук соєвих бобів за дверима важливіший за слова — оні-ва-сото.",
     mottoEn: "The sound of beans at the door matters more than the words — oni-wa-soto.",
     bodyUk:
-        "Курки знов несуться — світло повертається. На сецубун — еха-маки, цілий ролл суші, який їдять мовчки, дивлячись на щасливий напрямок року.",
+        "Курки знов несуться — світло повертається. На сецубун — ехо-маки, цілий ролл суші, який їдять мовчки, дивлячись на щасливий напрямок року.",
     bodyEn:
         "Hens lay again — light is returning; on Setsubun, ehō-maki, a whole sushi roll eaten in silence facing the year's lucky direction.",
     activityUk:

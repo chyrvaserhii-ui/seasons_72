@@ -693,7 +693,7 @@ const Map<int, KigoPairing> seasonalKigo = {
         noteEn: 'A verb form — when the paddy is flooded, frogs become the night chorus.',
       ),
     ],
-    summaryUk: 'Очерет витикається над водою, молода крона тримає світло — весна перевтілюється у ранне літо.',
+    summaryUk: 'Очерет витикається над водою, молода крона тримає світло — весна перевтілюється у раннє літо.',
     summaryEn: 'Reeds rise above the water and young canopy holds the light — spring tilts into early summer.',
   ),
 
@@ -829,7 +829,7 @@ const Map<int, KigoPairing> seasonalKigo = {
         romaji: 'mimizu',
         glossUk: '(дощовий черв\'як)',
         glossEn: '(earthworm)',
-        noteUk: 'Мімідзу — раннелітнє кіґо: ґрунт стає теплим і черви знаходять верхній шар.',
+        noteUk: 'Мімідзу — ранньолітнє кіґо: ґрунт стає теплим і черви знаходять верхній шар.',
         noteEn: 'Mimizu — an early-summer kigo: the soil warms and worms find the upper layer.',
       ),
       KigoEntry(
@@ -938,7 +938,7 @@ const Map<int, KigoPairing> seasonalKigo = {
         romaji: 'benibana',
         glossUk: '(сафлор для червоної барви)',
         glossEn: '(safflower)',
-        noteUk: 'Беніба — головний барвник старої Японії; цвіт жовто-помаранчевий, дає густий червоний.',
+        noteUk: 'Беніхана — головний барвник старої Японії; цвіт жовто-помаранчевий, дає густий червоний.',
         noteEn: 'Benibana — old Japan\'s chief dye flower; yellow-orange in bloom, dyes a deep red.',
       ),
       KigoEntry(
@@ -1373,7 +1373,7 @@ const Map<int, KigoPairing> seasonalKigo = {
       KigoEntry(
         japanese: '土用',
         romaji: 'doyō',
-        glossUk: '(18-денна точка калéндаря)',
+        glossUk: '(18-денна точка календаря)',
         glossEn: '(18-day calendar marker)',
         noteUk: 'Дойо — 18-денний період перед наступним сезоном; кіґо адміністративного календаря.',
         noteEn: 'Doyō — the 18-day stretch before each season turn; an administrative kigo.',
@@ -1578,7 +1578,7 @@ const Map<int, KigoPairing> seasonalKigo = {
         romaji: 'bon-odori',
         glossUk: '(танець обона)',
         glossEn: '(obon dance)',
-        noteUk: 'Бон-одорі — нічний колодний танець під ліхтарями; кіґо людської дії.',
+        noteUk: 'Бон-одорі — нічний коловий танець під ліхтарями; кіґо людської дії.',
         noteEn: 'Bon-odori — the nightly circle-dance under lanterns; a human-act kigo.',
       ),
       KigoEntry(
@@ -2526,7 +2526,7 @@ const Map<int, KigoPairing> seasonalKigo = {
         romaji: 'fuyu-no-kawa',
         glossUk: '(зимова річка)',
         glossEn: '(winter river)',
-        noteUk: 'Фую-но-кава — низька, темна, з прозорою водою; в неї і піднімається сейке.',
+        noteUk: 'Фую-но-кава — низька, темна, з прозорою водою; в неї і піднімається саке.',
         noteEn: 'Fuyu-no-kawa — low, dark, with clear water; the sake rises into it.',
       ),
     ],
@@ -2549,7 +2549,7 @@ const Map<int, KigoPairing> seasonalKigo = {
         romaji: 'yuzuyu',
         glossUk: '(ванна з юдзу на дзодзі)',
         glossEn: '(yuzu bath on solstice)',
-        noteUk: 'Юдзу-ю — солнцестойна ванна з цитрусами; кіґо домашнього ритуалу.',
+        noteUk: 'Юдзу-ю — ванна на сонцестояння з цитрусами; кіґо домашнього ритуалу.',
         noteEn: 'Yuzuyu — the solstice citrus bath; a kigo of household ritual.',
       ),
       KigoEntry(

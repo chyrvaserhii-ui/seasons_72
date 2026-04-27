@@ -28,6 +28,7 @@ class ColorsCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isUk = locale.languageCode == 'uk';
     final onSurface = theme.colorScheme.onSurface;
+    final isDark = theme.brightness == Brightness.dark;
 
     // The card's accent comes from the deepest (last) layer — feels
     // appropriate since in Heian usage the lining was the boldest part
@@ -45,51 +46,66 @@ class ColorsCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Material(
-          // Use a near-neutral wash so it never fights the swatches.
-          color: onSurface.withValues(alpha: 0.04),
+        ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => _showSheet(context, pairing, isUk),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _LayerSwatchStack(
-                    layers: pairing.layers,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${pairing.kasaneJa}  ${isUk ? pairing.kasaneUk : pairing.kasaneEn}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          pairing.kasaneRomaji,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: onSurface.withValues(alpha: 0.65),
-                          ),
-                        ),
-                      ],
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _showSheet(context, pairing, isUk),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: isDark ? 0.14 : 0.16),
+                  border: Border(
+                    left: BorderSide(
+                      color: accent.withValues(alpha: 0.70),
+                      width: 3,
+                    ),
+                    bottom: BorderSide(
+                      color: accent.withValues(alpha: 0.18),
+                      width: 0.5,
                     ),
                   ),
-                  Icon(
-                    Icons.info_outline,
-                    size: 18,
-                    color: onSurface.withValues(alpha: 0.45),
-                  ),
-                ],
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _LayerSwatchStack(
+                      layers: pairing.layers,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${pairing.kasaneJa}  ${isUk ? pairing.kasaneUk : pairing.kasaneEn}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            pairing.kasaneRomaji,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: onSurface.withValues(alpha: 0.65),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: onSurface.withValues(alpha: 0.45),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

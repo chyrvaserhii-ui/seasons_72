@@ -46,53 +46,69 @@ class FoodCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Material(
-          color: persimmon.withValues(alpha: isDark ? 0.10 : 0.12),
+        ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => _showSheet(context, food, isUk, persimmon),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '🍱',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: persimmon.withValues(alpha: 0.92),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _showSheet(context, food, isUk, persimmon),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: persimmon.withValues(alpha: isDark ? 0.14 : 0.16),
+                  border: Border(
+                    left: BorderSide(
+                      color: persimmon.withValues(alpha: 0.70),
+                      width: 3,
+                    ),
+                    bottom: BorderSide(
+                      color: persimmon.withValues(alpha: 0.18),
+                      width: 0.5,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isUk ? food.nameUk : food.nameEn,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          _foodTypeLabel(food.type, isUk),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: onSurface.withValues(alpha: 0.65),
-                          ),
-                        ),
-                      ],
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '🍱',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: persimmon.withValues(alpha: 0.92),
+                      ),
                     ),
-                  ),
-                  Icon(
-                    Icons.info_outline,
-                    size: 18,
-                    color: onSurface.withValues(alpha: 0.45),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isUk ? food.nameUk : food.nameEn,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            _foodTypeLabel(food.type, isUk),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: onSurface.withValues(alpha: 0.65),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: onSurface.withValues(alpha: 0.45),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -215,9 +231,9 @@ class _FoodDetailsSheet extends StatelessWidget {
 String _foodTypeLabel(FoodType t, bool isUk) {
   if (isUk) {
     switch (t) {
-      case FoodType.wagashi:   return 'Васі (солодощі)';
+      case FoodType.wagashi:   return 'Ваґаші (солодощі)';
       case FoodType.sakana:    return 'Сакана (риба і морепродукти)';
-      case FoodType.yasai:     return 'Ясай (овочі, ґірські трави)';
+      case FoodType.yasai:     return 'Ясай (овочі, гірські трави)';
       case FoodType.gohan:     return 'Гохан (рисова страва)';
       case FoodType.shirumono: return 'Сірумоно (суп, набе)';
       case FoodType.men:       return 'Мен (локшина)';

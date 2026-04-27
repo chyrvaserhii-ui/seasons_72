@@ -66,7 +66,7 @@ const List<CardTradition> cardTraditionsUk = [
     contents: 'Назва касане (наприклад «сакура-ґасане», «корі-ґасане»), 2–3 кольорові шари з японськими назвами, і нота, що в’яже палітру до природного явища.',
   ),
   CardTradition(
-    emoji: '🌫️',
+    emoji: '🪔',
     name: 'Сезонні пахощі kōdō',
     tradition: 'З придворного шляху пахощів 香道. Класичні хейанські неріко (баіка, кайо, кікка, ракуйо, куробо) і едо-кумікō (ґенджі-кō, юмеджі-кō, цукімі-кō) — там, де підходять; для решти — сучасні композиції в тому ж кōдō-регістрі.',
     contents: 'Назва суміші, тема (одне-рядкове образне твердження), 4–5 канонічних інгредієнтів (агар, сандал, гвоздика, нард, мускус...) з перекладом.',
@@ -112,7 +112,7 @@ const List<CardTradition> cardTraditionsEn = [
     contents: 'Kasane name (e.g. "sakura-gasane", "kōri-gasane"), 2–3 layered colour swatches with Japanese names, and a note linking the palette to the kō.',
   ),
   CardTradition(
-    emoji: '🌫️',
+    emoji: '🪔',
     name: 'Seasonal kōdō incense',
     tradition: 'From the courtly way of incense 香道. Classical Heian neriko (baika, kayō, kikka, rakuyō, kurobō) and Edo kumikō games (Genji-kō, Yumeji-kō, Tsukimi-kō) where they fit; modern compositions in the same kōdō register elsewhere.',
     contents: 'Blend name, evocative one-line theme, and 4–5 canonical ingredients (agarwood, sandalwood, clove, spikenard, musk…) translated for non-specialists.',

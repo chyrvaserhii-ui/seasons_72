@@ -46,63 +46,81 @@ class TeaCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Material(
-          // Light theme needs a stronger alpha to differentiate the
-          // card from white scaffold; dark theme keeps the airy 0.10
-          // since pastel on dark already shows.
-          color: jade.withValues(alpha: isDark ? 0.10 : 0.12),
+        ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            // Light theme needs a stronger alpha to differentiate the
+            // card from white scaffold; dark theme keeps the airy 0.10
+            // since pastel on dark already shows.
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => _showSheet(context, tea, isUk, jade),
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Per-category glyph — distinguishes a Wuyi rock tea from
-              // a Tieguanyin orchid-fragrant oolong at a glance.
-              Text(
-                _typeEmoji(tea.type),
-                style: TextStyle(
-                  fontSize: 20,
-                  color: jade.withValues(alpha: 0.92),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isUk ? tea.nameUk : tea.nameEn,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _showSheet(context, tea, isUk, jade),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: jade.withValues(alpha: isDark ? 0.14 : 0.16),
+                  border: Border(
+                    left: BorderSide(
+                      color: jade.withValues(alpha: 0.70),
+                      width: 3,
                     ),
+                    bottom: BorderSide(
+                      color: jade.withValues(alpha: 0.18),
+                      width: 0.5,
+                    ),
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Per-tea glyph — name-level overrides where the tea's
+                    // name has a vivid visual hook (Dragon Well, Monkey
+                    // King, Frozen Peak, etc.); falls back to category
+                    // default for everything else.
                     Text(
-                      // Тільки категорія — підваріетій уже у nameUk
-                      // (наприклад "Шоу Мей (Брова довголіття)").
-                      _categoryLabel(tea.type, isUk),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: onSurface.withValues(alpha: 0.65),
+                      _teaEmoji(tea),
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: jade.withValues(alpha: 0.92),
                       ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isUk ? tea.nameUk : tea.nameEn,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            // Тільки категорія — підваріетій уже у nameUk
+                            // (наприклад "Шоу Мей (Брова довголіття)").
+                            _categoryLabel(tea.type, isUk),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: onSurface.withValues(alpha: 0.65),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: onSurface.withValues(alpha: 0.45),
                     ),
                   ],
                 ),
               ),
-              Icon(
-                Icons.info_outline,
-                size: 18,
-                color: onSurface.withValues(alpha: 0.45),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-    ),
       ],
     );
   }
@@ -292,15 +310,57 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-/// Per-category glyph used on the row card. Each TeaType gets a single
-/// expressive emoji that hints at terroir or character — a fresh sprout
-/// for green, downy feather for white silver-needle, a rock for Wuyi
-/// yan-cha, an orchid for Tieguanyin, etc. The bottom sheet still uses
-/// the Chinese kanji as its hero, so this is purely a quick row glance.
+/// Glyph for one tea pairing on the row card.
+///
+/// Resolution order:
+///   1. Per-NAME override (this function) — the tea's `subVariety`
+///      string is matched against a hand-curated list. Used when the
+///      Chinese name itself paints a vivid image (Dragon Well = 🐉,
+///      Monkey King = 🐒, Frozen Peak = ❄️ …).
+///   2. Per-TYPE default ([_typeEmoji]) — fallback for teas whose name
+///      doesn't have a clear visual hook (mostly mountain/region named
+///      teas like Bingdao or Yiwu).
+///
+/// The override list is intentionally conservative: only teas whose
+/// translated name has a strong visual referent get a custom glyph.
+/// Generic "X mountain" or "Y village" teas keep the type default so
+/// the row still tells the user what KIND of tea they're looking at.
+String _teaEmoji(TeaPairing tea) {
+  switch (tea.subVariety) {
+    case 'Лун Цзін':           return '🐉'; // 龙井 "Dragon Well"
+    case 'Бі Ло Чунь':         return '🐌'; // 碧螺春 "Green Snail Spring"
+    case 'Цзюньшань Іньчжень': return '🪡'; // 君山銀針 silver needles, Mt Jun
+    case 'Бай Хао Інь Чжень':  return '🪡'; // 白毫銀針 silver needles, white down
+    case 'Тай Пін Хоу Куй':    return '🐒'; // 太平猴魁 "Monkey King of Taiping"
+    case 'Хуаншань Мао Фен':   return '🏔️'; // 黄山毛峰 "Hairy peak, Yellow Mt"
+    case 'Сон Чжун':           return '🦚'; // Phoenix dancong (Sòng-dynasty bush)
+    case 'Цзінь Сюань':        return '🥛'; // 金萱 milk-oolong character
+    case 'Цзінь Цзюнь Мей':    return '🐎'; // 金骏眉 "Golden eyebrow of spirited horse"
+    case 'Лапсан Сушон':       return '🔥'; // 正山小种 pine-smoked over fire
+    case 'Бай Цзі Ґуань':      return '🐓'; // 白鸡冠 "White cockscomb"
+    case 'Уї Шуй Сянь':        return '💧'; // 武夷水仙 "Water immortal"
+    case 'Дун Дін':            return '❄️'; // 凍頂 "Frozen peak"
+    case 'Юе Ґуан Бай':        return '🌙'; // 月光白 "Moonlight white"
+    case 'Чень Пі Пуер':       return '🍊'; // 陳皮普洱 tangerine-peel pu-erh
+    case 'Я Ши Сян':           return '🦆'; // 鸭屎香 "Duck aroma" dancong
+    case 'Мі Лань Сян':        return '🍯'; // 蜜兰香 "Honey orchid fragrance"
+    case 'Чжи Лань Сян':       return '🌸'; // 芝兰香 "Orchid fragrance"
+    case 'Ісін Хун Ча':        return '🏺'; // 宜兴红茶 — the Yixing teapot region
+    case 'Гун Тін':            return '👑'; // 宫廷 "Palace-tribute" pu-erh
+    case 'Да Хун Пао':         return '🧥'; // 大红袍 "Big red robe"
+    default:                    return _typeEmoji(tea.type);
+  }
+}
+
+/// Per-category fallback glyph. Each TeaType gets a single expressive
+/// emoji that hints at terroir or character — a fresh sprout for green,
+/// stylised white-flower for white silver-needle / Bai Mu Dan, a rock
+/// for Wuyi yan-cha, an orchid for Tieguanyin, etc. Used by [_teaEmoji]
+/// when no per-name override matches.
 String _typeEmoji(TeaType t) {
   switch (t) {
     case TeaType.greenTea:             return '🌱'; // fresh sprout
-    case TeaType.whiteTea:             return '🪶'; // silver down on buds
+    case TeaType.whiteTea:             return '💮'; // white-peony bloom (白牡丹)
     case TeaType.yellowTea:            return '🌕'; // pale gold
     case TeaType.redTea:               return '🍂'; // roasted-leaf red
     case TeaType.northFujianOolong:    return '🪨'; // Wuyi yan-cha rock

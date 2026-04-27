@@ -329,7 +329,7 @@ const Map<int, KodoPairing> seasonalKodo = {
     themeUk: 'останній день, коли ще можна сказати «весна»',
     themeEn: 'the last day on which "spring" can still be said',
     noteUk:
-        'Едоська гра святого касузького лугу: повний неріко-стиль із дзинко (агар), сандалом і пряностями — тепло на порозі літа.',
+        'Едоська гра святого Касуґа-лугу: повний неріко-стиль із дзинко (агар), сандалом і пряностями — тепло на порозі літа.',
     noteEn:
         'An Edo Kasuga-meadow game: full neriko style with jinkō (agarwood), sandalwood and spice — warmth on the threshold of summer.',
   ),
@@ -535,7 +535,7 @@ const Map<int, KodoPairing> seasonalKodo = {
   32: KodoPairing(
     japanese: '荷葉',
     romaji: 'kayō',
-    nameUk: 'Каьо (лотосовий лист — класичний неріко)',
+    nameUk: 'Кайо (лотосовий лист — класичний неріко)',
     nameEn: 'Kayō (lotus leaf, classical Heian neriko)',
     ingredients: ['jinkō', 'byakudan', 'kanshō', 'chōji'],
     themeUk: 'квітка, що піднімається з мулу, але не пахне ним',
@@ -974,7 +974,7 @@ const Map<int, KodoPairing> seasonalKodo = {
   61: KodoPairing(
     japanese: '落葉',
     romaji: 'rakuyō',
-    nameUk: 'Ракуьо (опале листя — класичний неріко)',
+    nameUk: 'Ракуйо (опале листя — класичний неріко)',
     nameEn: 'Rakuyō (fallen leaves, classical Heian neriko)',
     ingredients: ['kyara', 'jinkō', 'kunroku', 'jakō', 'kasshoku-kō'],
     themeUk: 'покривало, що зробив за тебе вітер',
@@ -1070,7 +1070,7 @@ const Map<int, KodoPairing> seasonalKodo = {
     themeUk: 'найкоротший день, у якому повертається довжина',
     themeEn: 'the shortest day with length already returning',
     noteUk:
-        'Сучасна композиція: щільна кяра (преміум-агар) з мускусом і кашшоку (темна смола) — теплий, тлумаки темряви, в якій уже є насіння наступного дня.',
+        'Сучасна композиція: щільна кяра (преміум-агар) з мускусом і кашшоку (темна смола) — тепла гущавина темряви, в якій уже є насіння наступного дня.',
     noteEn:
         'A modern composition: dense kyara (premium agar) with jakō (musk) and kasshoku-kō (dark resin) — a warm, deep darkness already holding the seed of the next day.',
   ),

@@ -210,7 +210,7 @@ const Map<int, FoodPairing> seasonalFoods = {
     nameUk: "Кашіва-мочі (мочі з квасолевою пастою у дубовому листі для свята хлопчиків)",
     nameEn: "Kashiwa mochi (sweet mochi wrapped in an oak leaf for Boys' Day)",
     type: FoodType.wagashi,
-    noteUk: "Білий мочі, обгорнутий у твердий лист дуба — піон вже відцвів, але міцність кореня оста на язиці гіркуватим запахом дерева.",
+    noteUk: "Білий мочі, обгорнутий у твердий лист дуба — піон вже відцвів, але міцність кореня лишається на язиці гіркуватим запахом дерева.",
     noteEn: "White mochi folded in a stiff oak leaf — the peony has bloomed and gone, but the rooted strength stays as a faint woody bitterness.",
   ),
   // ─── Summer ────────────────────────────────────────────────────────────
@@ -280,7 +280,7 @@ const Map<int, FoodPairing> seasonalFoods = {
   26: FoodPairing(
     japanese: "若鮎の塩焼き",
     romaji: "wakaayu shio-yaki",
-    nameUk: "Ваказйу шіо-які (молодий аю з гірської річки, сольно гриль)",
+    nameUk: "Вакаю шіо-які (молодий аю з гірської річки, на грилі з сіллю)",
     nameEn: "Wakaayu shio-yaki (young sweetfish skewered and salt-grilled, eaten whole)",
     type: FoodType.sakana,
     noteUk: "Молодий аю на шпажці, посипаний сіллю — у його річці зараз спалахують перші світляки, наче з-під каменів зривається тиха електрика.",
@@ -289,7 +289,7 @@ const Map<int, FoodPairing> seasonalFoods = {
   27: FoodPairing(
     japanese: "梅干し",
     romaji: "umeboshi",
-    nameUk: "Умебоші (солені сушені слива, вижовкла на сонці)",
+    nameUk: "Умебоші (солені сушені сливи, вижовклі на сонці)",
     nameEn: "Umeboshi (sun-dried, salt-pickled plums)",
     type: FoodType.hozon,
     noteUk: "Жовто-руда зморщена слива, висушена на трьох літніх сонцях — той самий плід, що зараз дозріває до медового кольору на гілці.",
@@ -370,7 +370,7 @@ const Map<int, FoodPairing> seasonalFoods = {
   36: FoodPairing(
     japanese: "鰻丼",
     romaji: "unadon",
-    nameUk: "Унадон (рис із зацукрованим вугрем, страва Доє-но-уші у спеку)",
+    nameUk: "Унадон (рис із зацукрованим вугрем, страва Дойо-но-уші у спеку)",
     nameEn: "Unadon (rice topped with kabayaki eel, eaten on Doyō no Ushi)",
     type: FoodType.gohan,
     noteUk: "Засмаглий вугор у солодкому соусі поверх гарячого рису — їжа дня великих злив, коли тіло змивають літні води, а сила потрібна знов.",
@@ -527,7 +527,7 @@ const Map<int, FoodPairing> seasonalFoods = {
     nameUk: "Кіноко-джіру (місо-суп з лісовими грибами)",
     nameEn: "Kinoko-jiru (miso soup with mixed forest mushrooms)",
     type: FoodType.shirumono,
-    noteUk: "Темний місо-суп з мацутаке, шіймеджі і шіїтаке — пара з мисочки густішає у вечірньому повітрі, як короткі дощики, що пройдуть і затихнуть.",
+    noteUk: "Темний місо-суп з мацутаке, шіймеджі і шіїтаке — пара з місочки густішає у вечірньому повітрі, як короткі дощики, що пройдуть і затихнуть.",
     noteEn: "A dark miso soup of matsutake, shimeji and shiitake — its steam thickening in the evening air, like the brief rain showers passing through.",
   ),
   54: FoodPairing(
@@ -600,7 +600,7 @@ const Map<int, FoodPairing> seasonalFoods = {
     nameUk: "Касу-джіру (суп з саке-касу, лосося і коренеплодів)",
     nameEn: "Kasu-jiru (soup of sake lees, salmon and root vegetables)",
     type: FoodType.shirumono,
-    noteUk: "Молочно-біла мисочка з саке-касу, лососем і коренеплодами — її пара перша зустрічає холод, що тепер усідається в кожному кутку дому.",
+    noteUk: "Молочно-біла місочка з саке-касу, лососем і коренеплодами — її пара перша зустрічає холод, що тепер усідається в кожному кутку дому.",
     noteEn: "A milky bowl of sake lees, salmon and roots — its steam the first thing to meet the cold now settling into every corner of the house.",
   ),
   62: FoodPairing(
@@ -624,7 +624,7 @@ const Map<int, FoodPairing> seasonalFoods = {
   64: FoodPairing(
     japanese: "冬至かぼちゃ",
     romaji: "tōji-kabocha",
-    nameUk: "Тоодзі-кабоча (тушкована гарбуз з адзукі на день зимового сонцестояння)",
+    nameUk: "Тодзі-кабоча (тушкований гарбуз з адзукі на день зимового сонцестояння)",
     nameEn: "Tōji-kabocha (kabocha squash simmered with adzuki on the winter solstice)",
     type: FoodType.yasai,
     noteUk: "Помаранчевий шматок гарбуза з темно-червоною адзукі — сонячний колір, який ставлять на стіл саме того дня, коли сонце стоїть найкоротше.",
@@ -642,7 +642,7 @@ const Map<int, FoodPairing> seasonalFoods = {
   66: FoodPairing(
     japanese: "お雑煮",
     romaji: "ozōni",
-    nameUk: "Одзооні (новорічний суп з мочі, овочами і даші)",
+    nameUk: "Одзоні (новорічний суп з мочі, овочами і даші)",
     nameEn: "Ozōni (New Year mochi soup, varied region by region)",
     type: FoodType.shirumono,
     noteUk: "Новорічний суп з округлим мочі і зеленими паростками — перший подих року, поданий гарячим, поки під снігом росте молода пшениця.",

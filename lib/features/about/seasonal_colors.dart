@@ -114,7 +114,7 @@ const Map<int, ColorPairing> seasonalColors = {
         hex: "6E7E54",
         nameJa: "海松",
         nameRomaji: "miru",
-        nameUk: "Мірю (морська сосна)",
+        nameUk: "Міру (морська сосна)",
         nameEn: "Miru (sea-pine olive)",
       ),
       ColorLayer(
@@ -169,7 +169,7 @@ const Map<int, ColorPairing> seasonalColors = {
         hex: "6E7E54",
         nameJa: "海松",
         nameRomaji: "miru",
-        nameUk: "Мірю (морська сосна)",
+        nameUk: "Міру (морська сосна)",
         nameEn: "Miru (sea-pine olive)",
       ),
     ],
@@ -813,7 +813,7 @@ const Map<int, ColorPairing> seasonalColors = {
         nameEn: "Tokusa (scouring-rush green)",
       ),
     ],
-    noteUk: "Синичо-жовтий над темним хвощем — тінь лісу густішає, а на узліссі цвіте однопелюстковий пінелій.",
+    noteUk: "Синичо-жовтий над темним хвощем — тінь лісу густішає, а на узліссі цвіте однопелюсткова пінелія.",
     noteEn: "Siskin-yellow over scouring-rush — the forest shadow thickening as crow-dipper opens at its edge.",
   ),
   31: ColorPairing(
@@ -1695,7 +1695,7 @@ const Map<int, ColorPairing> seasonalColors = {
         nameEn: "Chitose-midori (thousand-year green)",
       ),
     ],
-    noteUk: "Сніговий білий, святковий кіноварний і вічна зелень — церемоніальний шар першого дня, де озіма пшениця спить під снігом.",
+    noteUk: "Сніговий білий, святковий кіноварний і вічна зелень — церемоніальний шар першого дня, де озима пшениця спить під снігом.",
     noteEn: "Snow white, festive vermilion, and evergreen — the formal layering of New Year's day, with winter wheat asleep beneath the snow.",
   ),
   67: ColorPairing(
@@ -1719,7 +1719,7 @@ const Map<int, ColorPairing> seasonalColors = {
         nameEn: "Mizu-asagi (water-blue-green)",
       ),
     ],
-    noteUk: "Сніжно-білий над блідою водяною блакиттю — петрушка серітеться зеленню над холодним струмком сімох трав.",
+    noteUk: "Сніжно-білий над блідою водяною блакиттю — петрушка стелиться зеленню над холодним струмком сімох трав.",
     noteEn: "Snow-white over pale water-blue — water-dropwort showing its green above the cold stream of the seven herbs.",
   ),
   68: ColorPairing(

@@ -726,7 +726,7 @@ class _PullQuote extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         color: accent.withValues(alpha: isDark ? 0.16 : 0.12),
         borderRadius: BorderRadius.circular(14),
@@ -735,38 +735,24 @@ class _PullQuote extends StatelessWidget {
           width: 0.6,
         ),
       ),
-      child: Stack(
-        children: [
-          // Decorative oversize opening quote glyph in the corner.
-          Positioned(
-            left: -2,
-            top: -10,
-            child: Text(
-              '“',
-              style: TextStyle(
-                fontSize: 48,
-                height: 1.0,
-                fontWeight: FontWeight.w700,
-                color: accent.withValues(alpha: isDark ? 0.55 : 0.45),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 6, 6, 0),
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.4,
-                height: 1.45,
-                color: onSurface.withValues(alpha: 0.92),
-              ),
-            ),
-          ),
-        ],
+      // Pulled out the oversize Western "“" glyph — it rendered as a
+      // heavy block-quote mark that read as out-of-place against the
+      // app's restrained Japanese typography. Italic also dropped for
+      // the same reason. The pull-quote now relies on the tinted card
+      // + accent border alone for emphasis, in line with the rest of
+      // the visual system. If a "callout" feel is wanted later, the
+      // cleanest Japanese equivalent is a small「」corner bracket
+      // before the text, NOT a large decorative quote glyph.
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.4,
+          height: 1.45,
+          color: onSurface.withValues(alpha: 0.92),
+        ),
       ),
     );
   }

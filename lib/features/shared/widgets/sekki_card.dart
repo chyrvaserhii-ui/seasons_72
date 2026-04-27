@@ -38,50 +38,75 @@ class SekkiCard extends StatelessWidget {
     final isUk = locale.languageCode == 'uk';
     final onSurface = theme.colorScheme.onSurface;
     final isDark = theme.brightness == Brightness.dark;
+    // Moss-olive — fixed accent for the Sekki card, evoking the rice
+    // paddy / 🌾 grain register that "phase of the year" rhymes with.
+    // Independent of meta-season tint: see period_card.dart for the
+    // rationale (Period and Sekki used to share the meta accent and
+    // came out visually identical). The passed-in [accentColor] is now
+    // ignored on purpose — kept on the constructor only for backwards
+    // call-site compatibility.
+    const moss = Color(0xFF8E9C5C);
+    final cardAccent = moss;
 
-    final card = Material(
-      color: accentColor.withValues(alpha: isDark ? 0.12 : 0.14),
+    final card = ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: InkWell(
+      child: Material(
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(10),
-        onTap: () => _showSekkiSheet(context),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            children: [
-              Text(
-                sekki.kanji,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: onSurface,
-                  fontWeight: FontWeight.w700,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => _showSekkiSheet(context),
+          child: Container(
+            decoration: BoxDecoration(
+              color: cardAccent.withValues(alpha: isDark ? 0.14 : 0.16),
+              border: Border(
+                left: BorderSide(
+                  color: cardAccent.withValues(alpha: 0.70),
+                  width: 3,
+                ),
+                bottom: BorderSide(
+                  color: cardAccent.withValues(alpha: 0.18),
+                  width: 0.5,
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      sekki.localizedName(locale),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      meta.localizedName(locale),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: onSurface.withValues(alpha: 0.70),
-                      ),
-                    ),
-                  ],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                Text(
+                  sekki.kanji,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: onSurface,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.info_outline,
-                size: 18,
-                color: onSurface.withValues(alpha: 0.45),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        sekki.localizedName(locale),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        meta.localizedName(locale),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: onSurface.withValues(alpha: 0.70),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: onSurface.withValues(alpha: 0.45),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -106,6 +131,11 @@ class SekkiCard extends StatelessWidget {
   }
 
   void _showSekkiSheet(BuildContext context) {
+    // Pass the same moss accent to the details sheet so its headings,
+    // separators, and emoji tint match the row card the user just
+    // tapped. Caller-provided [accentColor] is ignored — the card
+    // owns its colour identity now.
+    const moss = Color(0xFF8E9C5C);
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -115,7 +145,7 @@ class SekkiCard extends StatelessWidget {
         sekki: sekki,
         meta: meta,
         locale: locale,
-        accentColor: accentColor,
+        accentColor: moss,
       ),
     );
   }

@@ -43,56 +43,72 @@ class PracticeCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Material(
-          color: sage.withValues(alpha: isDark ? 0.10 : 0.12),
+        ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+          child: Material(
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => _showSheet(context, note, isUk, sage),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '🪷',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: sage.withValues(alpha: 0.92),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _showSheet(context, note, isUk, sage),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: sage.withValues(alpha: isDark ? 0.14 : 0.16),
+                  border: Border(
+                    left: BorderSide(
+                      color: sage.withValues(alpha: 0.70),
+                      width: 3,
+                    ),
+                    bottom: BorderSide(
+                      color: sage.withValues(alpha: 0.18),
+                      width: 0.5,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isUk
-                              ? 'Як прожити ці п\'ять днів'
-                              : 'How to live these five days',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          isUk
-                              ? 'тіло · дія · споглядання'
-                              : 'body · activity · contemplation',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: onSurface.withValues(alpha: 0.65),
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                      ],
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '🪷',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: sage.withValues(alpha: 0.92),
+                      ),
                     ),
-                  ),
-                  Icon(
-                    Icons.info_outline,
-                    size: 18,
-                    color: onSurface.withValues(alpha: 0.45),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isUk
+                                ? 'Як прожити ці п\'ять днів'
+                                : 'How to live these five days',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            isUk
+                                ? 'тіло · дія · споглядання'
+                                : 'body · activity · contemplation',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: onSurface.withValues(alpha: 0.65),
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: onSurface.withValues(alpha: 0.45),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

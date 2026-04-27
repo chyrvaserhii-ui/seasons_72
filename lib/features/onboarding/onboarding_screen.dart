@@ -1397,11 +1397,11 @@ class _PageCardsState extends State<_PageCards>
     _CardSpec('日', 'Період', 'Period',
         'які звичні нам дати охоплює кō',
         'which familiar dates this kō covers',
-        Color(0xFFA0A0A0)),
+        Color(0xFF6E7E8E)), // slate inkstone — matches PeriodCard
     _CardSpec('節', 'Підсезон', 'Sub-season',
         'ширше дихання — секкі, у якому живе кō',
         'the wider breath — the sekki this kō lives in',
-        Color(0xFF8FBF7F)),
+        Color(0xFF8E9C5C)), // moss-olive rice paddy — matches SekkiCard
     _CardSpec('茶', 'Чай', 'Tea',
         'китайський сорт під настрій цих днів',
         'a Chinese tea tuned to these days',

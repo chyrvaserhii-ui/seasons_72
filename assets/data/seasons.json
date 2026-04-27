@@ -5,36 +5,36 @@
       "romaji": "Haru",
       "en": "Spring",
       "uk": "Весна",
-      "colorHex": "#F4B5C1",
+      "colorHex": "#D8A8BE",
       "emoji": "🌸",
-      "colorHexDark": "#FFA8B5"
+      "colorHexDark": "#E5A8C5"
     },
     "summer": {
       "kanji": "夏",
       "romaji": "Natsu",
       "en": "Summer",
       "uk": "Літо",
-      "colorHex": "#8FBF7F",
+      "colorHex": "#7DB0A8",
       "emoji": "☀️",
-      "colorHexDark": "#8FDD9E"
+      "colorHexDark": "#8DC8C0"
     },
     "autumn": {
       "kanji": "秋",
       "romaji": "Aki",
       "en": "Autumn",
       "uk": "Осінь",
-      "colorHex": "#D89060",
+      "colorHex": "#B58576",
       "emoji": "🍂",
-      "colorHexDark": "#F0A070"
+      "colorHexDark": "#C89484"
     },
     "winter": {
       "kanji": "冬",
       "romaji": "Fuyu",
       "en": "Winter",
       "uk": "Зима",
-      "colorHex": "#8DAAC7",
+      "colorHex": "#7A9FC0",
       "emoji": "❄️",
-      "colorHexDark": "#A8C4E0"
+      "colorHexDark": "#9CBFDC"
     }
   },
   "sekki": [
@@ -830,7 +830,7 @@
       "endMonth": 7,
       "endDay": 6,
       "descEn": "The crow-dipper plant appears, marking mid-summer planting season.",
-      "descUk": "З'являється пінеллія — знак середини літнього сезону посадки.",
+      "descUk": "З'являється пінелія — знак середини літнього сезону посадки.",
       "emoji": "🌿",
       "haikuUk": "Півліта вже збігло —\nтрава поспішає\nцвісти чимшвидше.",
       "haikuAuthor": "Шікі",
