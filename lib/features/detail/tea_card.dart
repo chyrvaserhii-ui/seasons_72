@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../about/tea_pairings.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// A small tappable card on the detail screen showing the Chinese tea
 /// paired with the current kō. Visual language: per-category glyph
@@ -111,6 +112,7 @@ class TeaCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) => _TeaDetailsSheet(tea: tea, isUk: isUk, accent: accent),
     );
   }
@@ -141,20 +143,12 @@ class _TeaDetailsSheet extends StatelessWidget {
     final brewing =
         variety == null ? '' : (isUk ? variety.brewingUk : variety.brewingEn);
 
-    final mq = MediaQuery.of(context);
-    // Cap the sheet so it never eats the whole screen — leaves room for
-    // the drag handle and visual breathing space.
-    final maxHeight = mq.size.height * 0.85;
-
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
               // ─── Hero (centered) ───────────────────────────────────────
               Center(
                 child: Text(
@@ -268,8 +262,6 @@ class _TeaDetailsSheet extends StatelessWidget {
               ],
             ],
           ),
-        ),
-      ),
     );
   }
 }

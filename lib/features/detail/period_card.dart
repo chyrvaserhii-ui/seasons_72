@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/models/season_models.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Calendrical period card for the current kō. Mirrors the visual
 /// vocabulary of the seven deep-dive cards (caps header, tinted row,
@@ -112,6 +113,7 @@ class PeriodCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) => _PeriodDetailsSheet(
         ko: ko,
         meta: meta,
@@ -167,8 +169,6 @@ class _PeriodDetailsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-    final mq = MediaQuery.of(context);
-    final maxHeight = mq.size.height * 0.85;
 
     final year = DateTime.now().year;
     final dfFull = DateFormat.yMMMMd(locale.languageCode);
@@ -181,15 +181,12 @@ class _PeriodDetailsSheet extends StatelessWidget {
     final inSekki = _koInSekki(ko);
     final inMeta = _koInMeta(ko);
 
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
               Center(
                 child: Text(
                   isUk ? 'ПЕРІОД' : 'PERIOD',
@@ -277,8 +274,6 @@ class _PeriodDetailsSheet extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 }

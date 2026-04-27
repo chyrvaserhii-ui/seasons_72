@@ -9,6 +9,7 @@ import '../../core/providers/seasons_providers.dart';
 import '../../core/utils/localized_names.dart';
 import '../../core/utils/season_calculator.dart';
 import '../detail/season_detail_screen.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Calendar — full picture of the year, shown in two complementary
 /// modes the user can switch between via a centred segmented control
@@ -535,16 +536,20 @@ class _ListView extends ConsumerWidget {
   }) {
     final accent = meta.colorFor(brightness);
     final tint = meta.tintColorFor(brightness);
-    // Six-step monotonic alpha ramp (one per sekki within meta).
-    // Step bumped from 0.034 → 0.05 because adjacent sekki at the
-    // smaller step were perceptually identical on real screens —
-    // 0.07 vs 0.10 alpha is below the human-eye threshold for tinted
-    // pastel on white. With a 0.05 step the ramp goes 0.07–0.32 in
-    // light, 0.08–0.33 in dark — each sekki distinctly visible
-    // against its neighbours while still pastel-elegant overall.
+    // Six-step alpha ramp (one per sekki within meta), step 0.06:
+    //   • light: 0.05–0.35
+    //   • dark:  0.08–0.38
+    // Ramp deliberately compressed — earlier 0.13 step produced top
+    // stops at 0.73/0.77 alpha that read as "punchy / too bright" on
+    // light theme and "too contrasty against the dark surface" on
+    // dark theme. Compromise: keep the top end gentle and let the
+    // PER-KŌ left-edge stripe (see [_buildSekkiBlock] / kō item
+    // builder below) carry the within-sekki position cue. Tile bg
+    // tells you "which pora roku / which sekki", stripe tells you
+    // "which of the three kō inside this sekki".
     final tileBgAlpha = isDark
-        ? 0.08 + sekkiIdx * 0.05
-        : 0.07 + sekkiIdx * 0.05;
+        ? 0.08 + sekkiIdx * 0.06
+        : 0.05 + sekkiIdx * 0.06;
 
     return SliverMainAxisGroup(
       slivers: [
@@ -562,36 +567,82 @@ class _ListView extends ConsumerWidget {
           itemBuilder: (context, i) {
             final s = sekkiKo[i];
             final isCurrent = s.index == currentIndex;
+            final isFirstInSekki = i == 0;
+            final isLastInSekki = i == sekkiKo.length - 1;
             final year = DateTime.now().year;
-            return Container(
-              color: tint.withValues(alpha: tileBgAlpha),
-              child: ListTile(
-                key: isCurrent ? currentTileKey : null,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                leading: _IndexBadge(
-                    number: s.index,
-                    color: accent,
-                    active: isCurrent),
-                title: Text(
-                  '${s.kanji}  ${s.localizedName(locale)}',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight:
-                            isCurrent ? FontWeight.w700 : FontWeight.w500,
-                      ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+            // Per-kō left-edge stripe carries the within-sekki cue.
+            // Three kō within one sekki get progressively stronger
+            // accent stripes — ko 1 ghostly, ko 3 solid — so the
+            // user can tell which of the three they're looking at
+            // even when the tile bgs (per-sekki, deliberately gentle)
+            // are visually similar. Implemented via the box-decoration
+            // BORDER (not a separate Row child) so the natural height
+            // of ListTile is preserved — earlier IntrinsicHeight+Row
+            // approach was forcing a uniform row height that clipped
+            // 2-line subtitles on long-name kō (Sugomori mushito o
+            // hiraku, etc).
+            final stripeAlpha = [0.30, 0.55, 0.85][i];
+            final stripeSide = BorderSide(
+              color: accent.withValues(alpha: stripeAlpha),
+              width: 4,
+            );
+            // The three kō under one sekki render as a single visually
+            // contained card: 20 px horizontal margin to align with the
+            // sekki / meta headers above and below, top corners rounded
+            // on the first tile, bottom corners rounded on the last
+            // tile. ClipRRect on the outer wrap ensures the InkWell
+            // ripple respects the rounded edges instead of overflowing.
+            const radius = Radius.circular(12);
+            final theme = Theme.of(context);
+            final hairlineSide = BorderSide(
+              color: theme.colorScheme.onSurface
+                  .withValues(alpha: isDark ? 0.18 : 0.16),
+              width: 0.5,
+            );
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: isFirstInSekki ? radius : Radius.zero,
+                  bottom: isLastInSekki ? radius : Radius.zero,
                 ),
-                subtitle: Text(
-                  '${s.romaji}  ·  ${df.format(s.startDateForYear(year))} – ${df.format(s.endDateForYear(year))}',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: tint.withValues(alpha: tileBgAlpha),
+                    border: isLastInSekki
+                        ? Border(left: stripeSide)
+                        : Border(left: stripeSide, bottom: hairlineSide),
+                  ),
+                  child: ListTile(
+                    key: isCurrent ? currentTileKey : null,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 4),
+                    leading: _IndexBadge(
+                        number: s.index,
+                        color: accent,
+                        active: isCurrent),
+                    title: Text(
+                      '${s.kanji}  ${s.localizedName(locale)}',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight:
+                                isCurrent ? FontWeight.w700 : FontWeight.w500,
+                          ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      '${s.romaji}  ·  ${df.format(s.startDateForYear(year))} – ${df.format(s.endDateForYear(year))}',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) =>
+                            SeasonDetailScreen(seasonIndex: s.index),
+                      ));
+                    },
+                  ),
                 ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => SeasonDetailScreen(seasonIndex: s.index),
-                  ));
-                },
               ),
             );
           },
@@ -1150,14 +1201,18 @@ class _MiniMonth extends StatelessWidget {
                 final accent = meta.colorFor(brightness);
                 final tint = meta.tintColorFor(brightness);
                 final sekkiInMeta = ((ko.index - 1) % 18) ~/ 3;
-                // Six-step ramp with step 0.05 so adjacent sekki are
-                // perceptually distinct on real screens. At the prior
-                // 0.036 step pastel cells blurred into one band on
-                // the tinted paper backdrop; 0.05 gives a clean
-                // staircase from 0.07 to 0.32 in light theme.
+                // Six-step alpha ramp, step 0.08 (light: 0.05–0.45,
+                // dark: 0.08–0.48). Months-grid cells are tiny (~30px
+                // square) so they need MORE alpha differentiation than
+                // the list view tiles — at the list's gentler 0.06
+                // step the day cells smeared into one band again.
+                // List view compensates with its left-edge stripe;
+                // months grid relies on tile bg alone, so the ramp
+                // here is widened. Sekki-legend swatch below MUST
+                // match this exactly.
                 final tileAlpha = isDark
-                    ? 0.10 + sekkiInMeta * 0.05
-                    : 0.07 + sekkiInMeta * 0.05;
+                    ? 0.08 + sekkiInMeta * 0.08
+                    : 0.05 + sekkiInMeta * 0.08;
                 final isToday = date.year == today.year &&
                     date.month == today.month &&
                     date.day == today.day;
@@ -1259,11 +1314,11 @@ class _SekkiLegend extends StatelessWidget {
       final meta = repo.meta(ko.metaId);
       final tint = meta.tintColorFor(brightness);
       final sekkiInMeta = ((ko.index - 1) % 18) ~/ 3;
-      // Same six-step ramp as day cells (step 0.05) — the legend
-      // swatch must visually equal the cells it is naming.
+      // Same six-step alpha ramp (step 0.08) as day cells — the
+      // legend swatch must visually equal the cells it is naming.
       final alpha = isDark
-          ? 0.10 + sekkiInMeta * 0.05
-          : 0.07 + sekkiInMeta * 0.05;
+          ? 0.08 + sekkiInMeta * 0.08
+          : 0.05 + sekkiInMeta * 0.08;
       sekkiSwatch[sekki.id] = tint.withValues(alpha: alpha);
     }
 
@@ -1396,12 +1451,13 @@ void _showDayPreview({
   showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
+    isScrollControlled: true,
+    useSafeArea: true,
     builder: (ctx) {
       final theme = Theme.of(ctx);
-      return Padding(
+      return DismissibleModalSheet(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Date headline.

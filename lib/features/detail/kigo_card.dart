@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../about/seasonal_kigo.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Kigo (季語) — saijiki seasonal words tied to the current kō. The
 /// row card surfaces the count of words and the lead entry; the bottom
@@ -130,6 +131,7 @@ class KigoCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) =>
           _KigoDetailsSheet(pairing: pairing, isUk: isUk, accent: accent),
     );
@@ -151,18 +153,13 @@ class _KigoDetailsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-    final mq = MediaQuery.of(context);
-    final maxHeight = mq.size.height * 0.88;
 
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
               Center(
                 child: Text(
                   isUk ? 'СЕЗОННІ СЛОВА' : 'SEASONAL WORDS',
@@ -229,8 +226,6 @@ class _KigoDetailsSheet extends StatelessWidget {
               ],
             ],
           ),
-        ),
-      ),
     );
   }
 }

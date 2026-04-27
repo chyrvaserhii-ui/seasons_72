@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../about/seasonal_practice.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Three quiet prompts paired to the current kō: body, activity,
 /// contemplation. The card is the most invitational of the four detail
@@ -106,6 +107,7 @@ class PracticeCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) =>
           _PracticeDetailsSheet(note: note, isUk: isUk, accent: accent),
     );
@@ -127,15 +129,10 @@ class _PracticeDetailsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-    final mq = MediaQuery.of(context);
-    final maxHeight = mq.size.height * 0.85;
 
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -205,8 +202,6 @@ class _PracticeDetailsSheet extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 }

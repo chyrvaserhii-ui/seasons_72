@@ -112,6 +112,32 @@ runs first because B (reach) is more effective when there's a fresh
 - Reduce-motion compliance: respect `MediaQuery.disableAnimations` for onboarding crossfades
 - Sticky meta + sekki headers in Calendar list view (recommended in design critique)
 
+## ⚠️ Open issue — calendar sekki colour differentiation
+
+Sekki cells inside one meta-season still read as one band on real
+devices, both on the months grid and (to a lesser extent) on the
+list view. Iterations explored so far:
+
+| Attempt | What | Why it failed |
+|---|---|---|
+| Alpha step 0.05 (original) | `tint × (0.07 + idx*0.05)` | Adjacent sekki perceptually identical |
+| Alpha step 0.08 → 0.10 → 0.13 | Wider gap | Top stops became "punchy / too bright" in light, "too contrasty" in dark; bottom stops still indistinct |
+| HSL lightness ramp (0.92→0.52 light, 0.18→0.62 dark) | Solid colour walk per stop | Dark mode high sekki rendered near-saturated red — looked bad |
+| Compressed alpha 0.06 + per-kō left stripe (current) | Tile bg = sekki, 4-px stripe = kō within sekki | Months grid now too subtle (no stripe to compensate); months bumped back to 0.08 step. List view OK with stripe + 0.06 step |
+
+Current state: list view differentiates 18 kō clearly via *bg×sekki +
+stripe×kō*, but the months grid still relies on alpha-only and the
+six sekki stops within one meta blur into one tone band on small
+day cells.
+
+**Ideas to try next:**
+- Different hue per sekki within a meta — e.g., very subtle `HSLColor.withHue` shift of ±5° per stop. Keeps the meta family but adds chromatic, not just luminance, separation.
+- Sekki marker glyph in the day cell (a tiny dot, sub-cell, 2-px square) coloured by sekki accent — orthogonal cue, doesn't depend on bg alpha.
+- Decorative diagonal hatching (1px stripes at ~15% alpha) in the day cell for sekki position — barely-there texture cue used in printed Japanese calendars.
+- Pre-compute a 6-step palette per meta (designer-curated colour stops, not arithmetic) so each sekki has a hand-picked hue inside the meta family.
+
+Whichever path, validate on real device in *both* themes — the eye reads alpha on OLED dark very differently from cream-paper light, and a ramp that works on one will collapse on the other (we hit this twice already).
+
 ---
 
 ## How to read this roadmap

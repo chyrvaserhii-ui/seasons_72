@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:seasons_72/l10n/app_localizations.dart';
 
 import '../../../core/utils/moon_calculator.dart';
+import 'dismissible_modal_sheet.dart';
 
 /// Small moon-phase glyph, tappable to reveal a details sheet.
 ///
@@ -98,6 +99,8 @@ class MoonPhaseIndicator extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (ctx) => _MoonDetailsSheet(info: info),
     );
   }
@@ -143,6 +146,8 @@ class MoonPhasePill extends StatelessWidget {
               onTap: () => showModalBottomSheet(
                 context: context,
                 showDragHandle: true,
+                isScrollControlled: true,
+                useSafeArea: true,
                 builder: (ctx) => _MoonDetailsSheet(info: info),
               ),
               child: Container(
@@ -228,7 +233,7 @@ class _MoonDetailsSheet extends StatelessWidget {
 
     final phaseLabel = _phaseLabel(context, info.phaseName);
 
-    return Padding(
+    return DismissibleModalSheet(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

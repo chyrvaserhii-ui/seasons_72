@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../about/seasonal_foods.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Seasonal Japanese food paired to the current kō.
 ///
@@ -106,6 +107,7 @@ class FoodCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) =>
           _FoodDetailsSheet(food: food, isUk: isUk, accent: accent),
     );
@@ -127,18 +129,13 @@ class _FoodDetailsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-    final mq = MediaQuery.of(context);
-    final maxHeight = mq.size.height * 0.85;
 
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
               Center(
                 child: Text(
                   isUk ? 'СЕЗОННА ЇЖА' : 'SEASONAL FOOD',
@@ -209,8 +206,6 @@ class _FoodDetailsSheet extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 }

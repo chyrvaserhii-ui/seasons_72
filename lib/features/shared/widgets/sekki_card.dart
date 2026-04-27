@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/models/season_models.dart';
 import '../../../core/utils/localized_names.dart';
 import '../../about/sekki_descriptions.dart';
+import 'dismissible_modal_sheet.dart';
 
 /// Sekki (24-season) cultural context card.
 ///
@@ -109,6 +110,7 @@ class SekkiCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) => _SekkiDetailsSheet(
         sekki: sekki,
         meta: meta,
@@ -140,13 +142,12 @@ class _SekkiDetailsSheet extends StatelessWidget {
         ? ''
         : (locale.languageCode == 'uk' ? desc.uk : desc.en);
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
             Text(
               meta.localizedName(locale).toUpperCase(),
               style: theme.textTheme.labelLarge?.copyWith(
@@ -192,7 +193,6 @@ class _SekkiDetailsSheet extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }

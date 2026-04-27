@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -676,7 +677,7 @@ class _PageNow extends StatelessWidget {
               const SizedBox(height: 36),
               Text(
                 isUk
-                    ? 'Це один із 72 крихітних сезонів японського року — по 5 днів кожен. Просто зараз триває саме цей.'
+                    ? 'Це один із 72 крихітних сезонів японського року — по 5 днів кожен. Саме зараз триває цей.'
                     : 'This is one of 72 tiny seasons in the Japanese year — five days each. Right now, this is the one unfolding.',
                 style: TextStyle(
                   fontSize: 15.5,
@@ -939,7 +940,7 @@ class _Phase4Seasons extends StatelessWidget {
         }),
       ),
       prose: isUk
-          ? 'Усі звикли до 4 пір року: весна, літо, осінь, зима. Але східна традиція ділить рік ще тонше — кожна пора розпадається на 24 фази (секкі), а ті — на 72 короткі сезони природи (кō).'
+          ? 'Усі знають 4 пори року: весна, літо, осінь, зима. Але східна традиція ділить рік ще тонше — кожна пора розпадається на 24 фази (секкі), а ті — на 72 короткі сезони природи (кō).'
           : 'Everyone grew up with 4 seasons: spring, summer, autumn, winter. But Eastern tradition slices the year much finer — each season breaks into 24 phases (sekki), and those — into 72 short seasons of nature (kō).',
     );
   }
@@ -969,7 +970,7 @@ class _Phase24Sekki extends StatelessWidget {
       dim: dim,
       visual: _SekkiRow(metaColors: metaColors),
       prose: isUk
-          ? 'Кожна з 4 пір року ділиться на 6 секкі — періодів по ~15 днів. У кожного власна назва й настрій: «початок весни», «дощ для злаків», «малий холод».'
+          ? 'Кожна з 4 пір року ділиться на 6 секкі — це періоди по 15 днів. У кожного власна назва й настрій: «початок весни», «хлібний дощ», «малий холод» тощо.'
           : 'Each of the 4 seasons splits into 6 sekki — ~15-day periods. Each has its own name and feel: "start of spring", "grain rain", "minor cold".',
     );
   }
@@ -1025,7 +1026,7 @@ class _Phase72Ko extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                isUk ? 'ось у якому ти зараз' : 'this is the one you\u2019re in',
+                isUk ? 'ось у якому ми зараз' : 'this is the one we\u2019re in',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -1045,7 +1046,7 @@ class _Phase72Ko extends StatelessWidget {
         ],
       ),
       prose: isUk
-          ? 'Кожне секкі вміщає 3 кō по 5 днів. Один кō ловить одну тонку зміну в природі: «персики цвітуть», «жаби заспівали», «перші морози». Цей застосунок — про них.'
+          ? 'Кожне секкі вміщає 3 кō по 5 днів. Один кō ловить одну тонку зміну в природі: «персики цвітуть», «жаби заспівали», «перші морози». Цей застосунок — про опис та зміни кō.'
           : 'Each sekki holds 3 kō, 5 days each. A single kō captures one subtle shift in nature: "peach blossoms", "frogs begin to call", "first frosts". This app is about them.',
     );
   }
@@ -1327,28 +1328,44 @@ class _PageCardsState extends State<_PageCards>
     super.initState();
     _ctl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3400),
+      // Total bumped 6000 → 8500ms so the sequential card pulse can
+      // breathe. With 9 cards × 850ms-wide pulses (formerly 300ms)
+      // and a small overlap between adjacent cards, the staircase
+      // reads as a slow continuous wave rather than nine quick
+      // flashes — matches the rest of the app's quiet pacing.
+      duration: const Duration(milliseconds: 8500),
     );
-    // 0.0–0.15 title, 0.15–0.27 subtitle, 0.27–0.40 row1,
-    // 0.40–0.53 row2, 0.53–0.66 row3, 0.66–1.0 caption.
+    // Phase map (proportions of the 8500ms timeline):
+    //   0.00–0.06  title             (~510ms)
+    //   0.06–0.13  subtitle          (~595ms)
+    //   0.13–0.21  row1 fade-in      (~680ms)
+    //   0.21–0.29  row2 fade-in      (~680ms)
+    //   0.29–0.37  row3 fade-in      (~680ms)
+    //   0.37–0.42  breath
+    //   0.42–0.94  pulse phase: 9 cards, each window 0.10 wide
+    //              (= ~850ms), stride 0.055 between starts so adjacent
+    //              cards overlap ~0.045 — produces the continuous
+    //              wave effect rather than nine isolated blinks.
+    //              Tile-side constants: see [_CardGridTile].
+    //   0.94–1.00  caption
     _titleAnim = CurvedAnimation(
         parent: _ctl,
-        curve: const Interval(0.0, 0.15, curve: Curves.easeOut));
+        curve: const Interval(0.0, 0.06, curve: Curves.easeOut));
     _subtitleAnim = CurvedAnimation(
         parent: _ctl,
-        curve: const Interval(0.15, 0.27, curve: Curves.easeOut));
+        curve: const Interval(0.06, 0.13, curve: Curves.easeOut));
     _row1Anim = CurvedAnimation(
         parent: _ctl,
-        curve: const Interval(0.27, 0.40, curve: Curves.easeOut));
+        curve: const Interval(0.13, 0.21, curve: Curves.easeOut));
     _row2Anim = CurvedAnimation(
         parent: _ctl,
-        curve: const Interval(0.40, 0.53, curve: Curves.easeOut));
+        curve: const Interval(0.21, 0.29, curve: Curves.easeOut));
     _row3Anim = CurvedAnimation(
         parent: _ctl,
-        curve: const Interval(0.53, 0.66, curve: Curves.easeOut));
+        curve: const Interval(0.29, 0.37, curve: Curves.easeOut));
     _captionAnim = CurvedAnimation(
         parent: _ctl,
-        curve: const Interval(0.66, 1.0, curve: Curves.easeOut));
+        curve: const Interval(0.94, 1.0, curve: Curves.easeOut));
     if (widget.isVisible) _ctl.forward();
   }
 
@@ -1451,7 +1468,12 @@ class _PageCardsState extends State<_PageCards>
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 6),
+          // Big gap before the subtitle: that label introduces the 3×3
+          // grid below it, not the title above. Pulled the subtitle
+          // down so it visually anchors to the cards rather than to
+          // the page heading. Counter-balanced by a tighter
+          // subtitle→grid gap (10 px instead of 18) below.
+          const SizedBox(height: 28),
           FadeTransition(
             opacity: _subtitleAnim,
             child: Text(
@@ -1474,7 +1496,10 @@ class _PageCardsState extends State<_PageCards>
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 18),
+          // Tight subtitle→grid gap (was 18, now 10) — the subtitle
+          // is the label for the cards, so it should hug the grid
+          // visually instead of floating between title and grid.
+          const SizedBox(height: 10),
           // 3×3 grid of square tiles (kanji + name) — fits comfortably
           // without scrolling on any iPhone. Established UI pattern
           // for "categories overview" (iOS Settings, App Store
@@ -1498,19 +1523,31 @@ class _PageCardsState extends State<_PageCards>
                 FadeTransition(
                   opacity: _row1Anim,
                   child: _CardGridRow(
-                      cards: _cards.sublist(0, 3), isUk: isUk),
+                    cards: _cards.sublist(0, 3),
+                    globalStartIndex: 0,
+                    pulseListenable: _ctl,
+                    isUk: isUk,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 FadeTransition(
                   opacity: _row2Anim,
                   child: _CardGridRow(
-                      cards: _cards.sublist(3, 6), isUk: isUk),
+                    cards: _cards.sublist(3, 6),
+                    globalStartIndex: 3,
+                    pulseListenable: _ctl,
+                    isUk: isUk,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 FadeTransition(
                   opacity: _row3Anim,
                   child: _CardGridRow(
-                      cards: _cards.sublist(6, 9), isUk: isUk),
+                    cards: _cards.sublist(6, 9),
+                    globalStartIndex: 6,
+                    pulseListenable: _ctl,
+                    isUk: isUk,
+                  ),
                 ),
               ],
             ),
@@ -1559,8 +1596,25 @@ class _PageCardsState extends State<_PageCards>
 /// itself from the tight width handed down by [Expanded] and the
 /// row picks up that height naturally.
 class _CardGridRow extends StatelessWidget {
-  const _CardGridRow({required this.cards, required this.isUk});
+  const _CardGridRow({
+    required this.cards,
+    required this.globalStartIndex,
+    required this.pulseListenable,
+    required this.isUk,
+  });
   final List<_CardSpec> cards;
+
+  /// Index of the FIRST card in this row within the full 9-card grid
+  /// (0 for row 1, 3 for row 2, 6 for row 3). Each tile's pulse window
+  /// is computed from `globalStartIndex + localIndex`, so the sweep
+  /// goes 1 → 9 across all rows even though each row is its own widget.
+  final int globalStartIndex;
+
+  /// Animation that drives the sequential pulse — usually the page's
+  /// master `_ctl`. Each tile reads the current value to decide whether
+  /// it's currently in its own 0.05-wide pulse window.
+  final Animation<double> pulseListenable;
+
   final bool isUk;
   @override
   Widget build(BuildContext context) {
@@ -1569,7 +1623,14 @@ class _CardGridRow extends StatelessWidget {
       children: [
         for (int i = 0; i < cards.length; i++) ...[
           if (i > 0) const SizedBox(width: 10),
-          Expanded(child: _CardGridTile(spec: cards[i], isUk: isUk)),
+          Expanded(
+            child: _CardGridTile(
+              spec: cards[i],
+              cardIndex: globalStartIndex + i,
+              pulseListenable: pulseListenable,
+              isUk: isUk,
+            ),
+          ),
         ],
       ],
     );
@@ -1587,64 +1648,139 @@ class _CardGridRow extends StatelessWidget {
 /// glanceable and matches the established iOS / App Store pattern
 /// for category previews.
 class _CardGridTile extends StatelessWidget {
-  const _CardGridTile({required this.spec, required this.isUk});
+  const _CardGridTile({
+    required this.spec,
+    required this.cardIndex,
+    required this.pulseListenable,
+    required this.isUk,
+  });
   final _CardSpec spec;
+
+  /// 0..8 — the tile's position in the full 9-card sweep. Drives when
+  /// (and how strongly) this tile pulses during the sequential
+  /// highlight phase of the parent page animation.
+  final int cardIndex;
+
+  /// Master animation (the page's `_ctl`). The tile reads its current
+  /// value each frame and converts that into a 0..1 highlight
+  /// intensity using a sine envelope inside its own window.
+  final Animation<double> pulseListenable;
+
   final bool isUk;
+
+  // Pulse-phase boundaries on the parent's [0,1] timeline. Must stay
+  // in sync with the phase comments in `_PageCardsState.initState`.
+  //
+  // Per-card pulse window is 0.10 wide (~850ms at 8500ms total) and
+  // adjacent cards step by [_cardStride] = 0.055, which is LESS than
+  // the window width — so each pulse overlaps the next by ~0.045.
+  // That overlap is the key to "smooth wave" rather than "9 isolated
+  // flashes": as one card is fading down, the next is already lifting,
+  // so there's always at least one card mid-pulse on screen.
+  //
+  // Span: 8 strides + 1 window = 8 × 0.055 + 0.10 = 0.54.
+  // Last card starts at _phaseStart + 8 × 0.055 = _phaseStart + 0.44,
+  // ends at _phaseStart + 0.54. Place phaseStart = 0.42 so last card
+  // ends at 0.96, overlapping caption (0.94–1.0) just slightly.
+  static const double _phaseStart = 0.42;
+  static const double _cardStride = 0.055;
+  static const double _cardWindow = 0.10;
+
+  /// Highlight intensity for this tile at global animation [t].
+  /// Returns 0 outside the tile's own window; inside the window walks
+  /// 0 → 1 → 0 along a sin curve so the pulse "lifts and settles" in
+  /// place rather than jump-cuts.
+  double _intensityAt(double t) {
+    final cardStart = _phaseStart + cardIndex * _cardStride;
+    final cardEnd = cardStart + _cardWindow;
+    if (t < cardStart || t >= cardEnd) return 0;
+    final localT = (t - cardStart) / _cardWindow; // 0..1
+    return math.sin(localT * math.pi); // 0 → 1 → 0
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Color.alphaBlend(
-            spec.accent.withValues(alpha: isDark ? 0.20 : 0.16),
-            scheme.surface.withValues(alpha: isDark ? 0.92 : 0.95),
-          ),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: spec.accent.withValues(alpha: 0.50),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: spec.accent.withValues(alpha: 0.12),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              spec.kanji,
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
-                color: spec.accent,
-                height: 1.0,
+    final baseFillAlpha = isDark ? 0.20 : 0.16;
+    final baseSurfaceAlpha = isDark ? 0.92 : 0.95;
+
+    return AnimatedBuilder(
+      animation: pulseListenable,
+      builder: (context, _) {
+        final t = pulseListenable.value;
+        final pulse = _intensityAt(t); // 0..1 sine envelope
+
+        // Pulse decoration deltas — small enough that the tile still
+        // feels like the same widget, big enough to clearly read as
+        // "this one is being pointed at right now". Tuned for the
+        // app's quiet aesthetic — no neon glow, just a brief lift.
+        final fillBoost = pulse * 0.18;
+        final borderAlphaBoost = pulse * 0.40;
+        final borderWidth = 1.0 + pulse * 0.6;
+        final shadowAlphaBoost = pulse * 0.32;
+        final shadowBlur = 10.0 + pulse * 16.0;
+        final scale = 1.0 + pulse * 0.05;
+
+        return Transform.scale(
+          scale: scale,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Color.alphaBlend(
+                  spec.accent
+                      .withValues(alpha: baseFillAlpha + fillBoost),
+                  scheme.surface.withValues(alpha: baseSurfaceAlpha),
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: spec.accent
+                      .withValues(alpha: 0.50 + borderAlphaBoost),
+                  width: borderWidth,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: spec.accent
+                        .withValues(alpha: 0.12 + shadowAlphaBoost),
+                    blurRadius: shadowBlur,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    spec.kanji,
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w500,
+                      color: spec.accent,
+                      height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isUk ? spec.uk : spec.en,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                      height: 1.2,
+                      letterSpacing: 0.3,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              isUk ? spec.uk : spec.en,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: scheme.onSurface,
-                height: 1.2,
-                letterSpacing: 0.3,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -1832,7 +1968,7 @@ class _PageBeginState extends State<_PageBegin>
                   children: [
                     Text(
                       isUk
-                          ? 'Сезон (кō) триває п’ять днів. За цей час природа промовить одну дрібну зміну — тихо, як подих. Ми просто допоможемо помітити.'
+                          ? 'Сезон (кō) триває п’ять днів. За цей час природа промовить одну дрібну зміну — немов подих. Ми просто допоможемо помітити.'
                           : 'A season (kō) lasts five days. In that time nature will speak one tiny change — quiet as a breath. We just help you notice.',
                       style: TextStyle(
                         fontSize: 16,
@@ -1846,7 +1982,7 @@ class _PageBeginState extends State<_PageBegin>
                     const SizedBox(height: 14),
                     Text(
                       isUk
-                          ? 'А коли зміниться сезон — підкажемо.'
+                          ? 'А коли зміниться сезон — ми підкажемо.'
                           : 'And when the season turns — we\u2019ll let you know.',
                       style: TextStyle(
                         fontSize: 16,
@@ -1878,24 +2014,58 @@ class _PageBeginState extends State<_PageBegin>
                       horizontal: 14, vertical: 8),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        isUk
-                            ? 'Витоки — у вкладці «Традиція»'
-                            : 'The roots — in the Tradition tab',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: onSurface.withValues(alpha: 0.85),
-                          height: 1.4,
-                          letterSpacing: 0.3,
-                          shadows: softShadow,
-                          decoration: TextDecoration.underline,
-                          decorationColor: onSurface
-                              .withValues(alpha: 0.40),
-                          decorationThickness: 0.8,
+                      // Wrapped in Flexible so the long Ukrainian
+                      // string ("Більше про особливості східної
+                      // культури — у вкладці «Традиція»") wraps onto
+                      // a second line on narrower iPhones instead of
+                      // overflowing past the right edge of the screen.
+                      // Without Flexible the Row's MainAxisSize.min
+                      // tried to take the text's intrinsic width,
+                      // which exceeded the parent's 337-px content
+                      // box and got clipped.
+                      Flexible(
+                        // Split into a plain prose lead + an
+                        // underlined link chunk. Only the chunk
+                        // ("вкладці «Традиція»" / "the Tradition tab")
+                        // gets the underline, so the visual link
+                        // affordance points at the actual destination
+                        // word rather than every word in the line.
+                        // The whole row is still tappable thanks to
+                        // the parent InkWell — splitting only changes
+                        // how the link READS, not how it works.
+                        child: Text.rich(
+                          TextSpan(
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: onSurface.withValues(alpha: 0.85),
+                              height: 1.4,
+                              letterSpacing: 0.3,
+                              shadows: softShadow,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: isUk
+                                    ? 'Більше про особливості східної культури — у '
+                                    : 'More about Eastern culture — in ',
+                              ),
+                              TextSpan(
+                                text: isUk
+                                    ? 'вкладці «Традиція»'
+                                    : 'the Tradition tab',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: onSurface
+                                      .withValues(alpha: 0.40),
+                                  decorationThickness: 0.8,
+                                ),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(width: 4),
                       Icon(

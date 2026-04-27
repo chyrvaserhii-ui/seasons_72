@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/notifications/notification_service.dart';
 import '../../core/providers/seasons_providers.dart';
 import '../../core/settings/settings_provider.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -19,49 +20,37 @@ class SettingsScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 16),
       children: [
         _SectionHeader(l10n.settingsLanguage),
-        RadioGroup<Locale?>(
-          groupValue: settings.locale,
-          onChanged: (v) => notifier.setLocale(v),
-          child: Column(
-            children: [
-              RadioListTile<Locale?>(
-                title: Text(l10n.settingsLanguageSystem),
-                value: null,
-              ),
-              RadioListTile<Locale?>(
-                title: Text(l10n.settingsLanguageEnglish),
-                value: const Locale('en'),
-              ),
-              RadioListTile<Locale?>(
-                title: Text(l10n.settingsLanguageUkrainian),
-                value: const Locale('uk'),
-              ),
-            ],
-          ),
+        // Compact horizontal pill picker — replaces the previous
+        // 3-row RadioListTile stack which ate ~180 px of vertical
+        // space per setting (~360 px combined for language + theme).
+        // Now ~52 px per row, matching the [_ViewToggle] design from
+        // the calendar tab so the app speaks one visual language for
+        // "pick one of N" controls.
+        _PillPicker<Locale?>(
+          value: settings.locale,
+          options: const [null, Locale('en'), Locale('uk')],
+          labels: [
+            l10n.settingsLanguageSystem,
+            l10n.settingsLanguageEnglish,
+            l10n.settingsLanguageUkrainian,
+          ],
+          onChanged: notifier.setLocale,
         ),
         const Divider(),
         _SectionHeader(l10n.settingsTheme),
-        RadioGroup<ThemeMode>(
-          groupValue: settings.themeMode,
-          onChanged: (v) {
-            if (v != null) notifier.setThemeMode(v);
-          },
-          child: Column(
-            children: [
-              RadioListTile<ThemeMode>(
-                title: Text(l10n.settingsThemeSystem),
-                value: ThemeMode.system,
-              ),
-              RadioListTile<ThemeMode>(
-                title: Text(l10n.settingsThemeLight),
-                value: ThemeMode.light,
-              ),
-              RadioListTile<ThemeMode>(
-                title: Text(l10n.settingsThemeDark),
-                value: ThemeMode.dark,
-              ),
-            ],
-          ),
+        _PillPicker<ThemeMode>(
+          value: settings.themeMode,
+          options: const [
+            ThemeMode.system,
+            ThemeMode.light,
+            ThemeMode.dark,
+          ],
+          labels: [
+            l10n.settingsThemeSystem,
+            l10n.settingsThemeLight,
+            l10n.settingsThemeDark,
+          ],
+          onChanged: notifier.setThemeMode,
         ),
         const Divider(),
         SwitchListTile(
@@ -144,9 +133,9 @@ class SettingsScreen extends ConsumerWidget {
         // Japanese woodblock prints close: a rakkan (落款) seal in
         // the corner, with the year below. Impersonal: the symbol
         // speaks, not a name. Tap → modal sheet with the legend.
-        const SizedBox(height: 36),
+        const SizedBox(height: 18),
         const _ColophonMark(),
-        const SizedBox(height: 36),
+        const SizedBox(height: 18),
       ],
     );
   }
@@ -173,7 +162,7 @@ class _ColophonMark extends StatelessWidget {
           onTap: () => _showColophonSheet(context, isUk),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 14),
+                horizontal: 16, vertical: 7),
             // okuzuke order — title kanji → seal stamp → year.
             // Same vertical sequence as the modal sheet (just at
             // a smaller scale), so the user reads the same colophon
@@ -189,9 +178,9 @@ class _ColophonMark extends StatelessWidget {
                     height: 1.0,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 const _SealStamp(size: 64),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Text(
                   '2026',
                   style: theme.textTheme.labelLarge?.copyWith(
@@ -276,10 +265,14 @@ void _showColophonSheet(BuildContext context, bool isUk) {
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
+    // Stops the sheet expanding under the iPhone notch / dynamic
+    // island when content is tall — without this the drag handle
+    // can land under the safe-area cut-out and become unreachable.
+    useSafeArea: true,
     builder: (ctx) {
       final theme = Theme.of(ctx);
       final onSurface = theme.colorScheme.onSurface;
-      return SingleChildScrollView(
+      return DismissibleModalSheet(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,7 +280,8 @@ void _showColophonSheet(BuildContext context, bool isUk) {
             // okuzuke composition — kanji title → seal → year.
             // Identical vertical order to the small _ColophonMark
             // tile in Settings; the modal just renders it at a
-            // larger scale.
+            // larger scale. Spacings tuned compact so the drag
+            // handle stays reachable on smaller iPhones.
             Center(
               child: Text(
                 '菊水',
@@ -299,9 +293,9 @@ void _showColophonSheet(BuildContext context, bool isUk) {
                 ),
               ),
             ),
-            const SizedBox(height: 18),
-            const Center(child: _SealStamp(size: 168)),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+            const Center(child: _SealStamp(size: 140)),
+            const SizedBox(height: 10),
             Center(
               child: Text(
                 '2026',
@@ -312,11 +306,14 @@ void _showColophonSheet(BuildContext context, bool isUk) {
                 ),
               ),
             ),
-            const SizedBox(height: 26),
+            const SizedBox(height: 18),
             // Decorative thin rule with a small seal-red dot — same
             // pattern the haiku block uses across the app.
             const _SealRule(),
-            const SizedBox(height: 26),
+            const SizedBox(height: 18),
+            // Legend prose — three paragraphs at the same weight and
+            // size, reading as one continuous voice instead of
+            // stepping down by importance.
             Text(
               isUk
                   ? 'У японській легенді карп, що йде проти течії, рано чи пізно долає водоспад — і стає драконом. Молодість — це опір, наполегливість, мужність триматися проти води.'
@@ -331,9 +328,9 @@ void _showColophonSheet(BuildContext context, bool isUk) {
               isUk
                   ? 'А той, хто плине за течією, тієї мрії не зрадив — він її прожив. Те, що здалеку виглядає як спокій, не значить здатися: це ясне прийняття, кінцева мета зусилля. Вода, що несе сама, — то ж і є водоспад, який старий карп колись долав.'
                   : 'And the one that flows with the current has not betrayed that dream — it has lived it. What looks from outside like calm does not mean surrender: it is clear acceptance, the final aim of effort. The water that carries on its own is the very waterfall the elder carp once leapt.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: onSurface.withValues(alpha: 0.85),
+              style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.6,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 16),
@@ -341,25 +338,22 @@ void _showColophonSheet(BuildContext context, bool isUk) {
               isUk
                   ? 'Між ними цвіте багряна хризантема — символ довголіття і тихої гідності. А хвиля, що тримає обох, — це сам час.'
                   : 'Between them blooms the crimson chrysanthemum — symbol of longevity and quiet dignity. And the wave that holds both is time itself.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: onSurface.withValues(alpha: 0.85),
+              style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.6,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 18),
-            // Closing remark — italic, slightly larger leading. This
-            // is the only paragraph in a different cut, so the eye
-            // registers it as the "and finally" beat after the
-            // legend prose.
+            // Closing parallel — steps down to the quieter prose
+            // weight, reading as a quiet "and finally..." note
+            // after the legend itself.
             Text(
               isUk
                   ? 'Це той самий жест, що і 72 сезони: світ змінюється, увага лишається. Один день з п’яти — і вже інша квітка цвіте у горах, інша пташка заспівала на світанку.'
                   : 'It is the same gesture as the 72 seasons: the world shifts, attention stays. One day in five and already a different flower has opened in the mountains, a different bird sings at dawn.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: onSurface.withValues(alpha: 0.88),
-                fontStyle: FontStyle.italic,
-                height: 1.65,
-                letterSpacing: 0.15,
+                color: onSurface.withValues(alpha: 0.85),
+                height: 1.6,
               ),
             ),
             const SizedBox(height: 22),
@@ -431,6 +425,125 @@ class _SectionHeader extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
               letterSpacing: 1.5,
             ),
+      ),
+    );
+  }
+}
+
+/// Compact horizontal pill segmented control. Used in Settings for
+/// language and theme — both formerly stacked as 3-row RadioListTile
+/// columns that ate ~180 px of vertical space each. The pill design
+/// here intentionally matches `_ViewToggle` in the calendar tab so
+/// the app speaks one visual language for "pick one of N" controls.
+///
+/// Generic over [T] — pass any type as [options], plus a parallel
+/// [labels] list of the same length. The currently-selected option
+/// is the one whose `==` matches [value].
+class _PillPicker<T> extends StatelessWidget {
+  const _PillPicker({
+    required this.value,
+    required this.options,
+    required this.labels,
+    required this.onChanged,
+  });
+
+  final T value;
+  final List<T> options;
+  final List<String> labels;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
+    final onSurface = theme.colorScheme.onSurface;
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: onSurface.withValues(alpha: isDark ? 0.10 : 0.07),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: onSurface.withValues(alpha: 0.18),
+            width: 0.7,
+          ),
+        ),
+        child: Row(
+          children: [
+            for (int i = 0; i < options.length; i++)
+              Expanded(
+                child: _PillSegment(
+                  label: labels[i],
+                  selected: options[i] == value,
+                  onTap: () => onChanged(options[i]),
+                  accent: accent,
+                  onSurface: onSurface,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A single segment in [_PillPicker]. Tap target = full pill, selected
+/// state = accent fill at 0.20 alpha + accent border + bolder weight.
+class _PillSegment extends StatelessWidget {
+  const _PillSegment({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    required this.accent,
+    required this.onSurface,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  final Color accent;
+  final Color onSurface;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          decoration: BoxDecoration(
+            color: selected
+                ? accent.withValues(alpha: 0.20)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(999),
+            border: selected
+                ? Border.all(
+                    color: accent.withValues(alpha: 0.45), width: 0.8)
+                : null,
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color:
+                    selected ? accent : onSurface.withValues(alpha: 0.75),
+                letterSpacing: 0.2,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
       ),
     );
   }

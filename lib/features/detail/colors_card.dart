@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../about/seasonal_colors.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Kasane-no-irome (襲の色目) — the layered Heian colour combination
 /// paired to the current kō. Visually the most distinctive of the
@@ -102,6 +103,7 @@ class ColorsCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) =>
           _ColorsDetailsSheet(pairing: pairing, isUk: isUk),
     );
@@ -173,18 +175,13 @@ class _ColorsDetailsSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
     final accent = pairing.layers.last.toColor();
-    final mq = MediaQuery.of(context);
-    final maxHeight = mq.size.height * 0.88;
 
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
               Center(
                 child: Text(
                   isUk ? 'СЕЗОННІ КОЛЬОРИ ОДЯГУ' : 'SEASONAL ROBE COLOURS',
@@ -270,8 +267,6 @@ class _ColorsDetailsSheet extends StatelessWidget {
               ],
             ],
           ),
-        ),
-      ),
     );
   }
 

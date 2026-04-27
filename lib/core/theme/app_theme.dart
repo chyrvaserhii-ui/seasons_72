@@ -4,7 +4,13 @@ import 'package:flutter/material.dart';
 /// accent color that tints the Home screen and detail views.
 class AppTheme {
   static const Color sumiInk = Color(0xFF1A1615); // 墨 black ink
-  static const Color washiPaper = Color(0xFFF5EFE6); // 和紙 paper
+  // Aged kinari (生成り) washi — warm cream with a clear yellow-tan
+  // undertone, like an antique scroll left in the light. Bumped from
+  // #F5EFE6 (which read as faintly pink, picking up the sealRed seed)
+  // to #F2E8D0 — same lightness range but with a 34-pt yellow shift
+  // that grounds the whole light theme in honest "old paper" rather
+  // than blossom pastel. R=242 G=232 B=208.
+  static const Color washiPaper = Color(0xFFF2E8D0); // 和紙 aged paper
   // Dark surface — nearly-neutral with slight warmth. Less brown than
   // before so vibrant season accents (pink/green/orange/blue) read clean.
   static const Color washiDark = Color(0xFF1C1A1A);

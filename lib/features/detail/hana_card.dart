@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../about/seasonal_hana.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Seasonal flower at peak for the current kō. Visual language follows
 /// [TeaCard] / [FoodCard]: caps editorial header → tinted Material row →
@@ -104,6 +105,7 @@ class HanaCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) =>
           _HanaDetailsSheet(hana: hana, isUk: isUk, accent: accent),
     );
@@ -125,18 +127,13 @@ class _HanaDetailsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-    final mq = MediaQuery.of(context);
-    final maxHeight = mq.size.height * 0.85;
 
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
               Center(
                 child: Text(
                   isUk ? 'СЕЗОННА КВІТКА' : 'SEASONAL FLOWER',
@@ -217,8 +214,6 @@ class _HanaDetailsSheet extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 }

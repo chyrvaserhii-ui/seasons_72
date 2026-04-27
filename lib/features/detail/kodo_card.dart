@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../about/seasonal_kodo.dart';
+import '../shared/widgets/dismissible_modal_sheet.dart';
 
 /// Kōdō (香道) seasonal incense pairing for the current kō. Includes
 /// classical Heian *neriko* blends (baika, kayō, kikka, rakuyō, kurobō)
@@ -106,6 +107,7 @@ class KodoCard extends StatelessWidget {
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) =>
           _KodoDetailsSheet(kodo: kodo, isUk: isUk, accent: accent),
     );
@@ -127,18 +129,13 @@ class _KodoDetailsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-    final mq = MediaQuery.of(context);
-    final maxHeight = mq.size.height * 0.85;
 
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    return DismissibleModalSheet(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
               Center(
                 child: Text(
                   isUk ? 'СЕЗОННІ ПАХОЩІ KŌDŌ' : 'SEASONAL KŌDŌ INCENSE',
@@ -242,8 +239,6 @@ class _KodoDetailsSheet extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 }
