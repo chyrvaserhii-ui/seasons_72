@@ -1393,11 +1393,11 @@ class _PageCardsState extends State<_PageCards>
   //   • Incense was singular; renamed to plural "Пахощі" / "Incenses"
   //     and the description now says what it actually is (a kōdō
   //     blend, the smell-portrait of this kō).
+  // 9 cultural traditions paired to each kō. Period (dates) was lifted
+  // out earlier — it's now a single inline strip ([PeriodStrip]) on
+  // Home and Detail. Kotowaza (Japanese proverbs) took the 9th slot
+  // since it has real per-kō content like the others.
   static const List<_CardSpec> _cards = [
-    _CardSpec('日', 'Період', 'Period',
-        'які звичні нам дати охоплює кō',
-        'which familiar dates this kō covers',
-        Color(0xFF6E7E8E)), // slate inkstone — matches PeriodCard
     _CardSpec('節', 'Підсезон', 'Sub-season',
         'ширше дихання — секкі, у якому живе кō',
         'the wider breath — the sekki this kō lives in',
@@ -1426,6 +1426,10 @@ class _PageCardsState extends State<_PageCards>
         'кіґо — слова, якими пишуть цей сезон',
         'kigo — words used to write this season',
         Color(0xFF3E5C8A)),
+    _CardSpec('諺', 'Прислів’я', 'Proverb',
+        'котовадза — японське прислів’я цього сезону',
+        'kotowaza — a Japanese proverb tied to this season',
+        Color(0xFF6F5B73)), // kodai-murasaki — matches KotowazaCard
     _CardSpec('養', 'Практика', 'Practice',
         'що поїсти, помітити й тихо зробити',
         'what to eat, notice, and quietly do',
@@ -1601,26 +1605,48 @@ class _CardGridRow extends StatelessWidget {
     required this.globalStartIndex,
     required this.pulseListenable,
     required this.isUk,
+    this.slotCount,
   });
   final List<_CardSpec> cards;
 
-  /// Index of the FIRST card in this row within the full 9-card grid
-  /// (0 for row 1, 3 for row 2, 6 for row 3). Each tile's pulse window
-  /// is computed from `globalStartIndex + localIndex`, so the sweep
-  /// goes 1 → 9 across all rows even though each row is its own widget.
+  /// Index of the FIRST card in this row within the full grid (0 for
+  /// row 1, 3 for row 2, 6 for row 3). Each tile's pulse window is
+  /// computed from `globalStartIndex + localIndex`, so the sweep
+  /// goes 1 → 8 across all rows even though each row is its own widget.
   final int globalStartIndex;
 
   /// Animation that drives the sequential pulse — usually the page's
   /// master `_ctl`. Each tile reads the current value to decide whether
-  /// it's currently in its own 0.05-wide pulse window.
+  /// it's currently in its own pulse window.
   final Animation<double> pulseListenable;
 
   final bool isUk;
+
+  /// Optional fixed number of "slots" this row should occupy. When
+  /// `slotCount` is greater than `cards.length`, the leftover slots
+  /// are filled with empty Spacers split evenly on both sides — the
+  /// cards remain the same width as upper-row cards but center-align
+  /// in the row. Used for the last row of the 8-card grid where there
+  /// are only 2 cards but the visual rhythm should match the 3-card
+  /// rows above.
+  final int? slotCount;
+
   @override
   Widget build(BuildContext context) {
+    final slots = slotCount ?? cards.length;
+    final emptySlots = slots - cards.length;
+    final leadingSpacers = emptySlots ~/ 2;
+    final trailingSpacers = emptySlots - leadingSpacers;
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
+        // Leading empty slots — each gets the same flex weight as a
+        // card slot, so the cards keep the upper-row width.
+        for (int i = 0; i < leadingSpacers; i++) ...[
+          const Spacer(),
+          const SizedBox(width: 10),
+        ],
         for (int i = 0; i < cards.length; i++) ...[
           if (i > 0) const SizedBox(width: 10),
           Expanded(
@@ -1631,6 +1657,10 @@ class _CardGridRow extends StatelessWidget {
               isUk: isUk,
             ),
           ),
+        ],
+        for (int i = 0; i < trailingSpacers; i++) ...[
+          const SizedBox(width: 10),
+          const Spacer(),
         ],
       ],
     );

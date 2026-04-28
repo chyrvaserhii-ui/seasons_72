@@ -749,8 +749,6 @@ String _replayOnboardingSubtitle(BuildContext context) => _isUk(context)
 String _cardLabel(DetailCard card, BuildContext context) {
   final isUk = _isUk(context);
   switch (card) {
-    case DetailCard.period:
-      return isUk ? 'Період 📅' : 'Period 📅';
     case DetailCard.sekki:
       return isUk ? 'Фаза секкі 🌾' : 'Sekki phase 🌾';
     case DetailCard.tea:
@@ -765,6 +763,8 @@ String _cardLabel(DetailCard card, BuildContext context) {
       return isUk ? 'Сезонні пахощі kōdō 🪔' : 'Seasonal kōdō incense 🪔';
     case DetailCard.kigo:
       return isUk ? 'Сезонні слова 📜' : 'Seasonal words 📜';
+    case DetailCard.kotowaza:
+      return isUk ? 'Сезонне прислів’я 📖' : 'Seasonal proverb 📖';
     case DetailCard.practice:
       return isUk ? 'Практика 🪷' : 'Practice 🪷';
   }

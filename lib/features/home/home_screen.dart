@@ -12,10 +12,12 @@ import '../detail/food_card.dart';
 import '../detail/hana_card.dart';
 import '../detail/kigo_card.dart';
 import '../detail/kodo_card.dart';
+import '../detail/kotowaza_card.dart';
 import '../detail/practice_card.dart';
 import '../detail/tea_card.dart';
 import '../shared/widgets/ambient_player.dart';
 import '../shared/widgets/moon_phase.dart';
+import '../shared/widgets/period_strip.dart';
 import '../shared/widgets/season_hero.dart';
 import '../shared/widgets/sekki_card.dart';
 import '../detail/season_detail_screen.dart';
@@ -116,12 +118,12 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             SeasonHaiku(ko: current, accentColor: accent),
             const SizedBox(height: 24),
-            // Date range — focused on "коли", no longer competing
-            // with moon and sound icons. Single accent dot + label.
-            _DateRow(
-              label: _formatDateRange(current, locale),
-              accentColor: accent,
-            ),
+            // Period strip — single shared format with the Detail
+            // screen (📅 dates · кō N з 72). Period was lifted out of
+            // the 9-card concept (it didn't fit the cultural-tradition
+            // register of the other 8); the strip is its replacement,
+            // editorial-light, no card decoration, no modal.
+            PeriodStrip(ko: current, locale: locale),
             // Sekki block — the 24-season cultural context. The caps
             // header ("ПІДСЕЗОН СЕККІ") is shown on Home as well as
             // Detail so the row reads consistently with the seven
@@ -163,6 +165,10 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               KigoCard(koIndex: current.index, locale: locale),
             ],
+            if (cards.kotowaza) ...[
+              const SizedBox(height: 16),
+              KotowazaCard(koIndex: current.index, locale: locale),
+            ],
             if (cards.practice) ...[
               const SizedBox(height: 16),
               PracticeCard(koIndex: current.index, locale: locale),
@@ -198,51 +204,6 @@ class HomeScreen extends ConsumerWidget {
     ));
   }
 
-  String _formatDateRange(dynamic current, Locale locale) {
-    final df = DateFormat.MMMMd(locale.languageCode);
-    final now = DateTime.now();
-    final start = current.startDateForYear(now.year) as DateTime;
-    final end = current.endDateForYear(now.year) as DateTime;
-    return '${df.format(start)} – ${df.format(end)}';
-  }
-}
-
-/// Pure date row: accent dot + the period label. Moon and ambient
-/// sound moved out of this row — moon to the page eyebrow, sound to
-/// a floating button on the hero engraving. Each lives where it
-/// matches its job: moon = passive cosmic context, sound = active
-/// sensory interaction, dates = factual period.
-class _DateRow extends StatelessWidget {
-  const _DateRow({
-    required this.label,
-    required this.accentColor,
-  });
-  final String label;
-  final Color accentColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 5,
-          height: 5,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: accentColor.withValues(alpha: 0.8),
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 /// Metadata row — a small accent-color dot followed by the label. Replaces

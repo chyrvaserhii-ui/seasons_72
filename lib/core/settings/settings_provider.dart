@@ -6,8 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// detail screens. Used by [CardVisibility] and the settings toggles.
 /// Order matches the visual order on the season screen so the toggles
 /// list reads top-to-bottom the way the user will scan it.
+/// User-toggleable detail cards. `period` was removed in an earlier
+/// iteration — it now renders as a single inline strip ([PeriodStrip])
+/// instead of a togglable card, since dates aren't a "cultural
+/// tradition" like the remaining 9. `kotowaza` (諺 — Japanese proverbs
+/// paired to each kō) was added to fill the slot. Stale `period` keys
+/// in SharedPreferences are ignored.
 enum DetailCard {
-  period,
   sekki,
   tea,
   food,
@@ -15,6 +20,7 @@ enum DetailCard {
   colors,
   kodo,
   kigo,
+  kotowaza,
   practice,
 }
 
@@ -26,7 +32,6 @@ enum DetailCard {
 @immutable
 class CardVisibility {
   const CardVisibility({
-    this.period = true,
     this.sekki = true,
     this.tea = true,
     this.food = true,
@@ -34,10 +39,10 @@ class CardVisibility {
     this.colors = true,
     this.kodo = true,
     this.kigo = true,
+    this.kotowaza = true,
     this.practice = true,
   });
 
-  final bool period;
   final bool sekki;
   final bool tea;
   final bool food;
@@ -45,12 +50,12 @@ class CardVisibility {
   final bool colors;
   final bool kodo;
   final bool kigo;
+  final bool kotowaza;
   final bool practice;
 
   /// Read the boolean for [card].
   bool get(DetailCard card) {
     switch (card) {
-      case DetailCard.period:   return period;
       case DetailCard.sekki:    return sekki;
       case DetailCard.tea:      return tea;
       case DetailCard.food:     return food;
@@ -58,6 +63,7 @@ class CardVisibility {
       case DetailCard.colors:   return colors;
       case DetailCard.kodo:     return kodo;
       case DetailCard.kigo:     return kigo;
+      case DetailCard.kotowaza: return kotowaza;
       case DetailCard.practice: return practice;
     }
   }
@@ -65,7 +71,6 @@ class CardVisibility {
   /// Returns a copy with [card] flipped to [value].
   CardVisibility setCard(DetailCard card, bool value) {
     switch (card) {
-      case DetailCard.period:   return copyWith(period: value);
       case DetailCard.sekki:    return copyWith(sekki: value);
       case DetailCard.tea:      return copyWith(tea: value);
       case DetailCard.food:     return copyWith(food: value);
@@ -73,12 +78,12 @@ class CardVisibility {
       case DetailCard.colors:   return copyWith(colors: value);
       case DetailCard.kodo:     return copyWith(kodo: value);
       case DetailCard.kigo:     return copyWith(kigo: value);
+      case DetailCard.kotowaza: return copyWith(kotowaza: value);
       case DetailCard.practice: return copyWith(practice: value);
     }
   }
 
   CardVisibility copyWith({
-    bool? period,
     bool? sekki,
     bool? tea,
     bool? food,
@@ -86,10 +91,10 @@ class CardVisibility {
     bool? colors,
     bool? kodo,
     bool? kigo,
+    bool? kotowaza,
     bool? practice,
   }) {
     return CardVisibility(
-      period: period ?? this.period,
       sekki: sekki ?? this.sekki,
       tea: tea ?? this.tea,
       food: food ?? this.food,
@@ -97,6 +102,7 @@ class CardVisibility {
       colors: colors ?? this.colors,
       kodo: kodo ?? this.kodo,
       kigo: kigo ?? this.kigo,
+      kotowaza: kotowaza ?? this.kotowaza,
       practice: practice ?? this.practice,
     );
   }

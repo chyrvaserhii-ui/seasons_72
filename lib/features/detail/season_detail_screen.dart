@@ -8,6 +8,7 @@ import '../../core/settings/settings_provider.dart';
 import '../../core/utils/localized_names.dart';
 import '../share/share_service.dart';
 import '../shared/widgets/ambient_player.dart';
+import '../shared/widgets/period_strip.dart';
 import '../shared/widgets/season_hero.dart';
 import '../shared/widgets/sekki_card.dart';
 import 'colors_card.dart';
@@ -15,7 +16,7 @@ import 'food_card.dart';
 import 'hana_card.dart';
 import 'kigo_card.dart';
 import 'kodo_card.dart';
-import 'period_card.dart';
+import 'kotowaza_card.dart';
 import 'practice_card.dart';
 import 'tea_card.dart';
 
@@ -150,16 +151,12 @@ class _DetailPage extends ConsumerWidget {
         // with the card so the layout stays clean when toggles are
         // off. Period sits at the top because it's the calendar
         // anchor — every other card hangs off "which 5 days is this".
-        if (cards.period) ...[
-          const SizedBox(height: 22),
-          PeriodCard(
-            ko: ko,
-            meta: meta,
-            sekki: sekki,
-            locale: locale,
-            accentColor: accent,
-          ),
-        ],
+        // Period strip — single shared format with the Home screen
+        // (📅 dates · кō N з 72). Always shown (no toggle); Period
+        // was lifted out of the 9-card concept since it doesn't fit
+        // the cultural-tradition register of the other 8.
+        const SizedBox(height: 18),
+        PeriodStrip(ko: ko, locale: locale),
         if (cards.sekki) ...[
           const SizedBox(height: 18),
           SekkiCard(
@@ -192,6 +189,10 @@ class _DetailPage extends ConsumerWidget {
         if (cards.kigo) ...[
           const SizedBox(height: 18),
           KigoCard(koIndex: ko.index, locale: locale),
+        ],
+        if (cards.kotowaza) ...[
+          const SizedBox(height: 18),
+          KotowazaCard(koIndex: ko.index, locale: locale),
         ],
         if (cards.practice) ...[
           const SizedBox(height: 18),
