@@ -7,6 +7,14 @@ import '../../core/providers/seasons_providers.dart';
 import '../../core/settings/settings_provider.dart';
 import '../shared/widgets/dismissible_modal_sheet.dart';
 
+/// Master switch for the temporary "DEBUG · СПОВІЩЕННЯ" section at
+/// the bottom of Settings. Flipped to `false` for production builds —
+/// the section is for smoke-testing the push pipeline manually
+/// (instant + delayed + real-text random kō + pending count +
+/// cancel-all). Flip back to `true` whenever you need to retest the
+/// notification flow.
+const bool _showNotifDebug = false;
+
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -124,6 +132,128 @@ class SettingsScreen extends ConsumerWidget {
             await notifier.setHasSeenOnboarding(false);
           },
         ),
+        // ─── DEBUG · СПОВІЩЕННЯ ──────────────────────────────────────
+        // Temporary smoke-test buttons for the push-notification
+        // pipeline. Visible only when the const flag at the top of
+        // this file (`_showNotifDebug`) is `true`. Flip to `false`
+        // before App Store release. Uses test IDs 9998/9999 to avoid
+        // collision with real kō notification IDs (1..72).
+        if (_showNotifDebug) ...[
+          const _SectionRule(),
+          const _SectionHeader('DEBUG · СПОВІЩЕННЯ'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+            child: Text(
+              'Тимчасові кнопки для тестування пушів. '
+                  'Прибрати перед релізом — флаг _showNotifDebug.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.65),
+                  ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.notifications_active_outlined),
+            title: const Text('Показати через 3 с'),
+            subtitle: const Text(
+              'Згорни додаток ЗАРАЗ (home swipe-up) — банер видно лише у фоні',
+            ),
+            onTap: () async {
+              final ok = await NotificationService.instance.showTestNow();
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(ok
+                      ? 'Заплановано через 3 с — ЗГОРНИ ЗАРАЗ'
+                      : 'Дозвіл на сповіщення відхилено'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.timer_outlined),
+            title: const Text('Через 10 секунд'),
+            subtitle: const Text(
+              'Перевіряє доставку коли застосунок у фоні / killed',
+            ),
+            onTap: () async {
+              final ok = await NotificationService.instance
+                  .scheduleTestIn(delay: const Duration(seconds: 10));
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(ok
+                      ? 'Заплановано через 10 с — згорни / закрий додаток'
+                      : 'Дозвіл на сповіщення відхилено'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.shuffle_outlined),
+            title: const Text('Реальний текст · випадковий kō'),
+            subtitle: const Text(
+              'Показує справжню вироб. текстовку для довільного сезону. '
+              'Натисни ще раз — інший kō',
+            ),
+            onTap: () async {
+              final result = await NotificationService.instance
+                  .showTestRealKoText(
+                repo: ref.read(seasonsRepositoryProvider),
+                locale: Localizations.localeOf(context),
+              );
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(result.ok
+                      ? 'kō #${result.koIndex} → 3 с. ЗГОРНИ ЗАРАЗ\n'
+                          '${result.title} — ${result.body}'
+                      : 'Дозвіл на сповіщення відхилено'),
+                  duration: const Duration(seconds: 4),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.list_alt_outlined),
+            title: const Text('Скільки заплановано'),
+            subtitle: const Text(
+              'Включає реальні (kō) і тестові (9998/9999)',
+            ),
+            onTap: () async {
+              final pending =
+                  await NotificationService.instance.pending();
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Заплановано: ${pending.length}'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete_outline),
+            title: const Text('Скасувати усі'),
+            subtitle: const Text(
+              'Прибере всі pending сповіщення (тест + реальні)',
+            ),
+            onTap: () async {
+              await NotificationService.instance.cancelAll();
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Усі сповіщення скасовано'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        ],
         const _SectionRule(),
         _SectionHeader(l10n.settingsAbout),
         Padding(
