@@ -123,12 +123,30 @@ class HomeScreen extends ConsumerWidget {
             // the 9-card concept (it didn't fit the cultural-tradition
             // register of the other 8); the strip is its replacement,
             // editorial-light, no card decoration, no modal.
-            PeriodStrip(ko: current, locale: locale),
-            // Sekki block — the 24-season cultural context. The caps
-            // header ("ПІДСЕЗОН СЕККІ") is shown on Home as well as
-            // Detail so the row reads consistently with the seven
-            // deep-dive cards above; the parallel labelling helps the
-            // user understand what each block is.
+            PeriodStrip(
+              ko: current,
+              meta: meta,
+              sekki: sekki,
+              locale: locale,
+            ),
+            // 9 cultural-tradition cards in UX rhythm:
+            //   context → senses → meaning → action.
+            //
+            //   1. sekki    — calendrical scaffold ("when am I in the year?")
+            //   2. hana     — what blooms now (sight, instant hook)
+            //   3. food     — what to eat this week (taste, actionable)
+            //   4. tea      — what to drink today (taste, intimate)
+            //   5. colors   — what to see / wear (sight, aesthetic)
+            //   6. kodo     — incense (smell, abstract sensory)
+            //   7. kigo     — seasonal words (language)
+            //   8. kotowaza — proverb (wisdom, reflection)
+            //   9. practice — what to do this week (closing CTA)
+            //
+            // Each card is conditional on its own visibility toggle in
+            // Settings → Season cards. The leading SizedBox collapses
+            // with the card so the layout stays clean when toggles are
+            // off. Sekki reads with the same caps header treatment as
+            // the others so the row stays consistent.
             if (cards.sekki) ...[
               const SizedBox(height: 16),
               SekkiCard(
@@ -138,20 +156,17 @@ class HomeScreen extends ConsumerWidget {
                 accentColor: meta.colorFor(brightness),
               ),
             ],
-            // Each deep-dive card is conditional on its own visibility
-            // toggle in Settings → Season cards. Each card's leading
-            // SizedBox collapses with it.
-            if (cards.tea) ...[
+            if (cards.hana) ...[
               const SizedBox(height: 16),
-              TeaCard(koIndex: current.index, locale: locale),
+              HanaCard(koIndex: current.index, locale: locale),
             ],
             if (cards.food) ...[
               const SizedBox(height: 16),
               FoodCard(koIndex: current.index, locale: locale),
             ],
-            if (cards.hana) ...[
+            if (cards.tea) ...[
               const SizedBox(height: 16),
-              HanaCard(koIndex: current.index, locale: locale),
+              TeaCard(koIndex: current.index, locale: locale),
             ],
             if (cards.colors) ...[
               const SizedBox(height: 16),

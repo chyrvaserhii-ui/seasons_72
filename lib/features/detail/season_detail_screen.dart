@@ -8,6 +8,7 @@ import '../../core/settings/settings_provider.dart';
 import '../../core/utils/localized_names.dart';
 import '../share/share_service.dart';
 import '../shared/widgets/ambient_player.dart';
+import '../shared/widgets/moon_phase.dart';
 import '../shared/widgets/period_strip.dart';
 import '../shared/widgets/season_hero.dart';
 import '../shared/widgets/sekki_card.dart';
@@ -131,9 +132,30 @@ class _DetailPage extends ConsumerWidget {
     final accent = meta.colorFor(brightness);
     final cards = ref.watch(settingsProvider).cards;
 
+    // Moon phase is bound to this kō's date range, not to wall-clock
+    // "now" — otherwise swiping through seasons leaves the same moon
+    // glyph on every page (a bug observed on both iOS and Android).
+    // Use the midpoint of the kō's 5-day window in the current year as
+    // the representative instant. `endDateForYear` already handles the
+    // Dec→Jan wrap for kō #72.
+    final year = DateTime.now().year;
+    final koStart = ko.startDateForYear(year);
+    final koEnd = ko.endDateForYear(year);
+    final koMidpoint =
+        koStart.add(Duration(seconds: koEnd.difference(koStart).inSeconds ~/ 2));
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
       children: [
+        // Moon-phase pill, right-aligned. Mirrors the Home screen
+        // header so the lunar context travels with the user when they
+        // swipe deeper into a kō; without it the moon would only ever
+        // appear on Home, breaking the parallel.
+        Align(
+          alignment: Alignment.centerRight,
+          child: MoonPhasePill(date: koMidpoint),
+        ),
+        const SizedBox(height: 8),
         SeasonHero(ko: ko, meta: meta),
         const SizedBox(height: 20),
         SeasonTitleBlock(
@@ -156,7 +178,17 @@ class _DetailPage extends ConsumerWidget {
         // was lifted out of the 9-card concept since it doesn't fit
         // the cultural-tradition register of the other 8.
         const SizedBox(height: 18),
-        PeriodStrip(ko: ko, locale: locale),
+        PeriodStrip(
+          ko: ko,
+          meta: meta,
+          sekki: sekki,
+          locale: locale,
+        ),
+        // 9 cultural-tradition cards in UX rhythm:
+        //   context → senses → meaning → action.
+        //   sekki (when) → hana / food / tea / colors / kodo (sensory)
+        //   → kigo / kotowaza (language + reflection) → practice (CTA).
+        // See home_screen.dart for the rationale comment in full.
         if (cards.sekki) ...[
           const SizedBox(height: 18),
           SekkiCard(
@@ -166,17 +198,17 @@ class _DetailPage extends ConsumerWidget {
             accentColor: accent,
           ),
         ],
-        if (cards.tea) ...[
+        if (cards.hana) ...[
           const SizedBox(height: 18),
-          TeaCard(koIndex: ko.index, locale: locale),
+          HanaCard(koIndex: ko.index, locale: locale),
         ],
         if (cards.food) ...[
           const SizedBox(height: 18),
           FoodCard(koIndex: ko.index, locale: locale),
         ],
-        if (cards.hana) ...[
+        if (cards.tea) ...[
           const SizedBox(height: 18),
-          HanaCard(koIndex: ko.index, locale: locale),
+          TeaCard(koIndex: ko.index, locale: locale),
         ],
         if (cards.colors) ...[
           const SizedBox(height: 18),

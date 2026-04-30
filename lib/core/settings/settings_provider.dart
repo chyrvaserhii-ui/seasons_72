@@ -12,16 +12,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// tradition" like the remaining 9. `kotowaza` (諺 — Japanese proverbs
 /// paired to each kō) was added to fill the slot. Stale `period` keys
 /// in SharedPreferences are ignored.
+/// Order matches the on-screen rhythm of the season detail page —
+/// context → senses → meaning → action. Settings → Season cards
+/// iterates `DetailCard.values`, so the toggles in the UI follow the
+/// same order the user sees on Home and Detail.
 enum DetailCard {
-  sekki,
-  tea,
-  food,
-  hana,
-  colors,
-  kodo,
-  kigo,
-  kotowaza,
-  practice,
+  sekki,    // when am I in the year
+  hana,     // sight — what blooms
+  food,     // taste — what to eat
+  tea,      // taste — what to drink
+  colors,   // sight — what to see / wear
+  kodo,     // smell
+  kigo,     // language
+  kotowaza, // wisdom / reflection
+  practice, // closing CTA — what to do this week
 }
 
 /// Per-card on/off visibility. Each kō can render up to nine optional

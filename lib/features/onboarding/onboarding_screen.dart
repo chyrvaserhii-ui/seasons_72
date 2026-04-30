@@ -1393,27 +1393,39 @@ class _PageCardsState extends State<_PageCards>
   //   • Incense was singular; renamed to plural "Пахощі" / "Incenses"
   //     and the description now says what it actually is (a kōdō
   //     blend, the smell-portrait of this kō).
-  // 9 cultural traditions paired to each kō. Period (dates) was lifted
-  // out earlier — it's now a single inline strip ([PeriodStrip]) on
-  // Home and Detail. Kotowaza (Japanese proverbs) took the 9th slot
-  // since it has real per-kō content like the others.
+  // 9 cultural traditions paired to each kō, ordered by UX rhythm:
+  // context → senses → meaning → action.
+  //
+  //   1. sekki    — calendrical scaffold (when am I in the year?)
+  //   2. hana     — what blooms now (sight)
+  //   3. food     — what to eat this week (taste, actionable)
+  //   4. tea      — what to drink today (taste, intimate)
+  //   5. colors   — what to see / wear (sight, aesthetic)
+  //   6. kodo     — incense (smell)
+  //   7. kigo     — seasonal words (language)
+  //   8. kotowaza — proverb (wisdom, reflection)
+  //   9. practice — what to do this week (closing CTA)
+  //
+  // Period (dates) was lifted out earlier — it's now a single inline
+  // strip ([PeriodStrip]) on Home and Detail. Kotowaza took the 9th
+  // slot since it has real per-kō content like the others.
   static const List<_CardSpec> _cards = [
     _CardSpec('節', 'Підсезон', 'Sub-season',
         'ширше дихання — секкі, у якому живе кō',
         'the wider breath — the sekki this kō lives in',
         Color(0xFF8E9C5C)), // moss-olive rice paddy — matches SekkiCard
-    _CardSpec('茶', 'Чай', 'Tea',
-        'китайський сорт під настрій цих днів',
-        'a Chinese tea tuned to these days',
-        Color(0xFF8FBF7F)),
-    _CardSpec('食', 'Їжа', 'Food',
-        'японська страва, що зараз у своєму часі',
-        'a Japanese dish at its time',
-        Color(0xFFD89060)),
     _CardSpec('花', 'Квітка', 'Flower',
         'що розквітло в японських садах тепер',
         'what\'s opening in Japanese gardens now',
         Color(0xFFE6A4B4)),
+    _CardSpec('食', 'Їжа', 'Food',
+        'японська страва, що зараз у своєму часі',
+        'a Japanese dish at its time',
+        Color(0xFFD89060)),
+    _CardSpec('茶', 'Чай', 'Tea',
+        'китайський сорт під настрій цих днів',
+        'a Chinese tea tuned to these days',
+        Color(0xFF8FBF7F)),
     _CardSpec('色', 'Кольори одягу', 'Robe colours',
         'палітра кімоно з епохи Хейан для цих днів',
         'Heian kimono palette for these days',

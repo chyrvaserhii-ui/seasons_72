@@ -8,18 +8,26 @@ screenshot captions. Adapt the tone to the channel.
 
 ## Taglines (pick one per context)
 
-**One-liner:**
-> A Japanese tradition of 72 micro-seasons — on your phone.
+**Hero (App Store screenshot, social header):**
+> Read the year. Live the year.
 
-**Slightly longer:**
-> Discover the 72 tiny seasons the Japanese have watched for a thousand
-> years. One every five days.
+**One-liner (App Store subtitle, pubspec):**
+> Read the year. Live the year. — A quiet seasonal practice on Japan's 72 micro-seasons (*Shichijūni-kō*).
 
-**Punchy:**
-> Between spring and summer, the Japanese found seventy-two other seasons.
+**Slightly longer (landing page, press blurb):**
+> The Japanese have watched the year in seventy-two pieces, one
+> every five days. 72 Seasons brings the full cycle to your phone —
+> a calendar to read, and slowly, a quiet practice to live: your tea,
+> your photo, your haiku, beside the classical engraving for that kō.
 
-**Мовою:**
-> 72 крихітних сезони, які японці помічають уже тисячу років — у твоєму телефоні.
+**Punchy (HN, Twitter):**
+> Between spring and summer, the Japanese found seventy-two other seasons. We built an app to live them.
+
+**Мовою (Telegram, Reddit UA):**
+> Читай рік. Живи рік. — Тиха сезонна практика на 72 японських мікросезонах (*Сітідзюні-кō*).
+
+**Мовою (довша):**
+> 72 крихітних сезони, які японці помічають уже тисячу років — у твоєму телефоні. З часом — не тільки календар, а й місце, де ти лишаєш свій чай, свій кадр і своє хоку поряд із класичною гравюрою того ж кō.
 
 ---
 

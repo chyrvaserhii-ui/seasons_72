@@ -7,15 +7,18 @@ import '../detail/season_detail_screen.dart';
 import 'about_content.dart';
 
 // Card-tradition accents — match the row-card tints on the home / detail
-// screens so the Tradition tab's "Seven traditions" overview is visually
-// recognisable. Order matches `cardTraditionsUk` / `cardTraditionsEn`.
+// screens so the Tradition tab's "Nine traditions" overview is visually
+// recognisable. Order matches `cardTraditionsUk` / `cardTraditionsEn`:
+// sekki · hana · food · tea · colors · kodo · kigo · kotowaza · practice.
 const List<Color> _cardAccents = [
-  Color(0xFF8FBF7F), // tea — jade
-  Color(0xFFD89060), // food — persimmon
+  Color(0xFF8E9C5C), // sekki — moss-olive rice paddy
   Color(0xFFE6A4B4), // hana — sakura pink
+  Color(0xFFD89060), // food — persimmon
+  Color(0xFF8FBF7F), // tea — jade
   Color(0xFF8DAAC7), // colors — soft slate
   Color(0xFFB8956A), // kodo — amber resin
   Color(0xFF3E5C8A), // kigo — saijiki indigo
+  Color(0xFF6F5B73), // kotowaza — kodai-murasaki
   Color(0xFF809B92), // practice — sage
 ];
 

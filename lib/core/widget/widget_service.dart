@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
 import 'dart:ui';
 
@@ -50,6 +51,13 @@ class WidgetService {
     _initialized = true;
   }
 
+  /// How many upcoming kō we serialise into the shared container so
+  /// the Swift widget can rotate through boundaries without the app
+  /// being opened. 12 kō ≈ 60 days; the assumption is the user opens
+  /// the app at least once a quarter — beyond that the widget
+  /// gracefully falls back to whatever the last entry was.
+  static const int _upcomingKosCount = 12;
+
   /// Write the current kō's data to the shared container and trigger a
   /// widget refresh. Called on app start and whenever the current kō
   /// changes (roughly every 5 days).
@@ -84,6 +92,20 @@ class WidgetService {
     final countdownShort = _countdownShort(daysUntilNext, isUk);
     final lockScreenCountdown = _lockScreenCountdown(daysUntilNext, isUk);
 
+    // Pre-compute the next ~60 days of kō boundaries as a JSON blob.
+    // Without this the Swift timeline can only render the *current* kō
+    // — when the boundary passes (every 5 days) the widget goes stale
+    // until the user re-opens the app. With it, iOS rotates through
+    // the prepared entries on its own. See `_buildUpcomingKosJson` for
+    // the schema.
+    final upcomingKosJson = _buildUpcomingKosJson(
+      repo: repo,
+      calc: calc,
+      startingFrom: current,
+      locale: locale,
+      isUk: isUk,
+    );
+
     // Save flat key/value pairs. Widget reads these from UserDefaults
     // via the shared App Group.
     await Future.wait([
@@ -113,6 +135,10 @@ class WidgetService {
       HomeWidget.saveWidgetData<String>('countdownShort', countdownShort),
       HomeWidget.saveWidgetData<String>(
           'lockScreenCountdown', lockScreenCountdown),
+      // Multi-kō buffer — Swift widget reads this JSON and builds a
+      // 60-day timeline through boundaries on its own.
+      HomeWidget.saveWidgetData<String>('upcomingKosJson', upcomingKosJson),
+      HomeWidget.saveWidgetData<int>('isUk', isUk ? 1 : 0),
       // Moon phase — widget renders a small glyph; math matches
       // lib/core/utils/moon_calculator.dart. Stored as doubles so the
       // Swift side can recompute illumination and pick waxing/waning.
@@ -124,11 +150,91 @@ class WidgetService {
     // logged but don't block the widget update — the Swift side falls
     // back to emoji rendering when a file is missing.
     await _copyEngravings(current: current, next: next, previous: previous);
+    // Also copy the engravings for every kō in the upcoming buffer
+    // under stable per-index names (engraving_<index>.png) so the
+    // Swift timeline can render each future kō with its own image.
+    await _copyUpcomingEngravings(repo: repo, calc: calc, current: current);
 
     await HomeWidget.updateWidget(
       name: widgetName,
       iOSName: iOSWidgetName,
     );
+  }
+
+  /// Build a JSON list describing the next [_upcomingKosCount] kō
+  /// (current + the ones that follow), with everything the Swift
+  /// widget needs to render an entry: kō text, sekki/meta context,
+  /// neighbours, meta colour, plus the absolute start/end epoch
+  /// milliseconds so Swift can compute `daysUntilNext` from any date.
+  String _buildUpcomingKosJson({
+    required SeasonsRepository repo,
+    required SeasonCalculator calc,
+    required MicroSeason startingFrom,
+    required Locale locale,
+    required bool isUk,
+  }) {
+    final now = DateTime.now();
+    final entries = <Map<String, Object>>[];
+
+    var ko = startingFrom;
+
+    // Pick the year-instance of [startingFrom] that actually contains
+    // "now". Year-crossing kō (e.g. #66 spanning late Dec → early Jan)
+    // can be valid for either dt.year-1 or dt.year, depending on which
+    // side of the wrap we're on. Default to the current year if no
+    // window contains today (shouldn't normally happen).
+    var year = now.year;
+    for (final y in [now.year - 1, now.year, now.year + 1]) {
+      final s = ko.startDateForYear(y);
+      final e = ko.endDateForYear(y);
+      if (!now.isBefore(s) && !now.isAfter(e)) {
+        year = y;
+        break;
+      }
+    }
+    var start = ko.startDateForYear(year);
+    var end = ko.endDateForYear(year);
+
+    for (var i = 0; i < _upcomingKosCount; i++) {
+      final meta = repo.meta(ko.metaId);
+      final sekki = repo.sekki(ko.sekkiId);
+      final nextKo = calc.next(ko);
+      final prevKo = calc.previous(ko);
+
+      entries.add({
+        'index': ko.index,
+        'kanji': ko.kanji,
+        'romaji': ko.romaji,
+        'name': isUk ? ko.nameUk : ko.nameEn,
+        'emoji': ko.emoji,
+        'sekki': isUk ? sekki.nameUk : sekki.nameEn,
+        'sekkiKanji': sekki.kanji,
+        'meta': isUk ? meta.nameUk : meta.nameEn,
+        'metaColorHex': _hex(meta.colorLight),
+        'startEpochMs': start.millisecondsSinceEpoch,
+        'endEpochMs': end.millisecondsSinceEpoch,
+        'nextIndex': nextKo.index,
+        'nextKanji': nextKo.kanji,
+        'nextName': isUk ? nextKo.nameUk : nextKo.nameEn,
+        'nextEmoji': nextKo.emoji,
+        'previousIndex': prevKo.index,
+        'previousKanji': prevKo.kanji,
+        'previousName': isUk ? prevKo.nameUk : prevKo.nameEn,
+        'previousEmoji': prevKo.emoji,
+      });
+
+      // Advance to next kō in calendar order. When the index wraps
+      // past 72 → 1, the new kō belongs to the *next* calendar year.
+      final advanced = calc.next(ko);
+      if (advanced.index < ko.index) {
+        year += 1;
+      }
+      ko = advanced;
+      start = ko.startDateForYear(year);
+      end = ko.endDateForYear(year);
+    }
+
+    return jsonEncode(entries);
   }
 
   /// Pushes three PNGs (current / next / previous kō) into the iOS App
@@ -145,6 +251,25 @@ class WidgetService {
       _pushEngraving(next.index, 'engraving_next'),
       _pushEngraving(previous.index, 'engraving_previous'),
     ]);
+  }
+
+  /// Push every kō in the upcoming buffer's engraving under a stable
+  /// per-index file name (`engraving_<index>.png`). The Swift timeline
+  /// keys lookups on the kō index so it can render each future entry
+  /// with its own image without needing additional mapping.
+  Future<void> _copyUpcomingEngravings({
+    required SeasonsRepository repo,
+    required SeasonCalculator calc,
+    required MicroSeason current,
+  }) async {
+    if (!Platform.isIOS) return;
+    final futures = <Future<void>>[];
+    var ko = current;
+    for (var i = 0; i < _upcomingKosCount; i++) {
+      futures.add(_pushEngraving(ko.index, 'engraving_${ko.index}'));
+      ko = calc.next(ko);
+    }
+    await Future.wait(futures);
   }
 
   Future<void> _pushEngraving(int seasonIndex, String key) async {

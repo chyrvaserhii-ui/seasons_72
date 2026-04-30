@@ -20,6 +20,7 @@ class MoonPhaseIndicator extends StatelessWidget {
     this.size = 22,
     this.showLabel = false,
     this.interactive = true,
+    this.date,
   });
 
   /// Edge length in logical pixels.
@@ -32,9 +33,15 @@ class MoonPhaseIndicator extends StatelessWidget {
   /// Useful inside lists where the row itself is the tap target.
   final bool interactive;
 
+  /// Instant the moon should be computed for. Defaults to "now" — which
+  /// is what the Home screen wants. Detail/preview surfaces pass a kō's
+  /// representative date so the glyph travels with the season the user
+  /// is reading, not with the wall clock.
+  final DateTime? date;
+
   @override
   Widget build(BuildContext context) {
-    final info = MoonCalculator.at();
+    final info = MoonCalculator.at(date);
     final theme = Theme.of(context);
     final colors = _MoonColors.from(theme);
 
@@ -117,11 +124,17 @@ class MoonPhaseIndicator extends StatelessWidget {
 /// Tap → existing modal with full phase name, next full/new moon
 /// dates, and the lunisolar note.
 class MoonPhasePill extends StatelessWidget {
-  const MoonPhasePill({super.key});
+  const MoonPhasePill({super.key, this.date});
+
+  /// Instant the moon should be computed for. Defaults to "now". The
+  /// detail screen passes the midpoint of the kō being viewed so the
+  /// pill stays bound to the season under the user's finger instead of
+  /// re-reading the wall clock for every page swipe.
+  final DateTime? date;
 
   @override
   Widget build(BuildContext context) {
-    final info = MoonCalculator.at();
+    final info = MoonCalculator.at(date);
     final theme = Theme.of(context);
     final colors = _MoonColors.from(theme);
     final pct = (info.illumination * 100).round();

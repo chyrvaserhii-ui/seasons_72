@@ -1,10 +1,16 @@
 # 72 Seasons · 七十二候
 
+> **Read the year. Live the year.** — A quiet seasonal practice on
+> Japan's 72 micro-seasons (*Shichijūni-kō*, 七十二候).
+
 A Flutter app that brings the **72 ancient Japanese micro-seasons**
-(*Shichijūni-kō*, 七十二候) to your phone. Each kō is a ~5-day window
-capturing one shift in nature — *"The spring breeze melts the ice"*,
-*"Bush warblers start singing"*, *"First frost falls"*, *"Bears start
-hibernating"*. Seventy-two of them, one for every five days of the year.
+to your phone. Each kō is a ~5-day window capturing one shift in
+nature — *"The spring breeze melts the ice"*, *"Bush warblers start
+singing"*, *"First frost falls"*, *"Bears start hibernating"*.
+Seventy-two of them, one for every five days of the year. You read
+them as a calendar today; over time the app grows into the place
+you live them — your tea, your photo, your haiku, kept beside the
+classical engraving for the same kō, year over year.
 
 Each kō comes with:
 - an original **ukiyo-e-style illustration**

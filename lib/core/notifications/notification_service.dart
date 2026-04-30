@@ -86,11 +86,18 @@ class NotificationService {
     await cancelAll();
 
     final now = tz.TZDateTime.now(tz.local);
+    final wallNow = DateTime.now();
     final current = calc.currentAt();
     final all = repo.all;
 
-    // Build a rolling list starting from the next kō after the current one.
-    var idx = current.index; // 1..72
+    // Build a rolling list. Critical: start ONE BEFORE the current kō so
+    // the first iteration considers the current kō itself. Without this
+    // (the prior bug) `cancelAll()` above wipes the current kō's 9 AM
+    // push, and the loop never re-adds it because it starts from the
+    // *next* kō. Result: opening the app between midnight and 9 AM on a
+    // boundary day silently kills today's notification.
+    var idx = current.index - 1; // first `idx % 72 + 1` below lands on current.index
+    if (idx < 0) idx = 71; // wrap when current = #1
     var year = now.year;
     var scheduled = 0;
 
@@ -98,16 +105,19 @@ class NotificationService {
       idx = idx % 72 + 1; // next kō (wrap 72 → 1)
       final ko = all[idx - 1];
       var start = ko.startDateForYear(year);
-      // If we've wrapped past Dec 31 → the next occurrence is next year.
-      if (start.isBefore(DateTime.now())) {
+      // Compute the actual fire instant (9 AM local on start day) and
+      // bump the year if it's already passed. The previous version
+      // compared `start` (midnight) which incorrectly bumped the year
+      // any time the user opened the app after 00:00 on a boundary
+      // day — so the morning push got pushed 365 days into the future.
+      var fireAtDt = DateTime(start.year, start.month, start.day, 9, 0);
+      if (fireAtDt.isBefore(wallNow)) {
         year += 1;
         start = ko.startDateForYear(year);
+        fireAtDt = DateTime(start.year, start.month, start.day, 9, 0);
       }
 
-      final fireAt = tz.TZDateTime.from(
-        DateTime(start.year, start.month, start.day, 9, 0), // 9:00 local
-        tz.local,
-      );
+      final fireAt = tz.TZDateTime.from(fireAtDt, tz.local);
 
       final (title, body) = _buildSeasonNotificationText(ko, locale);
 

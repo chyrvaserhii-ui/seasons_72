@@ -21,7 +21,7 @@ class AboutSection {
   });
 }
 
-/// One row in the "Seven traditions" overview rendered after the prose
+/// One row in the "Nine traditions" overview rendered after the prose
 /// sections in the Tradition tab. Each entry mirrors a deep-dive card
 /// from the home / detail screens so the reader can recognise it at
 /// a glance.
@@ -38,14 +38,21 @@ class CardTradition {
   });
 }
 
-/// Ukrainian — seven card-tradition overviews, in the order they appear
-/// on the season screen.
+/// Ukrainian — nine card-tradition overviews, in the order they appear
+/// on the season screen (context → senses → meaning → action):
+/// sekki · hana · food · tea · colors · kodo · kigo · kotowaza · practice.
 const List<CardTradition> cardTraditionsUk = [
   CardTradition(
-    emoji: '🌱',
-    name: 'Сезонний чай',
-    tradition: 'З китайської чайної традиції 茶道. Кожному кō підібрано один із 13 базових типів — зелений, білий, жовтий, червоний, улун, шен-пуер і шу-пуер, хей-ча, лю-бао — з конкретним сортом, що пасує характеру тих п’яти днів.',
-    contents: 'Усередині — назва ієрогліфом, поетична нота-підбір, інфо про терруар і виробництво, легенда (для відомих сортів) і спосіб заварювання.',
+    emoji: '🌾',
+    name: 'Підсезон секкі',
+    tradition: 'Із 24 секкі (節氣) — 15-денних фаз сонячного року, що були серцем хейанських сільськогосподарських календарів. 72 кō — це поділ кожного секкі на 3 п’ятиденні мікросезони, ще тонший шар читання року.',
+    contents: 'Назва секкі канджі + ромаджі + переклад, мета-сезон (весна / літо / осінь / зима), і вікно дат, яке цей 15-денний відрізок охоплює.',
+  ),
+  CardTradition(
+    emoji: '🌸',
+    name: 'Сезонна квітка',
+    tradition: 'З 花暦 (хана-ґойомі) — японського квіткового календаря, і традиції 花言葉 (ханакотоба) — мови квітів. Кожному кō відповідає квітка на піку цвітіння в центральному Хонсю.',
+    contents: 'Японська і латинська ботанічна назва, символіка ханакотоба, і нота про місце квітки в храмових садах, ікебані або поезії доби Хейан.',
   ),
   CardTradition(
     emoji: '🍱',
@@ -54,10 +61,10 @@ const List<CardTradition> cardTraditionsUk = [
     contents: 'Японська назва, ромаджі, переклад з глосою, категорія (сакана/ґохан/ваґаші/...), і нота, що пов’язує страву з природою кō.',
   ),
   CardTradition(
-    emoji: '🌸',
-    name: 'Сезонна квітка',
-    tradition: 'З 花暦 (хана-ґойомі) — японського квіткового календаря, і традиції 花言葉 (ханакотоба) — мови квітів. Кожному кō відповідає квітка на піку цвітіння в центральному Хонсю.',
-    contents: 'Японська і латинська ботанічна назва, символіка ханакотоба, і нота про місце квітки в храмових садах, ікебані або поезії доби Хейан.',
+    emoji: '🌱',
+    name: 'Сезонний чай',
+    tradition: 'З китайської чайної традиції 茶道. Кожному кō підібрано один із 13 базових типів — зелений, білий, жовтий, червоний, улун, шен-пуер і шу-пуер, хей-ча, лю-бао — з конкретним сортом, що пасує характеру тих п’яти днів.',
+    contents: 'Усередині — назва ієрогліфом, поетична нота-підбір, інфо про терруар і виробництво, легенда (для відомих сортів) і спосіб заварювання.',
   ),
   CardTradition(
     emoji: '🎨',
@@ -78,6 +85,12 @@ const List<CardTradition> cardTraditionsUk = [
     contents: '3–5 кіґо для кō (кандзі + ромаджі + глоса + літературна нота), плюс summary-фраза, що задає колективний настрій усіх слів цього кō.',
   ),
   CardTradition(
+    emoji: '📖',
+    name: 'Сезонне прислів’я',
+    tradition: 'Із збірок 諺辞典 (kotowaza-jiten) — стислих фольклорних мудростей, що століттями зберігалися в усній традиції. Багато прислів’їв прив’язані до природного циклу: 三日見ぬ間の桜 (вишня, не бачена три дні), 暑さ寒さも彼岸まで (спека і холод лише до рівнодення).',
+    contents: 'Японський оригінал + ромаджі, буквальний переклад, повсякденне значення, і нота про те, як прислів’я співпадає із природним явищем цього кō.',
+  ),
+  CardTradition(
     emoji: '🪷',
     name: 'Практика',
     tradition: 'З японської філософії 養生 (йоджо) — «плекання життя», що йде від трактату Кайбари Екікена (1713). У її традиції кожна пора року тісно пов’язана з одним внутрішнім органом, який саме тоді найвразливіший і потребує підтримки: весна — печінка, літо — серце, кінець літа — селезінка-шлунок, осінь — легені, зима — нирки. Звідси й конкретика порад нижче — що їсти, чим зігрітися, як рухатися.',
@@ -85,13 +98,20 @@ const List<CardTradition> cardTraditionsUk = [
   ),
 ];
 
-/// English — same seven card traditions, same order.
+/// English — same nine card traditions, same order:
+/// sekki · hana · food · tea · colors · kodo · kigo · kotowaza · practice.
 const List<CardTradition> cardTraditionsEn = [
   CardTradition(
-    emoji: '🌱',
-    name: 'Seasonal tea',
-    tradition: 'From the Chinese way of tea 茶道. Each kō is paired with one of 13 base types — green, white, yellow, red, oolong, raw and ripe pu-erh, hei-cha, liu-bao — with a specific cultivar matching the character of those five days.',
-    contents: 'Inside: Chinese name in kanji, a poetic pairing note, terroir and processing notes, an origin legend for famous teas, and brewing instructions.',
+    emoji: '🌾',
+    name: 'Sekki sub-season',
+    tradition: 'From the 24 sekki (節氣) — 15-day phases of the solar year that were the heart of Heian-era agricultural calendars. The 72 kō are each sekki divided into three 5-day micro-seasons, an even finer layer of reading the year.',
+    contents: 'Sekki name in kanji + romaji + translation, the meta-season (spring / summer / autumn / winter), and the date window that this 15-day stretch covers.',
+  ),
+  CardTradition(
+    emoji: '🌸',
+    name: 'Seasonal flower',
+    tradition: 'From the 花暦 (hana-goyomi) flower calendar and the 花言葉 (hanakotoba) flower-language tradition. Each kō pairs with a flower at peak bloom in central Honshu in those five days.',
+    contents: 'Japanese and Latin botanical names, hanakotoba symbolism, and a note placing the flower in temple gardens, ikebana, or Heian poetry.',
   ),
   CardTradition(
     emoji: '🍱',
@@ -100,10 +120,10 @@ const List<CardTradition> cardTraditionsEn = [
     contents: 'Japanese name, romaji, translation with gloss, category (sakana / gohan / wagashi / ...), and a sensory note tying the dish to the kō.',
   ),
   CardTradition(
-    emoji: '🌸',
-    name: 'Seasonal flower',
-    tradition: 'From the 花暦 (hana-goyomi) flower calendar and the 花言葉 (hanakotoba) flower-language tradition. Each kō pairs with a flower at peak bloom in central Honshu in those five days.',
-    contents: 'Japanese and Latin botanical names, hanakotoba symbolism, and a note placing the flower in temple gardens, ikebana, or Heian poetry.',
+    emoji: '🌱',
+    name: 'Seasonal tea',
+    tradition: 'From the Chinese way of tea 茶道. Each kō is paired with one of 13 base types — green, white, yellow, red, oolong, raw and ripe pu-erh, hei-cha, liu-bao — with a specific cultivar matching the character of those five days.',
+    contents: 'Inside: Chinese name in kanji, a poetic pairing note, terroir and processing notes, an origin legend for famous teas, and brewing instructions.',
   ),
   CardTradition(
     emoji: '🎨',
@@ -122,6 +142,12 @@ const List<CardTradition> cardTraditionsEn = [
     name: 'Seasonal words',
     tradition: 'From the saijiki (歳時記) — dictionaries of kigo seasonal words around which Bashō, Buson, Issa, Shiki built their haiku. Each kigo is anchored to a specific 5-day window of the year.',
     contents: '3–5 kigo for the kō (kanji + romaji + gloss + literary note), plus a summary line framing the collective mood the words summon.',
+  ),
+  CardTradition(
+    emoji: '📖',
+    name: 'Seasonal proverb',
+    tradition: 'From the kotowaza-jiten (諺辞典) folk-wisdom dictionaries — short crystallised sayings carried for centuries in the oral tradition. Many anchor to the natural cycle: 三日見ぬ間の桜 (cherries unseen for three days), 暑さ寒さも彼岸まで (heat and cold last only until the equinox).',
+    contents: 'Japanese original + romaji, literal translation, the proverb\'s everyday meaning, and a note on how it lines up with this kō\'s natural cue.',
   ),
   CardTradition(
     emoji: '🪷',

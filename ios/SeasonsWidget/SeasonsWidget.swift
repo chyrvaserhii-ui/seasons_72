@@ -102,36 +102,142 @@ struct SeasonProvider: TimelineProvider {
         completion(readFromSharedDefaults(at: Date()) ?? .placeholder)
     }
 
-    /// Build a daily timeline: one entry per day until the current kō ends,
-    /// each with an accurate `daysUntilNext` for its own date. After the
-    /// last entry iOS re-asks for a timeline — by then Flutter should have
-    /// written fresh data for the next kō. As a safety net we also schedule
-    /// a refresh 1 hour after the last entry.
+    /// Build a multi-kō timeline that survives boundaries on its own.
+    ///
+    /// Old version only knew the *current* kō (whatever Flutter last
+    /// wrote). After the kō ended the widget went stale until the app
+    /// was re-opened — see widget bug 2026-04. New version reads
+    /// `upcomingKosJson` (next 12 kō, ~60 days) and produces daily
+    /// entries across boundaries, so iOS rotates kō text / kanji /
+    /// sekki on its own.
     func getTimeline(in context: Context,
                      completion: @escaping (Timeline<SeasonEntry>) -> Void) {
         let now = Date()
-        guard let base = readFromSharedDefaults(at: now) else {
-            completion(Timeline(entries: [.placeholder], policy: .after(Date().addingTimeInterval(3600))))
+
+        // 1. Try the new path — multi-kō buffer.
+        if let entries = buildTimelineFromUpcomingBuffer(at: now), !entries.isEmpty {
+            completion(Timeline(entries: entries, policy: .atEnd))
             return
         }
 
+        // 2. Legacy fallback — single-kō daily timeline. Triggered if
+        //    the app hasn't been opened since this widget version
+        //    shipped, so `upcomingKosJson` is missing.
+        guard let base = readFromSharedDefaults(at: now) else {
+            completion(Timeline(entries: [.placeholder],
+                                policy: .after(Date().addingTimeInterval(3600))))
+            return
+        }
         var entries: [SeasonEntry] = [base]
         let calendar = Calendar.current
         let startOfToday = calendar.startOfDay(for: now)
-
-        // Add entries for each subsequent midnight until this kō ends.
-        // Cap at 7 to bound memory — iOS will refresh before we hit it.
         let horizon = min(max(base.daysUntilNext, 0), 7)
         for i in 1...horizon where horizon > 0 {
             guard let next = calendar.date(byAdding: .day, value: i, to: startOfToday) else { break }
             entries.append(with(base, date: next, daysUntilNext: max(0, base.daysUntilNext - i)))
         }
-
-        // Refresh slightly after the last entry's date — gives Flutter a
-        // window to write fresh "next kō" data via the updateWidget call.
         let lastDate = entries.last?.date ?? now
         let nextRefresh = calendar.date(byAdding: .hour, value: 1, to: lastDate) ?? now.addingTimeInterval(3600)
         completion(Timeline(entries: entries, policy: .after(nextRefresh)))
+    }
+
+    /// Read `upcomingKosJson` and produce a flat array of timeline
+    /// entries — one per day per kō, in chronological order. Returns
+    /// nil if the buffer hasn't been written yet.
+    private func buildTimelineFromUpcomingBuffer(at now: Date) -> [SeasonEntry]? {
+        guard let defaults = UserDefaults(suiteName: Const.appGroupId),
+              let raw = defaults.string(forKey: "upcomingKosJson"),
+              let data = raw.data(using: .utf8),
+              let arr = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]],
+              !arr.isEmpty else {
+            return nil
+        }
+        let isUk = defaults.integer(forKey: "isUk") == 1
+        let prevLabel = defaults.string(forKey: "prevLabel") ?? (isUk ? "ПОПЕРЕДНІЙ" : "PREVIOUS")
+        let nextLabel = defaults.string(forKey: "nextLabel") ?? (isUk ? "НАСТУПНИЙ" : "NEXT")
+        let moonPhase = defaults.double(forKey: "moonPhase")
+        let moonIllum = defaults.double(forKey: "moonIllumination")
+        let moonIsWaxing = defaults.integer(forKey: "moonIsWaxing") == 1
+
+        let calendar = Calendar.current
+        var entries: [SeasonEntry] = []
+
+        for (i, dict) in arr.enumerated() {
+            guard let endMs = (dict["endEpochMs"] as? Int).map(Int64.init)
+                            ?? (dict["endEpochMs"] as? Int64) else { continue }
+            let startMs = (dict["startEpochMs"] as? Int).map(Int64.init)
+                       ?? (dict["startEpochMs"] as? Int64) ?? endMs
+            let koStart = Date(timeIntervalSince1970: TimeInterval(startMs) / 1000.0)
+            let koEnd = Date(timeIntervalSince1970: TimeInterval(endMs) / 1000.0)
+
+            // For the current kō (i == 0) start the walk at "now" so
+            // the first entry reflects today's actual countdown.
+            // Future kō walk from their start-of-day midnight.
+            var cursor = i == 0 ? now : calendar.startOfDay(for: koStart)
+
+            while cursor <= koEnd {
+                let daysToNext = max(
+                    0,
+                    Int((koEnd.timeIntervalSince(cursor) / 86400.0).rounded(.up))
+                )
+                entries.append(makeEntry(
+                    from: dict, date: cursor, daysUntilNext: daysToNext,
+                    isUk: isUk, prevLabel: prevLabel, nextLabel: nextLabel,
+                    moonPhase: moonPhase, moonIllumination: moonIllum,
+                    moonIsWaxing: moonIsWaxing
+                ))
+                guard let advanced = calendar.date(
+                    byAdding: .day, value: 1,
+                    to: calendar.startOfDay(for: cursor)
+                ) else { break }
+                cursor = advanced
+                if entries.count >= 60 { break }
+            }
+            if entries.count >= 60 { break }
+        }
+        return entries
+    }
+
+    /// Build a SeasonEntry from one element of `upcomingKosJson`.
+    private func makeEntry(
+        from dict: [String: Any],
+        date: Date,
+        daysUntilNext: Int,
+        isUk: Bool,
+        prevLabel: String,
+        nextLabel: String,
+        moonPhase: Double,
+        moonIllumination: Double,
+        moonIsWaxing: Bool
+    ) -> SeasonEntry {
+        let colorHex = (dict["metaColorHex"] as? String) ?? "#8DAAC7"
+        return SeasonEntry(
+            date: date,
+            index: (dict["index"] as? Int) ?? 0,
+            kanji: (dict["kanji"] as? String) ?? "",
+            romaji: (dict["romaji"] as? String) ?? "",
+            name: (dict["name"] as? String) ?? "",
+            emoji: (dict["emoji"] as? String) ?? "•",
+            sekki: (dict["sekki"] as? String) ?? "",
+            sekkiKanji: (dict["sekkiKanji"] as? String) ?? "",
+            meta: (dict["meta"] as? String) ?? "",
+            metaColor: Color(hex: colorHex),
+            daysUntilNext: daysUntilNext,
+            nextIndex: (dict["nextIndex"] as? Int) ?? 0,
+            nextName: (dict["nextName"] as? String) ?? "",
+            nextEmoji: (dict["nextEmoji"] as? String) ?? "•",
+            previousIndex: (dict["previousIndex"] as? Int) ?? 0,
+            previousName: (dict["previousName"] as? String) ?? "",
+            previousEmoji: (dict["previousEmoji"] as? String) ?? "•",
+            moonPhase: moonPhase,
+            moonIllumination: moonIllumination,
+            moonIsWaxing: moonIsWaxing,
+            prevLabel: prevLabel,
+            nextLabel: nextLabel,
+            countdownLong: formatCountdownLong(days: daysUntilNext, isUk: isUk),
+            countdownShort: formatCountdownShort(days: daysUntilNext, isUk: isUk),
+            lockScreenCountdown: formatLockScreenCountdown(days: daysUntilNext, isUk: isUk)
+        )
     }
 
     /// Copy an entry with overridden date / days-until-next.
@@ -289,6 +395,15 @@ private func loadEngraving(_ key: String) -> Image? {
     return Image(uiImage: uiImage)
 }
 
+/// Per-index engraving lookup — tries `engraving_<index>` first
+/// (populated by the upcoming-buffer copy) and falls back to the
+/// legacy `engraving_current` key for the very first launch before
+/// the buffer has been written. Falls through to nil → emoji.
+private func loadEngraving(forEntry entry: SeasonEntry) -> Image? {
+    if let img = loadEngraving("engraving_\(entry.index)") { return img }
+    return loadEngraving("engraving_current")
+}
+
 // MARK: - Views
 
 struct SeasonsWidgetEntryView: View {
@@ -312,7 +427,7 @@ struct SeasonsWidgetEntryView: View {
 /// room for a script the user can't parse quickly.
 struct SmallView: View {
     let entry: SeasonEntry
-    private var engraving: Image? { loadEngraving("engraving_current") }
+    private var engraving: Image? { loadEngraving(forEntry: entry) }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -373,7 +488,7 @@ struct SmallView: View {
 /// the middle.
 struct MediumView: View {
     let entry: SeasonEntry
-    private var engraving: Image? { loadEngraving("engraving_current") }
+    private var engraving: Image? { loadEngraving(forEntry: entry) }
 
     var body: some View {
         HStack(spacing: 14) {
@@ -650,6 +765,56 @@ private func countdownShortLeft(days: Int) -> String {
         return "Залишилось \(days) дні"
     }
     return "Залишилось \(days) днів"
+}
+
+// MARK: - Locale-aware countdowns (used by the multi-kō timeline path)
+//
+// These mirror `_countdownLong / _countdownShort / _lockScreenCountdown`
+// in lib/core/widget/widget_service.dart. When the timeline is built
+// from `upcomingKosJson`, the daysUntilNext for future kō isn't known
+// to Flutter at write time — Swift computes it per-entry, so the
+// strings have to be assembled here too.
+
+/// Returns the Ukrainian plural form: "день" | "дні" | "днів".
+private func uaDaysWord(_ days: Int) -> String {
+    let mod10 = days % 10
+    let mod100 = days % 100
+    if mod10 == 1 && mod100 != 11 { return "день" }
+    if (2...4).contains(mod10) && !(12...14).contains(mod100) { return "дні" }
+    return "днів"
+}
+
+/// "Наступний сезон через X днів" / "Next season in X days".
+fileprivate func formatCountdownLong(days: Int, isUk: Bool) -> String {
+    if days == 0 {
+        return isUk ? "Останній день цього сезону" : "Last day of this season"
+    }
+    if isUk {
+        return "Наступний сезон через \(days) \(uaDaysWord(days))"
+    }
+    return days == 1 ? "Next season in 1 day" : "Next season in \(days) days"
+}
+
+/// "X днів" / "X days" — used in Small widget.
+fileprivate func formatCountdownShort(days: Int, isUk: Bool) -> String {
+    if days == 0 { return isUk ? "Останній день" : "Last day" }
+    if isUk { return "\(days) \(uaDaysWord(days))" }
+    return days == 1 ? "1 day" : "\(days) days"
+}
+
+/// "Залишилось X днів" / "X days left" — used in Lock screen widget.
+fileprivate func formatLockScreenCountdown(days: Int, isUk: Bool) -> String {
+    if days == 0 { return isUk ? "Останній день" : "Last day" }
+    if isUk {
+        let mod10 = days % 10
+        let mod100 = days % 100
+        if mod10 == 1 && mod100 != 11 { return "Залишився \(days) день" }
+        if (2...4).contains(mod10) && !(12...14).contains(mod100) {
+            return "Залишилось \(days) дні"
+        }
+        return "Залишилось \(days) днів"
+    }
+    return days == 1 ? "1 day left" : "\(days) days left"
 }
 
 extension Color {

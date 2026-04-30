@@ -9,6 +9,37 @@ twelve hundred years.
 Not a productivity app. Not a habits tracker. A small contemplative
 window — open it once, see what's blooming this week, close it.
 
+## North star
+
+The reference layer is the canvas. **The user is the painter.**
+
+72 Seasons is moving from *a calendar you read* into *a quiet
+seasonal practice you live*. The 72 kō and 9 cultural traditions
+stay as the cultural spine; around them, gradually, a wellness
+companion takes shape. Four principles guide the direction:
+
+- **The year as ritual, not a feed.** 72 small invitations a year — to
+  brew the recommended tea, photograph the flower in bloom, write
+  your own haiku, pause for three breaths.
+- **A diary, not a grid.** Your photos, your words, your check-ins
+  saved next to the classical engraving for the same kō, year over
+  year. Last spring no. 13 next to this one.
+- **A circle, not a network.** When sharing arrives, it will be a
+  three-friend postcard feed, never a public timeline. No likes, no
+  counts, no leaderboard.
+- **Gentle recognition, never streaks.** Optional badges — *72 kō
+  noticed*, *Tea master*, *Haiku poet*, *Seasonal pilgrim* — that
+  reward attention, not engagement. Always opt-in, always opt-out.
+
+What stays the hard rule: 72 Seasons should keep feeling like a
+quiet diary, not Calm and not Duolingo. No graphs. No "you missed
+3 days". No leaderboard. The pace of the year is the pace of the
+app.
+
+The roadmap calls this **Phase 5 — Wellness pivot**; the cultural
+register (kasane-no-irome, kōdō, saijiki, kotowaza-jiten) does not
+move.
+
 ## Audience
 
 | Segment | Why they care |

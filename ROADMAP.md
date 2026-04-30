@@ -105,6 +105,64 @@ Six focused weeks → measurable retention + a real launch. Track A
 runs first because B (reach) is more effective when there's a fresh
 "daily journal" hook to mention in the launch post.
 
+## 🌱 Phase 5 — Wellness pivot (vision)
+
+A strategic reframe: 72 Seasons grows from *seasonal reference* into
+*seasonal wellness companion*. The cultural spine (72 kō, 9 traditions)
+stays as the canvas; the user becomes a co-author — with their own
+photos, ritual logs, written haiku, and quiet practice tracking. Phase
+4 Track A (observation journal) is the foundation; Phase 5 builds the
+wellness register on top of it.
+
+### Track E — Personal practice (user as co-author)
+
+| # | Item | Why |
+|---|---|---|
+| **E1** | **Own photo of the season** — capture your version of each kō, saved next to the engraving | Anchors the abstract Japanese kō to lived experience. Your spring no. 13 next to the hand-printed one. |
+| **E2** | **Tea ritual log** — when you brew the recommended tea, save a photo or short note to the journal | Turns the Tea card from passive suggestion into a felt ritual. |
+| **E3** | **Meditation timer** — kō-themed guided breaths (3 / 5 / 10 min) over the existing per-kō ambient clip, short seasonal prompt | Opens the wellness register. Reuses the audio infra already in place. |
+| **E4** | **Write your own haiku** — per-kō text field beside the classical haiku, optional save to journal | Active participation. Closes the haiku card loop — first you read, then you write. |
+| **E5** | **Practice check-ins** — soft "I did this" toggle on each item of the Practice card; lightweight per-week tally | Tone-safe gamification — rewards noticing, not engagement. |
+
+### Track F — Sharing layer (private, slow, no metrics)
+
+| # | Item | Why |
+|---|---|---|
+| **F1** | **Private circles** — opt-in 3–8 person feed of friends' kō photos, haiku, ritual notes. No likes, no counts, no public profile. | Slow alternative to public social. Closer to a group postcard than a feed. |
+| **F2** | **Share card v2** — extend the 1080×1350 PNG renderer with user photo + own haiku + chosen ritual line | Builds on Phase 2 share-card infra; no new rendering pipeline. |
+| **F3** | **Yearly review** ("you noticed 47/72 kō, brewed 31 teas, wrote 12 haiku") | Parked in Track D — Phase 5 unlocks it once journal + check-ins exist. |
+
+### Track G — Light gamification (taste-safe)
+
+Hard rules: never naggy, never numerical-anxiety, always opt-in,
+always opt-out from Settings. Inspired by A4's *streaks-as-mindfulness*
+but extended.
+
+| # | Item | Why |
+|---|---|---|
+| **G1** | **72 kō noticed** — quiet badge for completing one full year (≥1 journal entry per kō) | One-year retention anchor. |
+| **G2** | **Tradition badges** — Tea master / Hana watcher / Haiku poet / Kōdō nose — softly recognise cumulative practice in one register | Lets the user choose the register that pulls them in. |
+| **G3** | **Seasonal pilgrim** — multi-year badge for journaling year over year | The slow-burn long-term anchor. Most apps lose users after year 1; this one rewards staying. |
+
+### Open questions for Phase 5
+
+- **Backend or local-only?** E1–E5 + F3 yearly review fit local (drift/sqflite + iCloud sync via C3). F1 private circles needs a backend → infra cost, moderation surface, privacy footprint. Default: keep E local, gate F1 behind explicit user demand and possibly a quiet subscription.
+- **Where do badges live?** A quiet sub-section in Practice or About. Never in onboarding, never push-notified.
+- **How do we keep the tone?** Wellness apps usually feel preachy (Calm) or gamified (Duolingo). 72 Seasons should feel like a quiet diary — no graphs, no "you missed 3 days", no leaderboard. Opt-in everywhere.
+
+### Phase 5 sequence (after Phase 4 Track A lands)
+
+```
+After A1 (journal foundation):
+Week 1   — E1 Own season photo
+Week 2   — E4 Write your own haiku (smallest item, biggest emotional hook)
+Week 3   — E2 Tea ritual log
+Week 4   — E5 Practice check-ins  (+ G1 first badge as side-effect)
+Week 5   — E3 Meditation timer
+Week 6+  — F2 Share card v2, F3 Yearly review
+Later    — F1 (only with clear demand) + G2/G3 badges
+```
+
 ## 🧹 Tech debt
 
 - Compress onboarding PNGs in `assets/images/onboarding/` (~7–8 MB savings)

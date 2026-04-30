@@ -86,22 +86,37 @@ class KotowazaCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Title — the LITERAL translation, so the user
+                          // grasps the proverb's meaning at a glance
+                          // without parsing Japanese first. Japanese
+                          // form drops to the subtitle as a quiet
+                          // ornament; the modal sheet still uses kanji
+                          // as the hero, where the user has space to
+                          // read it.
+                          //
+                          // Source data is intentionally lowercase
+                          // (carries over from Japanese typographic
+                          // habit). For UI we want sentence case at the
+                          // start; we capitalise here at render time
+                          // rather than rewriting all 72 data rows.
                           Text(
-                            pairing.japanese,
+                            _capitalize(
+                              isUk ? pairing.literalUk : pairing.literalEn,
+                            ),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          const SizedBox(height: 2),
                           Text(
-                            '${pairing.romaji}  ·  '
-                            '${isUk ? pairing.literalUk : pairing.literalEn}',
+                            '${pairing.japanese}  ·  ${pairing.romaji}',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: onSurface.withValues(alpha: 0.65),
+                              color: onSurface.withValues(alpha: 0.60),
                               letterSpacing: 0.3,
                             ),
-                            maxLines: 2,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
@@ -213,7 +228,7 @@ class _KotowazaDetailsSheet extends StatelessWidget {
           const SizedBox(height: 18),
           _SectionBlock(
             title: isUk ? 'БУКВАЛЬНО' : 'LITERAL',
-            body: isUk ? pairing.literalUk : pairing.literalEn,
+            body: _capitalize(isUk ? pairing.literalUk : pairing.literalEn),
             theme: theme,
             onSurface: onSurface,
           ),
@@ -235,6 +250,17 @@ class _KotowazaDetailsSheet extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Returns [s] with the first character upper-cased, leaving the rest
+/// untouched. Used for the literal-translation field, which is stored
+/// lowercase in the source data (see seasonal_kotowaza.dart) but reads
+/// better as sentence-case in the UI. Robust on empty strings and on
+/// runes whose upper-case form differs in length (Cyrillic, Greek,
+/// etc.) — we use `String.toUpperCase()` on the first character only.
+String _capitalize(String s) {
+  if (s.isEmpty) return s;
+  return s[0].toUpperCase() + s.substring(1);
 }
 
 class _SectionBlock extends StatelessWidget {
